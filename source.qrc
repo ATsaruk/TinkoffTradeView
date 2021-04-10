@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="tinkoff">Resources/original.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,51 @@
+/* Класс для запуска задач/комманд: IBaseTask/CustomCommand
+ * Предварительно рекомендую ознакомиться с классами IBaseTask и CustomCommand
+ *
+ * Есть 2 пути регистрации задачи:
+ * 1. Регистрация комманды/задачи для которой создан класс, тут будет реальный пример запуска задачи CommanLoadStock:
+ *     auto *command = TaskManager::get()->addTask <CommanLoadStock> (stockKey, beginDate, endDate, minCandleCount);
+ *     или с учетом #define NEW_TASK TaskManager::get()->addTask
+ *     auto *command = NEW_TASK <CommanLoadStock> (stockKey, beginDate, endDate, minCandleCount);
+ *     connect(command, &CommandLoadStock::finished, this, &ChartCandlesGroup::addCandles);
+ *
+ * 2. Если команда сформирована "находу", то первы вариант не подходит, то второй вариант:
+ *     auto *command = new CustomCommand("LoadStock");
+ *     command->addTask<TaskLoadStockFromDb>(stockKey, beginDate, endDate, minCandleCount);
+ *     command->addTask<TaskLoadStocksFromBroker>(stockKey, beginDate, endDate, minCandleCount);
+ *     connect(command, &CommandLoadStock::finished, this, &ChartCandlesGroup::addCandles);
+ *     TaskManager::get()->registerTask(command);
+ *
+ * TaskManager при получении задачи сразу пытается её запустить, исключением являются ресурсоемкие задачи heavyTasks
+ * ресурсоемких задач одновременно может быть запущенно не более getMaxExecTask() (функция вернет количество ядер в системе)
+ * При завершении ресурсоемкой задачи будет запущена следующая задача.
+ */
+#ifndef MANAGER_H
+#define MANAGER_H
+
+#include "customcommand.h"
+
+namespace Task {
+
+
+///Класс управляющий задачами
+class Manager final : public CustomCommand
+{
+    Q_OBJECT
+
+public:
+    Manager(QThread *parent);
+
+    //Возвращает имя задачи
+    QString getName() override;
+
+    //Регистрация новой заявки
+    void registerTask(IBaseTask *newTask) override;
+
+protected:
+    //Возвращает сколько задач можно запускать паралельно
+    uint getMaxExecTask() override;
+};
+
+}
+
+#endif // MANAGER_H

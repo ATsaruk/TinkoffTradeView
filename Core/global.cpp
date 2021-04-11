@@ -20,11 +20,7 @@ Global::Global()
 
 Global::~Global()
 {
-    //broker->deleteLater();
-    //taskManager->deleteLater();
-    //delete dataBase;
 
-    //delete stocks;
 }
 
 void Global::init(QObject *parent)
@@ -37,10 +33,8 @@ void Global::init(QObject *parent)
 
     taskManager.init(parent->thread());
 
-    stocks.init();
-
     dataBase.init<DB::PostgreSql>();
-    broker.init<Broker::TinkoffApi>();// = new Broker::TinkoffApi;
+    broker.init<Broker::TinkoffApi>();
 
     // Что бы не пропустить ни одного предупреждения или ошибки выводим их дополнительно на экран! Можно удалить
     logger->add<MsgBoxLogger>(logTags[2]);

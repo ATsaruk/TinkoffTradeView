@@ -63,7 +63,7 @@ void LoadStockFromDb::exec()
                    .arg(candles.size()).arg(candles.front().dateTime.toString(), candles.back().dateTime.toString());
 
     //Добавляем данные в общий список акций
-    Glo.stocks->insertCandles(key, candles);
+    Glo.stocks.insertCandles(key, candles);
 
     //Отпавляем сигнал о завершении задачи
     emit finished();

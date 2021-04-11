@@ -19,6 +19,7 @@
 #include "stockkey.h"
 #include "candle.h"
 #include "Data/daterange.h"
+#include "Core/safeptrwrapper.h"
 
 namespace Data {
 
@@ -68,7 +69,8 @@ protected:
     /** @brief Список акций
       * @param QString - ключ акции StockKey::keyToString();
       * @param CandlesDataVector - список свечных данных для данного ключа */
-    std::unordered_map< QString, Candles > stocks;
+    std::unordered_map<QString, Candles> stocks;
+    //Core::SafePtr< std::unordered_map<QString, Candles> > stocks;
 
 private:
     Q_OBJECT

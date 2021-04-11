@@ -245,8 +245,8 @@ void StockItem::addCandle(const Data::Candle &candleData)
 void StockItem::addCandles()
 {
     bool isCandlesAdded = false;
-    QReadLocker lock(&Glo.stocks->rwMutex);
-    const Data::Candles &candlesData = Glo.stocks->getStock(curStockKey);
+    QReadLocker lock(&Glo.stocks.rwMutex);
+    const Data::Candles &candlesData = Glo.stocks.getStock(curStockKey);
     for (auto it = candlesData.rbegin(); it != candlesData.rend(); ++it) {
         bool isExist = false;
 

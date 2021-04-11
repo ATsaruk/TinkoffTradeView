@@ -46,8 +46,8 @@ public:
     SafePtr<Task::Manager> taskManager;
 
     //Вспомогательные
-    SafePtr<Data::Stocks>  stocks;
-    SafePtr<Broker::Api>   broker;
+    Data::Stocks stocks;
+    SafePtr<Broker::Api> broker;
     SafePtr<DB::IDataBase> dataBase;
 
     //Singleton

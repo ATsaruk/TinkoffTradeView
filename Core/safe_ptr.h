@@ -8,6 +8,9 @@
 #include <mutex>
 #include <thread>
 
+namespace Core {
+
+
 template<typename T, typename mutex_t = std::recursive_mutex, typename x_lock_t = std::unique_lock<mutex_t>,
     typename s_lock_t = std::unique_lock<mutex_t >>
 class safe_ptr {
@@ -124,5 +127,7 @@ public:
 
 using lock_timed_any_once = lock_timed_any<lock_count_t::lock_once>;
 using lock_timed_any_infinity = lock_timed_any<lock_count_t::lock_infinity>;
+
+}
 
 #endif // #ifndef SAFE_PTR_H

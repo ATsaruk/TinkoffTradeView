@@ -43,7 +43,7 @@ void LoadStockFromBroker::exec()
     }
 
     Glo.broker->mutex.lock();
-    connect(Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
+    connect(*Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
     if (!sendRequest())
         finishTask();
@@ -129,7 +129,7 @@ void LoadStockFromBroker::finishTask()
 
         Candles newCandles;
         newCandles = Glo.stocks->insertCandles(stockKey, candles);
-        DB::StocksQuery::placeCandles(Glo.dataBase, stockKey, newCandles);
+        DB::StocksQuery::placeCandles(*Glo.dataBase, stockKey, newCandles);
     }
     emit finished();
 }

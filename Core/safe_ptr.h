@@ -1,27 +1,15 @@
 /** Мопед не мой, взят с https://github.com/AlexeyAB/object_threadsafe
   * Статья на эту тему: https://habr.com/ru/post/328348/
-  */
+  * В проекте используется обертка над данным классом (class SafePtr - safeptrwrapper.h) */
 #ifndef SAFE_PTR_H
 #define SAFE_PTR_H
 
-#include <iostream>
-#include <string>
 #include <vector>
-#include <list>
-#include <memory>
 #include <mutex>
 #include <thread>
-#include <atomic>
-#include <map>
-#include <numeric>
-#include <sstream>
-#include <cassert>
-#include <new>
-//#include <shared_mutex>
 
 template<typename T, typename mutex_t = std::recursive_mutex, typename x_lock_t = std::unique_lock<mutex_t>,
     typename s_lock_t = std::unique_lock<mutex_t >>
-    // std::shared_lock<std::shared_timed_mutex>, when mutex_t = std::shared_timed_mutex
 class safe_ptr {
     typedef mutex_t mtx_t;
     const std::shared_ptr<T> ptr;
@@ -47,22 +35,23 @@ class safe_ptr {
         auto_lock_obj_t(T * const _ptr, mutex_t& _mtx) : ptr(_ptr), lock(_mtx){}
         template<typename arg_t>
         auto operator [] (arg_t arg) -> decltype((*ptr)[arg]) { return (*ptr)[arg]; }
+        T* operator * () { return ptr; }
     };
 
     void lock() { mtx_ptr->lock(); }
     void unlock() { mtx_ptr->unlock(); }
     friend struct link_safe_ptrs;
     template<size_t, typename, size_t, size_t> friend class lock_timed_any;
-#if (_MSC_VER && _MSC_VER == 1900)
-    template<class... mutex_types> friend class std::lock_guard;  // MSVS2015
-#else
-    template<class mutex_type> friend class std::lock_guard;  // other compilers
-#endif
+    template<typename mutex_type> friend class std::lock_guard;
+    //template<class... mutex_types> friend class std::lock_guard;    // C++17
 public:
+
+    safe_ptr(T *t) : ptr(std::shared_ptr<T>(t)), mtx_ptr(std::make_shared<mutex_t>()) {}
+
     template<typename... Args>
     safe_ptr(Args... args) : ptr(std::make_shared<T>(args...)), mtx_ptr(std::make_shared<mutex_t>()) {}
 
-    auto_lock_t<x_lock_t> operator -> () { return auto_lock_t<x_lock_t>(ptr.get(), *mtx_ptr); }
+    auto_lock_t<x_lock_t> operator -> ()  { return auto_lock_t<x_lock_t>(ptr.get(), *mtx_ptr);}
     auto_lock_obj_t<x_lock_t> operator * () { return auto_lock_obj_t<x_lock_t>(ptr.get(), *mtx_ptr); }
     const auto_lock_t<s_lock_t> operator -> () const { return auto_lock_t<s_lock_t>(ptr.get(), *mtx_ptr); }
     const auto_lock_obj_t<s_lock_t> operator * () const { return auto_lock_obj_t<s_lock_t>(ptr.get(), *mtx_ptr); }
@@ -88,7 +77,7 @@ template<size_t lock_count, typename duration = std::chrono::nanoseconds,
 class lock_timed_any {
     std::vector<std::shared_ptr<void>> locks_ptr_vec;
     bool success;
-    
+
     template<typename mtx_t>
     std::unique_lock<mtx_t> try_lock_one(mtx_t &mtx) const {
         std::unique_lock<mtx_t> lock(mtx, std::defer_lock_t());
@@ -99,7 +88,7 @@ class lock_timed_any {
             auto const time_remained = duration(deadlock_timeout) - std::chrono::duration_cast<duration>(std::chrono::steady_clock::now() - start_time);
             if (time_remained <= duration(0))
                 break;
-            else 
+            else
                 std::this_thread::sleep_for(time_remained);
         }
         return lock;
@@ -135,7 +124,5 @@ public:
 
 using lock_timed_any_once = lock_timed_any<lock_count_t::lock_once>;
 using lock_timed_any_infinity = lock_timed_any<lock_count_t::lock_infinity>;
-// ---------------------------------------------------------------
-
 
 #endif // #ifndef SAFE_PTR_H

@@ -99,8 +99,7 @@ void Config::save(QString fileName) const
  * п.7 Перемещаем newObj в наш исходный объект с ключем curKey: obj[curKey] = std::move(newObj);
  *
  * тем самым мы будем укорачивать key, до тех пока он не перестанет содержать симовал '/'
- * как только это произойдет, на очередном рекурсивном вызове см. п.1 (выход из рекурсии)
- */
+ * как только это произойдет, на очередном рекурсивном вызове см. п.1 (выход из рекурсии) */
 void Config::toJSON(const QString &key, const QVariant &value, QJsonObject &obj) const
 {
     int index = key.indexOf("/");
@@ -152,16 +151,16 @@ void Config::toJSON(const QString &key, const QVariant &value, QJsonObject &obj)
  * path + it.key() = "pen/" + "color" = "pen/color", значение "blue" : settingsMap["pen/color"] = QVariant("blue");
  * Если бы это был тоже QJsonObject, функция спустилась бы ниже, и так будут пройдены все поля obj
  * так же будет со следующей записью, она не является QJsonObject'ом, и будет сохранена в settingsMap
- * path + it.key() = "pen/" + "width" = "pen/width", значение 2 : settingsMap["pen/width"] = QVariant(2);
- */
+ * path + it.key() = "pen/" + "width" = "pen/width", значение 2 : settingsMap["pen/width"] = QVariant(2); */
 void Config::fromJSON(const QJsonObject &obj, const QString &subPath /* = QString() */ )
 {
     for (auto it = obj.begin(); it < obj.end(); it++) {
         if (it.value().isObject()) {
             QString newPath = subPath + it.key() + QString('/');
             fromJSON(it.value().toObject(), newPath);
-        } else
+        } else {
             settingsMap[subPath + it.key()] = it.value().toVariant();
+        }
     }
 }
 

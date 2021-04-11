@@ -44,7 +44,6 @@ HEADERS += \
     Broker/Tinkoff/request.h \
     Broker/Tinkoff/tinkoff.h \
     Broker/api.h \
-    Core/safeptr.h \
     Core/Logs/filelogger.h \
     Core/Logs/ilogger.h \
     Core/Logs/imultilogger.h \
@@ -52,6 +51,8 @@ HEADERS += \
     Core/config.h \
     Core/global.h \
     Core/loggerlist.h \
+    Core/safe_ptr.h \
+    Core/safeptrwrapper.h \
     Data/Stock/candle.h \
     Data/Stock/stockkey.h \
     Data/Stock/stocks.h \

@@ -16,8 +16,6 @@ void StocksQuery::placeCandles(IDataBase *db, const StockKey &key, Candles &cand
     if (!db->isOpen())
         return;
 
-    QMutexLocker locker(&db->mutex);
-
     QString interval = key.intervalToString();
     for (const auto &it: candles) {
         QString insert = QString("INSERT INTO stocks (figi, interval, time, open, close, high, low, volume) VALUES ('%1', '%2', '%3', %4, %5, %6, %7, %8)")
@@ -40,8 +38,6 @@ void StocksQuery::retrieveCandles(IDataBase *db, const StockKey &key, Candles &c
 {
     if (!db->isOpen())
         return;
-
-    QMutexLocker locker(&db->mutex);
 
     QString interval = key.intervalToString();
     QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(key.figi(), interval);

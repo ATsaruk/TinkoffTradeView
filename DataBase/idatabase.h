@@ -12,9 +12,6 @@ namespace DB {
 class IDataBase
 {
 public:
-    //Mutex для управления доступом к данным
-    QMutex mutex;
-
     IDataBase();
     virtual ~IDataBase();
 

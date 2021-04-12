@@ -45,6 +45,9 @@ public:
     QString getClassName() const override = 0;
 
 
+    /// Включает/отключает запись текущего лога
+    void setWriteLog(bool on) override;
+
     /** @brief Выводит сообщение text в лог
       * @warning Данную функцию нужно перегрузить, реализовав в ней обработку сообщения.\n
       * Для передачи сообще вложенным логгерам в конце реализации функции нужно вызвать @code
@@ -58,6 +61,8 @@ public:
     typename std::enable_if_t<std::is_base_of_v<IMultiLogger, T>>
     appendLogger()
     {
+        QMutexLocker locker(&mutex);
+
         T *newLogger = new T(tag);
         QString newClass = newLogger->getClassName();
         auto count = std::count_if(loggers.begin(), loggers.end(), [&newClass] (auto &it) {return it->getClassName() == newClass;});

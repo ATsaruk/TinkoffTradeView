@@ -12,7 +12,6 @@
 #include "Data/Stock/stocks.h"
 #include "DataBase/idatabase.h"
 #include "Tasks/manager.h"
-#include "safeptrwrapper.h"
 
 namespace Core {
 
@@ -41,14 +40,14 @@ class Global
 {
 public:
     //Основные инструменты
-    SafePtr<Config> conf;
-    SafePtr<LoggerList> logger;
-    SafePtr<Task::Manager> taskManager;
+    Config *conf;
+    LoggerList *logger;
+    Task::Manager *taskManager;
 
     //Вспомогательные
-    Data::Stocks stocks;
-    SafePtr<Broker::Api> broker;
-    SafePtr<DB::IDataBase> dataBase;
+    Data::Stocks *stocks;
+    Broker::Api *broker;
+    DB::IDataBase *dataBase;
 
     //Singleton
     static Global &get();

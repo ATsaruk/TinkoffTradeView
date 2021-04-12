@@ -20,21 +20,27 @@ Global::Global()
 
 Global::~Global()
 {
-
+    delete taskManager;
+    delete broker;
+    delete dataBase;
+    delete stocks;
+    delete logger;
+    delete conf;
 }
 
 void Global::init(QObject *parent)
 {
-    conf.init("config.cfg");
+    conf = new Config("config.cfg");
 
-    logger.init();
+    logger = new LoggerList;
     for (const auto &it : logTags)
         logger->add(it);
 
-    taskManager.init(parent->thread());
+    taskManager = new Task::Manager(parent->thread());
 
-    dataBase.init<DB::PostgreSql>();
-    broker.init<Broker::TinkoffApi>();
+    stocks = new Data::Stocks;
+    dataBase = new DB::PostgreSql;
+    broker = new Broker::TinkoffApi;
 
     // Что бы не пропустить ни одного предупреждения или ошибки выводим их дополнительно на экран! Можно удалить
     logger->add<MsgBoxLogger>(logTags[2]);

@@ -8,7 +8,7 @@
  *   class CommandDoSomething : public BaseCommand
  *   {
  *     public:
- *       void setData(const Place &from, const Place &to) //if needed some extra data
+ *       void setData(const Place &from, const Place &to) //must be created
  *
  *       //Возвращает имя класса владельца
  *       QString getName() override;
@@ -187,6 +187,7 @@
 #define IBASECOMMAND_H
 
 #include <QQueue>
+#include <QRecursiveMutex>
 
 #include "ibasetask.h"
 
@@ -200,13 +201,13 @@ class CustomCommand : public IBaseTask
 public:
     CustomCommand(const QString &customCommandName = QString("CustomCommand"));
     CustomCommand(QThread *parent, const QString &customCommandName = QString("CustomCommand"));
-    virtual ~CustomCommand();
+    ~CustomCommand();
 
     //Возвращает имя задачи
-    virtual QString getName() override;
+    QString getName() override;
 
     //Задать имя для CustomCommand
-    void setCommandName(QString customCommandName);
+    virtual void setCommandName(QString customCommandName);
 
     /* Добавление новой задачи
     *  T - класс задачи наследние IBaseTask(или CustomCommand)
@@ -219,6 +220,7 @@ public:
     typename std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
     addTask(N ... args)
     {
+        QMutexLocker locker(&mutex);
         T *newTask = new T(taskThread);
         newTask->setData(args ...);
         registerTask(newTask);
@@ -229,13 +231,14 @@ public:
     virtual void registerTask(IBaseTask *newTask);
 
 protected:
+    QRecursiveMutex mutex;
     QQueue<IBaseTask*> taskList;        //очередь обычных задач на запуск
 
     //Основной цикл выполнения задачи
-    virtual void exec() override;
+    void exec() override;
 
     //Остановить задату
-    virtual void stop() override;
+    void stop() override;
 
     //Возвращает сколько задач можно запускать паралельно (по уммолчанию 1 : последовательный запуск задач)
     virtual uint getMaxExecTask();

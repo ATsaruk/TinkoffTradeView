@@ -43,7 +43,7 @@ void LoadStockFromBroker::exec()
     }
 
     Glo.broker->mutex.lock();
-    connect(*Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
+    connect(Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
     if (!sendRequest())
         finishTask();
@@ -71,11 +71,11 @@ bool LoadStockFromBroker::initRanges()
     if ( !loadRange.isValid() )
         return false;
 
-    extraRange.setRange(loadRange.getBegin(), -14 * 24 * 3600);
+    extraRange.setRange(loadRange.getEnd(), -14 * 24 * 3600 - loadRange.toSec());
 
     qint64 maxLoadRange = getMaxLoadInterval(stockKey.interval());
     curRange.setRange(loadRange.getBegin(), maxLoadRange);
-    curRange.constrain(loadRange + extraRange);
+    curRange.constrain(extraRange);
 
     return true;
 }
@@ -114,7 +114,7 @@ void LoadStockFromBroker::shiftCurRange()
         maxLoadRange *= -1; //Началась загрузка extraRange, поэтому двигаемся в обратном направлении до границы extraRange
 
     curRange.displace(maxLoadRange, maxLoadRange);
-    curRange.constrain(loadRange + extraRange);
+    curRange.constrain(extraRange);
 }
 
 void LoadStockFromBroker::finishTask()
@@ -128,8 +128,8 @@ void LoadStockFromBroker::finishTask()
         removeIncompleteCandle(candles);
 
         Candles newCandles;
-        newCandles = Glo.stocks.insertCandles(stockKey, candles);
-        DB::StocksQuery::placeCandles(*Glo.dataBase, stockKey, newCandles);
+        newCandles = Glo.stocks->insertCandles(stockKey, candles);
+        DB::StocksQuery::placeCandles(Glo.dataBase, stockKey, newCandles);
     }
     emit finished();
 }

@@ -44,7 +44,7 @@ void LoadStockFromDb::exec()
     QDateTime twoWeeksAgo = range.getBegin().addSecs(-14 * 86400); //86400 - число секунд в сутках
     while (candles.size() < minCount) {
         //Загрузка свечных данных из БД
-        DB::StocksQuery::retrieveCandles(*Glo.dataBase, key, candles, range);
+        DB::StocksQuery::retrieveCandles(Glo.dataBase, key, candles, range);
 
         long interval = LoadStockFromBroker::getMaxLoadInterval(key.interval());
         range.displace(-interval, -interval);
@@ -63,7 +63,7 @@ void LoadStockFromDb::exec()
                    .arg(candles.size()).arg(candles.front().dateTime.toString(), candles.back().dateTime.toString());
 
     //Добавляем данные в общий список акций
-    Glo.stocks.insertCandles(key, candles);
+    Glo.stocks->insertCandles(key, candles);
 
     //Отпавляем сигнал о завершении задачи
     emit finished();

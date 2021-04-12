@@ -104,7 +104,7 @@ public:
     virtual QString getName() = 0;
 
     //Возвращает поток, в котором находится данный экземпляр класса
-    QThread* getThread();
+    virtual QThread* getThread();
 
 public slots:
     //Основная функция, запускает задачу (taskThread->start())

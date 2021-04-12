@@ -18,6 +18,8 @@ Config::~Config()
 
 QVariant Config::getValue(const QString &key, const QVariant &defaultValue)
 {
+    QReadLocker locker(&lock);
+
     if (settingsMap.find(key) == settingsMap.end())
         settingsMap[key] = defaultValue;
 
@@ -26,6 +28,8 @@ QVariant Config::getValue(const QString &key, const QVariant &defaultValue)
 
 void Config::setValue(QString &&key, QVariant &&value)
 {
+    QWriteLocker locker(&lock);
+
     //Удаляем возможные '/' в конце ключа, он там не нужен и будет мешать!
     while (key.lastIndexOf('/') == key.length()-1 && !key.isEmpty())
         key.chop(1);
@@ -35,6 +39,8 @@ void Config::setValue(QString &&key, QVariant &&value)
 
 void Config::load(const QString &fileName)
 {
+    QWriteLocker locker(&lock);
+
     _fileName = fileName;
 
     QFile file(_fileName);
@@ -48,8 +54,10 @@ void Config::load(const QString &fileName)
     fromJSON(doc.object());
 }
 
-void Config::save(QString fileName) const
+void Config::save(QString fileName)
 {
+    QReadLocker locker(&lock);
+
     if (fileName.isNull())
         fileName = _fileName;
 

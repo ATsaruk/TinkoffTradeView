@@ -63,6 +63,8 @@ void CustomCommand::setCommandName(QString customCommandName)
 //Регистрация задачи
 void CustomCommand::registerTask(IBaseTask *newTask)
 {
+    QMutexLocker locker(&mutex);
+
     //Регистрация возможна только есть задачи работают в одном потоке
     if (newTask->getThread() == taskThread)
         taskList.enqueue(newTask);
@@ -105,6 +107,8 @@ uint CustomCommand::getMaxExecTask()
  */
 void CustomCommand::runNextTask()
 {
+    QMutexLocker locker(&mutex);
+
     uint maxTaskCount = getMaxExecTask();
     //Запуск задач из очереди, их может быть одновременно не более чем getMaxExecTask() задач
     while (taskCount < maxTaskCount) {
@@ -127,6 +131,8 @@ void CustomCommand::runNextTask()
  */
 void CustomCommand::taskFinished()
 {
+    QMutexLocker locker(&mutex);
+
     if (taskCount > 0) {
         taskCount--;
 

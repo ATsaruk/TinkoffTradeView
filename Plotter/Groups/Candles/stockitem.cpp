@@ -214,7 +214,7 @@ void StockItem::loadData(const Data::DateRange &range)
     uint candleCount = hAxis->getRange() / 3.;
     auto *command = NEW_TASK<Task::LoadStock>(curStockKey, range, candleCount);
     connect(command, &Task::IBaseTask::finished, this, &StockItem::dataChanged);
-    //connect(command, &IBaseTask::finished, this, &ChartCandlesGroup::loadTaskFinished);
+    //connect(command, &Task::IBaseTask::finished, this, &StockItem::loadTaskFinished);
 }
 
 //Добавление 1 свечи, поиск нового индекса
@@ -245,8 +245,8 @@ void StockItem::addCandle(const Data::Candle &candleData)
 void StockItem::addCandles()
 {
     bool isCandlesAdded = false;
-    QReadLocker lock(&Glo.stocks.rwMutex);
-    const Data::Candles &candlesData = Glo.stocks.getStock(curStockKey);
+    QReadLocker lock(&Glo.stocks->rwMutex);
+    const Data::Candles &candlesData = Glo.stocks->getStock(curStockKey);
     for (auto it = candlesData.rbegin(); it != candlesData.rend(); ++it) {
         bool isExist = false;
 

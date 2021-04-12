@@ -19,7 +19,7 @@
 #include "stockkey.h"
 #include "candle.h"
 #include "Data/daterange.h"
-#include "Core/safeptrwrapper.h"
+//#include "Core/safe_ptr.h"
 
 namespace Data {
 

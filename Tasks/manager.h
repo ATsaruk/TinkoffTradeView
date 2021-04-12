@@ -27,7 +27,11 @@
 namespace Task {
 
 
-///Класс управляющий задачами
+/** @brief Класс управляющий задачами
+  * @warning Класс нарушает принцип Барбары Лисков, его нельзя использоваться в качестве Task или Command
+  * @details Класс предназначен для запуска других задач/комманд. Что бы задачу можно было запустить с помощью
+  * addTask<TaskClass>(args...), у задачи должна быть реализована функция setData(...).
+  */
 class Manager final : public CustomCommand
 {
     Q_OBJECT
@@ -44,6 +48,10 @@ public:
 protected:
     //Возвращает сколько задач можно запускать паралельно
     uint getMaxExecTask() override;
+
+private:
+    //Функция перенесена в секцию private, что бы нельзя было зарегестрировать задачу класса Manager
+    QThread* getThread() override;
 };
 
 }

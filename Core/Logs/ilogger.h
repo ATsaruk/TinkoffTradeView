@@ -33,6 +33,7 @@ public:
     virtual ILogger* operator<<(const QString &text);
 
 protected:
+    QMutex mutex;
     bool isWriteLog;
     QString tag;
 };

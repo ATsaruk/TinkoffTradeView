@@ -42,12 +42,13 @@ void FileLogger::setWriteLog(bool value)
     if (value == isWriteLog)
         return;
 
+    IMultiLogger::setWriteLog(value);
+
+    QMutexLocker locker(&mutex);
     if (value == false) {
         if (logFile->isOpen())
             logFile->close();
     }
-
-    isWriteLog = value;
 }
 
 void FileLogger::message(const QString &text)
@@ -55,6 +56,9 @@ void FileLogger::message(const QString &text)
     if (!isWriteLog)
         return;
 
+    IMultiLogger::message(text);
+
+    QMutexLocker locker(&mutex);
     if (!logFile->isOpen()) {
         logFile->open(QIODevice::WriteOnly);
         if (!logFile->isOpen()) {
@@ -67,8 +71,6 @@ void FileLogger::message(const QString &text)
     QString data = QDateTime::currentDateTime().toString("yyyy.MM.dd;hh:mm:ss;%1;\n").arg(text);
     logFile->write(data.toUtf8().data(), data.size());
     logFile->flush();
-
-    IMultiLogger::message(text);
 }
 
 }

@@ -4,6 +4,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
+# C++ 17
+QMAKE_CXXFLAGS += -std=c++17
+
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
@@ -51,8 +54,6 @@ HEADERS += \
     Core/config.h \
     Core/global.h \
     Core/loggerlist.h \
-    Core/safe_ptr.h \
-    Core/safeptrwrapper.h \
     Data/Stock/candle.h \
     Data/Stock/stockkey.h \
     Data/Stock/stocks.h \
@@ -84,9 +85,6 @@ INCLUDEPATH += C:/Program Files/PostgreSQL/10/include
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-# C++ 17
-QMAKE_CXXFLAGS += -std=c++17
 
 #uncomment to disable std::assert warnings!
 DEFINES += NDEBUG

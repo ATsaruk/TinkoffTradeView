@@ -44,27 +44,6 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{101ed975-84e5-4d41-aa0d-d2d0808056a0}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{88b55e88-8d5f-4394-bcf1-a8cdc8eb0243}</object>
-                         <name>Locker</name>
-                         <pos>x:195;y:115</pos>
-                         <rect>x:-85;y:-65;w:170;h:130</rect>
-                         <visual-role>0</visual-role>
-                        </DObject>
-                       </base-DObject>
-                       <show-all-members>true</show-all-members>
-                      </DClass>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DClass">
-                      <DClass>
-                       <base-DObject>
-                        <DObject>
-                         <base-DElement>
-                          <DElement>
                            <uid>{1ab45d22-624c-483f-a7b6-a891961a1198}</uid>
                           </DElement>
                          </base-DElement>
@@ -134,7 +113,7 @@
                          <object>{60874d41-684e-4199-9baa-8c26948b40ec}</object>
                          <name>Stocks</name>
                          <pos>x:195;y:330</pos>
-                         <rect>x:-100;y:-85;w:200;h:170</rect>
+                         <rect>x:-100;y:-80;w:200;h:160</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -254,29 +233,6 @@
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{a4876415-372b-40d5-b159-2d0b85bb6971}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{3185183f-0976-4a8b-a0eb-51d329dd6db4}</object>
-                         <a>{f6b8bec1-15aa-4cc9-95e6-e5482d7cb0e8}</a>
-                         <b>{101ed975-84e5-4d41-aa0d-d2d0808056a0}</b>
-                        </DRelation>
-                       </base-DRelation>
-                       <a>
-                        <DAssociationEnd>
-                         <navigable>true</navigable>
-                        </DAssociationEnd>
-                       </a>
-                      </DAssociation>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DAssociation">
-                      <DAssociation>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
                            <uid>{351bf0a5-1b52-47b3-8739-be4bb195f70f}</uid>
                           </DElement>
                          </base-DElement>
@@ -295,71 +251,11 @@
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1617905582682</last-modified>
+                  <last-modified>1618163570558</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
                </MCanvasDiagram>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{88b55e88-8d5f-4394-bcf1-a8cdc8eb0243}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{88b55e88-8d5f-4394-bcf1-a8cdc8eb0243}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>Locker</name>
-                 </MObject>
-                </base-MObject>
-                <members>
-                 <qlist>
-                  <item>
-                   <MClassMember>
-                    <uid>{debfce94-8276-48fc-bb56-243e98087a4d}</uid>
-                    <type>1</type>
-                    <declaration>+enum ACCESS_TYPE</declaration>
-                   </MClassMember>
-                  </item>
-                  <item>
-                   <MClassMember>
-                    <uid>{8c2402b9-a3f2-4c0f-bb3d-5aad6273d13e}</uid>
-                    <type>1</type>
-                    <declaration>+dataWriteMutex</declaration>
-                   </MClassMember>
-                  </item>
-                  <item>
-                   <MClassMember>
-                    <uid>{97adf840-71ee-4d36-9d70-f02cc712b0f1}</uid>
-                    <type>2</type>
-                    <declaration>+getAccess(ACCESS_TYPE)</declaration>
-                   </MClassMember>
-                  </item>
-                  <item>
-                   <MClassMember>
-                    <uid>{663fdf72-aea7-497e-b376-ced1764d65df}</uid>
-                    <type>2</type>
-                    <declaration>tryGetReadAccess()</declaration>
-                   </MClassMember>
-                  </item>
-                  <item>
-                   <MClassMember>
-                    <uid>{c00edf84-edb6-4f40-ab3a-7bb7aaaad024}</uid>
-                    <type>2</type>
-                    <declaration>releaseAccess(ACCESS_TYPE)</declaration>
-                   </MClassMember>
-                  </item>
-                 </qlist>
-                </members>
-               </MClass>
               </instance>
              </target>
             </handle>
@@ -679,33 +575,6 @@
                       </item>
                       <item>
                        <handle>
-                        <uid>{3185183f-0976-4a8b-a0eb-51d329dd6db4}</uid>
-                        <target>
-                         <instance type="MAssociation">
-                          <MAssociation>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{3185183f-0976-4a8b-a0eb-51d329dd6db4}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{60874d41-684e-4199-9baa-8c26948b40ec}</a>
-                             <b>{88b55e88-8d5f-4394-bcf1-a8cdc8eb0243}</b>
-                            </MRelation>
-                           </base-MRelation>
-                           <a>
-                            <MAssociationEnd>
-                             <navigable>true</navigable>
-                            </MAssociationEnd>
-                           </a>
-                          </MAssociation>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                      <item>
-                       <handle>
                         <uid>{6c9cdb98-9ed9-4f20-b6fe-2451bf8b2e57}</uid>
                         <target>
                          <instance type="MAssociation">
@@ -741,56 +610,49 @@
                  <qlist>
                   <item>
                    <MClassMember>
-                    <uid>{e22edebe-1471-4903-bd84-0b40177e0016}</uid>
-                    <type>1</type>
-                    <declaration>-Locker locker</declaration>
-                   </MClassMember>
-                  </item>
-                  <item>
-                   <MClassMember>
-                    <uid>{c91827f1-090d-419e-b67c-c02049c92fd0}</uid>
+                    <uid>{4fc79b5e-1c55-46d1-9902-cd642a8b63b3}</uid>
                     <type>1</type>
                     <declaration>-std::unordered_map&lt;Stock&gt; stocks</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{c0e71d1c-1bff-4e8a-a7c9-6a630e74b432}</uid>
+                    <uid>{f1f5879e-f015-45ca-8e4e-c9aa09605b00}</uid>
                     <type>2</type>
                     <declaration>+getStock()</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{db51f9ee-e356-4233-afc9-d50380bb5c95}</uid>
+                    <uid>{a41f0f61-30f5-49df-b494-b8aaea8e1616}</uid>
                     <type>2</type>
                     <declaration>+releaseStock()</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{c3e6d1e0-4680-4c7c-b86d-94dd1f9dd861}</uid>
+                    <uid>{6ac78a54-7ffe-4748-aa60-da2c577df800}</uid>
                     <type>2</type>
                     <declaration>+getCandlesCount()</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{bba227e0-94af-43c6-8b8c-220b764c05fa}</uid>
+                    <uid>{09feccbf-a99c-4f00-bbde-f62a0e0aacbe}</uid>
                     <type>2</type>
                     <declaration>+getRange()</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{c9b91219-a402-486a-bb2c-8b6c4957ca62}</uid>
+                    <uid>{b19f11d2-711c-40b0-a952-a78ff337470b}</uid>
                     <type>2</type>
                     <declaration>+insertCandles()</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{928e417d-c81a-45f1-843b-8badee9b79a8}</uid>
+                    <uid>{30b29437-5176-4b3b-8539-da59a2ff2ab1}</uid>
                     <type>1</type>
                     <declaration>+Signal_dataChanged</declaration>
                    </MClassMember>

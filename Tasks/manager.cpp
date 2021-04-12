@@ -22,6 +22,8 @@ QString Manager::getName()
 //Регистрируем новую задачу и сразу её запускаем
 void Manager::registerTask(IBaseTask *newTask)
 {
+    QMutexLocker locker(&mutex);
+
     taskList.enqueue(newTask);
     exec();
 }
@@ -33,6 +35,11 @@ void Manager::registerTask(IBaseTask *newTask)
 uint Manager::getMaxExecTask()
 {
     return QThread::idealThreadCount() * 2;
+}
+
+QThread *Manager::getThread()
+{
+    return taskThread;
 }
 
 }

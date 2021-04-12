@@ -77,11 +77,11 @@ public:
     void remove(const DateRange &range);
 
     /**
-     * @brief operator + "расширенное" сложение диапазонов
-     * @param[IN] range - диапазон с которым будет сложен текущий диапазон (*this)
+     * @brief Расширяет текущий диапазон
+     * @param[IN] range - диапазон с которым будет сложен текущий диапазон
      * @return диапазон начало которого соответствует min(begin, range.begin), а конеч соответсует max(end, range.end).
      */
-    DateRange operator+ (const DateRange &range) const;    //расширить диапазон
+    void extend(const DateRange &range);
 
 private:
     QDateTime begin;

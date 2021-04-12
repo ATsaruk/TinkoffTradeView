@@ -151,14 +151,12 @@ void DateRange::remove(const DateRange &range)
         begin = range.end;
 }
 
-DateRange DateRange::operator+(const DateRange &range) const
+void DateRange::extend(const DateRange &range)
 {
-    DateRange res;
     if (isValid() && range.isValid()) {
-        res.begin = std::min(begin, range.begin);
-        res.end = std::max(end, range.end);
+        begin = std::min(begin, range.begin);
+        end = std::max(end, range.end);
     }
-    return res;
 }
 
 }

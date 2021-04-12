@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <QVariant>
+#include <QReadWriteLock>
 
 namespace Core {
 
@@ -43,9 +44,10 @@ public:
 
 
     /// Сохранение настройки в файл указанный при загрузке настроек
-    void save(QString fileName = QString()) const;
+    void save(QString fileName = QString());
 
 private:
+    QReadWriteLock lock;
     //Имя файла с настройками
     QString _fileName;
     //Список настроек

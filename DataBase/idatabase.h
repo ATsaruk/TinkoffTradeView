@@ -12,6 +12,8 @@ namespace DB {
 class IDataBase
 {
 public:
+    QMutex mutex;
+
     IDataBase();
     virtual ~IDataBase();
 

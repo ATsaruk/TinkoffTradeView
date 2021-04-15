@@ -1,21 +1,27 @@
 /* Пояснения к классу IMultiLogger:
- * Например нам нужно писать warning лог в файл и в базу данных, вот так делать НЕ НУЖНО:
- *   FileLogger *fileLogger = new FileLogger("warning");
- *   DbLogger *dbLogger = new DbLogger("warning");
+ * Например нам нужно писать warning лог в файл, базу данных и на экран, вот так делать НЕ НУЖНО:
+ *   auto fileLogger = new FileLogger("warning");
+ *   auto dbLogger = new DbLogger("warning");
+ *   auto msgBoxLogger = new MsgBoxLogger("warning");
  *   ...
  *   fileLogger << "Error: this is bad code!";
  *   dbLogger << "Error: this is bad code!";
+ *   msgBoxLogger << "Error: this is bad code!";
  * ПРАВИЛЬНО вот так:
- *   FileLogger *fileLogger = new FileLogger("warning");
+ *   auto fileLogger = new FileLogger("warning");
  *   fileLogger->appendLogger<DbLogger>();
+ *   fileLogger->appendLogger<MsgBoxLogger>();
  *   ...
  *   fileLogger << "Attention: this is good code :)";
  * или
- *   DbLogger *dbLogger = new DbLogger("warning");
+ *   auto dbLogger = new DbLogger("warning");
  *   dbLogger->appendLogger<FileLogger>();
+ *   dbLogger->appendLogger<MsgBoxLogger>();
  *   ...
  *   dbLogger << "Attention: this is good code :)";
- * Все 3 примера дадут одинаковый результат, сообщения разумеется будут записаны разные, но сообщение во всех 3 случаях окажутся и в файле и в БД. */
+ * Все 3 примера дадут одинаковый результат, сообщения разумеется будут записаны разные,
+ * но сообщение во всех 3 случаях окажутся в файле, в БД и на экране. */
+
 #ifndef IMULTILOGGER_H
 #define IMULTILOGGER_H
 

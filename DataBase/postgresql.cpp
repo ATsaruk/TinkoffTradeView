@@ -1,7 +1,7 @@
 #include <QSqlError>
 
 #include "postgresql.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace DB {
 

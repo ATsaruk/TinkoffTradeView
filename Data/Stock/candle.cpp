@@ -10,7 +10,7 @@ void Candle::fromJson(const QJsonObject &json)
     close = json.value("c").toDouble();
     high = json.value("h").toDouble();
     low = json.value("l").toDouble();
-    volume = json.value("v").toInteger();
+    volume = json.value("v").toInt();
 
     //QDateTime от брокера приходт со непонятной временной зоной, которая потом создает кучу проблем, приходится пересобирать дату
     const QDateTime &j = json.value("time").toVariant().toDateTime().addSecs(3*60*60);

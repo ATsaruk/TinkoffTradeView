@@ -1,5 +1,5 @@
 #include "customcommand.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace Task {
 

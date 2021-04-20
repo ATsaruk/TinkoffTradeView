@@ -1,7 +1,7 @@
 #include <QApplication>
 
 #include "mainwindow.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 int main(int argc, char *argv[])
 {

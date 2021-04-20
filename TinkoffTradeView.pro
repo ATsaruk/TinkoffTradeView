@@ -2,10 +2,10 @@ QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++11 c++14 c++17 c++2a
 
 # C++ 17
-QMAKE_CXXFLAGS += -std=c++17
+#QMAKE_CXXFLAGS += -std=c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -18,7 +18,7 @@ SOURCES += \
     Core/Logs/ilogger.cpp \
     Core/Logs/imultilogger.cpp \
     Core/Logs/msgboxlogger.cpp \
-    Core/global.cpp \
+    Core/globals.cpp \
     Core/config.cpp \
     Core/loggerlist.cpp \
     Data/Stock/candle.cpp \
@@ -52,7 +52,7 @@ HEADERS += \
     Core/Logs/imultilogger.h \
     Core/Logs/msgboxlogger.h \
     Core/config.h \
-    Core/global.h \
+    Core/globals.h \
     Core/loggerlist.h \
     Data/Stock/candle.h \
     Data/Stock/stockkey.h \

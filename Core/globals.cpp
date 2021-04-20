@@ -1,24 +1,24 @@
-#include "global.h"
+#include "globals.h"
 
-#include "Broker/Tinkoff/tinkoff.h"
-#include "DataBase/postgresql.h"
 #include "Logs/filelogger.h"
 #include "Logs/msgboxlogger.h"
+#include "DataBase/postgresql.h"
+#include "Broker/Tinkoff/tinkoff.h"
 
 namespace Core {
 
-Global &Global::get()
+Globals &Globals::get()
 {
-    static Global instance;
+    static Globals instance;
     return instance;
 }
 
-Global::Global()
+Globals::Globals()
 {
     logTags << "debug" << "info" << "warning" << "critical";
 }
 
-Global::~Global()
+Globals::~Globals()
 {
     delete taskManager;
     delete broker;
@@ -28,7 +28,7 @@ Global::~Global()
     delete conf;
 }
 
-void Global::init(QObject *parent)
+void Globals::init(QObject *parent)
 {
     conf = new Config("config.cfg");
 

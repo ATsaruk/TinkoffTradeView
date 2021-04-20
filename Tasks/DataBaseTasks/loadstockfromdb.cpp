@@ -2,7 +2,7 @@
 
 #include "loadstockfromdb.h"
 
-#include "Core/global.h"
+#include "Core/globals.h"
 #include "DataBase/Query/stocksquery.h"
 #include "Tasks/BrokerTasks/loadstockfrombroker.h"
 

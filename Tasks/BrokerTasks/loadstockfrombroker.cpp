@@ -4,7 +4,7 @@
 
 #include "loadstockfrombroker.h"
 #include "DataBase/Query/stocksquery.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace Task {
 

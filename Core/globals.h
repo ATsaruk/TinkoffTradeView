@@ -3,14 +3,14 @@
   * @author Царюк А.В.
   * @date Апрель 2021 года */
 
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
 #include "config.h"
 #include "loggerlist.h"
 #include "Broker/api.h"
-#include "Data/Stock/stocks.h"
 #include "DataBase/idatabase.h"
+#include "Data/Stock/stocks.h"
 #include "Tasks/manager.h"
 
 namespace Core {
@@ -19,24 +19,24 @@ namespace Core {
 ///@ingroup Core @{
 
 ///Быстрый доступ к классу
-#define Glo Core::Global::get()
+#define Glo Core::Globals::get()
 
 ///Быстрый доступ к Debug логу
-#define logDebug    *Core::Global::get().logger->get("debug")
+#define logDebug    *Core::Globals::get().logger->get("debug")
 ///Быстрый доступ к Info логу
-#define logInfo     *Core::Global::get().logger->get("info")
+#define logInfo     *Core::Globals::get().logger->get("info")
 ///Быстрый доступ к Warning логу
-#define logWarning  *Core::Global::get().logger->get("warning")
+#define logWarning  *Core::Globals::get().logger->get("warning")
 ///Быстрый доступ к Critical логу
-#define logCritical *Core::Global::get().logger->get("critical")
+#define logCritical *Core::Globals::get().logger->get("critical")
 
 ///Основная функция для запуска задач
-#define NEW_TASK Core::Global::get().taskManager->addTask
+#define NEW_TASK Core::Globals::get().taskManager->addTask
 ///@}
 
 /** @ingroup Core
   * @brief Класс singleton, содержит объекты для общего доступа */
-class Global
+class Globals
 {
 public:
     //Основные инструменты
@@ -46,17 +46,17 @@ public:
 
     //Вспомогательные
     Data::Stocks *stocks;
-    Broker::Api *broker;
     DB::IDataBase *dataBase;
+    Broker::Api *broker;
 
     //Singleton
-    static Global &get();
-    ~Global();
+    static Globals &get();
+    ~Globals();
 
     void init(QObject *parent);
 
 protected:
-    Global();
+    Globals();
 
 private:
     QStringList logTags;
@@ -64,4 +64,4 @@ private:
 
 }
 
-#endif // GLOBAL_H
+#endif // GLOBALS_H

@@ -1,6 +1,6 @@
 #include "stockitem.h"
 
-#include "Core/global.h"
+#include "Core/globals.h"
 #include "Plotter/Axis/axis.h"
 #include "Tasks/Commands/loadstock.h"
 

@@ -2,6 +2,7 @@
 #define STOCKKEY_H
 
 #include <QDateTime>
+#include <QJsonObject>
 
 namespace Data {
 

@@ -1,5 +1,5 @@
 #include "stocks.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace Data {
 

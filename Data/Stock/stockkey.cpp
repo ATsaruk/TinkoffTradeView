@@ -1,7 +1,7 @@
 #include <QJsonObject>
 
 #include "stockkey.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace Data {
 

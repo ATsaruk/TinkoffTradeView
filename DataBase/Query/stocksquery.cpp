@@ -2,7 +2,7 @@
 #include <QSqlError>
 
 #include "stocksquery.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace DB {
 

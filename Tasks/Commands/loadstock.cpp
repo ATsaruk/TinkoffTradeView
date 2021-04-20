@@ -1,6 +1,6 @@
 #include "loadstock.h"
 
-#include "Core/global.h"
+#include "Core/globals.h"
 #include "Tasks/DataBaseTasks/loadstockfromdb.h"
 #include "Tasks/BrokerTasks/loadstockfrombroker.h"
 

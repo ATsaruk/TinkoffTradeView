@@ -3,7 +3,7 @@
 #include <QString>
 
 #include "filelogger.h"
-#include "../global.h"
+#include "../globals.h"
 
 namespace Core {
 
@@ -68,9 +68,10 @@ void FileLogger::message(const QString &text)
         }
     }
 
-    QString data = QDateTime::currentDateTime().toString("yyyy.MM.dd;hh:mm:ss;%1;\n").arg(text);
-    logFile->write(data.toUtf8().data(), data.size());
-    logFile->flush();
+    QTextStream stream(logFile);
+
+    stream << QDateTime::currentDateTime().toString("yyyy.MM.dd;hh:mm:ss;%1;\n").arg(text);
+    stream.flush();
 }
 
 }

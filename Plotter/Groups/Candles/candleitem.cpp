@@ -1,7 +1,7 @@
 #include <QPainter>
 
 #include "candleitem.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace Plotter {
 

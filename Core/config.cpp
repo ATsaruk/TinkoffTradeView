@@ -6,6 +6,7 @@
 
 namespace Core {
 
+
 Config::Config(const QString &fileName)
 {
     load(fileName);

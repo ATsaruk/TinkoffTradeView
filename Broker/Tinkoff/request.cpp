@@ -1,7 +1,7 @@
 #include <QFile>
 
 #include "request.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 
 namespace Broker {
 

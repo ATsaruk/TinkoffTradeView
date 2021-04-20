@@ -3,7 +3,7 @@
 #include <QMouseEvent>
 
 #include "chartplotter.h"
-#include "Core/global.h"
+#include "Core/globals.h"
 #include "Groups/Candles/stockitem.h"
 
 namespace Plotter {

@@ -18,7 +18,7 @@ public:
     //Помещает список свечей candles в БД (таблица stocks)
     static void placeCandles(IDataBase *db, const StockKey &key, Candles &candles);
     //Извлекает свечи из базы данных (таблица stocks) в структуру candles
-    static void retrieveCandles(IDataBase *db, const StockKey &key, Candles &candles, const DateRange &range = DateRange());
+    static void retrieveCandles(IDataBase *db, const StockKey &key, Candles &candles, const Range &range = Range());
 };
 
 }

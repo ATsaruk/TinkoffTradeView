@@ -10,7 +10,7 @@
 #include "loggerlist.h"
 #include "Broker/api.h"
 #include "Data/Stock/stocks.h"
-#include "DataBase/idatabase.h"
+//#include "DataBase/idatabase.h"
 #include "Tasks/manager.h"
 
 namespace Core {
@@ -47,7 +47,7 @@ public:
     //Вспомогательные
     Data::Stocks *stocks;
     Broker::Api *broker;
-    DB::IDataBase *dataBase;
+    //DB::IDataBase *dataBase;
 
     //Singleton
     static Global &get();

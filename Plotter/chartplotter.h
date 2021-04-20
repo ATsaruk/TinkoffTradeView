@@ -1,61 +1,38 @@
 #ifndef CHARTPLOTTER_H
 #define CHARTPLOTTER_H
 
-#include <QGraphicsView>
+#include <QObject>
+#include <QtCharts>
 
-#include "Axis/axis.h"
-#include "Axis/horizontaldateaxis.h"
-#include "Groups/chartgroup.h"
-
-class QTimer;
-class QWheelEvent;
-class QMouseEvent;
+#include "Data/Stock/stockkey.h"
+#include "CandlesLoader/dbcandlesloader.h"
 
 namespace Plotter {
 
 
-typedef std::unordered_map<QString, ChartGroup*> GraphicsGroup_t;
-
 ///Класс рисования графика акций
-class ChartPlotter : public QGraphicsView
+class ChartPlotter : public QObject
 {
 public:
-    explicit ChartPlotter(QWidget *parent = nullptr);
+    explicit ChartPlotter(QObject *parent = nullptr);
     ~ChartPlotter();
 
-    void setDrawStockKey( const Data::StockKey &_stockKey );
+    void setStockKey(Data::StockKey &&stockKey);
 
-protected:
-    void wheelEvent( QWheelEvent *event ) override;
-    void mouseMoveEvent( QMouseEvent *event ) override;
-    void mousePressEvent( QMouseEvent *event ) override;
-    void mouseReleaseEvent( QMouseEvent *event ) override;
-
-    //событие изменения размеров окна
-    void resizeEvent(QResizeEvent *event) override;
+    QChartView *getWidget();
 
 protected slots:
-    void drawScene();   //слот отрисовки сцены
+    void updateCandles();
 
 private:
     Q_OBJECT
 
-    //Переменные для обработки событий мыши
-    QPoint prevMousePos;                //Предыдущее положение мыши
-    QPointF mouseAnchorPos;             //Предыдущее положение мыши
-    Qt::MouseButtons pressedButton;     //Идентефикаторы нажатых кнопок
+    Data::StockKey key;
+    DbCandlesLoader dbLoader;
 
-    //temp
-    HorizontalDateAxis *horizontalAxis;
-    Axis *verticalAxis;
-    //temp
-
-    QTimer *plotTimer;                  //Таймер для перерисовки сцены
-    QGraphicsScene *graphicScene;       //сцена для отрисовки
-    GraphicsGroup_t items;              //группы объектов
-
-    //Данные для рисования
-    Data::StockKey curStockKey;
+    QChart *chart;
+    QChartView *chartView;
+    QHCandlestickModelMapper *mapper;
 };
 
 }

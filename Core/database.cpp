@@ -1,13 +1,15 @@
 #include <QSqlError>
+#include <QSqlDatabase>
 
-#include "postgresql.h"
-#include "Core/global.h"
+#include "database.h"
+#include "global.h"
 
-namespace DB {
+namespace Core {
 
-PostgreSql::PostgreSql()
+
+void Database::connect()
 {
-    db = QSqlDatabase::addDatabase( Glo.conf->getValue("DataBase/type", QVariant("QPSQL")).toString() );
+    QSqlDatabase db = QSqlDatabase::addDatabase( Glo.conf->getValue("DataBase/type", QVariant("QPSQL")).toString() );
 
     db.setHostName     ( Glo.conf->getValue("DataBase/ip",       QVariant("127.0.0.1")).toString() );
     db.setDatabaseName ( Glo.conf->getValue("DataBase/dbName",   QVariant("Tinkoff")).toString() );
@@ -20,14 +22,14 @@ PostgreSql::PostgreSql()
         logInfo << "DataBase;DataBase();DB connected!";
 }
 
-QSqlDatabase &PostgreSql::get()
+void Database::disconnect()
 {
-    return db;
+    QSqlDatabase::removeDatabase( Glo.conf->getValue("DataBase/type", QVariant("QPSQL")).toString() );
 }
 
-bool PostgreSql::isOpen() const
+Database::Database()
 {
-    return db.isOpen();
+
 }
 
 }

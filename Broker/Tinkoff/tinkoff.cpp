@@ -31,7 +31,7 @@ bool TinkoffApi::loadStocks()
  *
  * Подробнее о формате запроса и ответа тут: https://tinkoffcreditsystems.github.io/invest-openapi/swagger-ui/#/market/get_market_candles
  */
-bool TinkoffApi::loadCandles(const Data::StockKey &stockKey, const Data::DateRange &range)
+bool TinkoffApi::loadCandles(const Data::StockKey &stockKey, const Data::Range &range)
 {
     const QDateTime &from = range.getBegin();
     const QDateTime &to = range.getEnd();

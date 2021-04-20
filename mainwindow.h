@@ -19,7 +19,7 @@ public:
     ~MainWindow();
 
 protected:
-    const Data::StockKey getStockKey();
+    Data::StockKey getStockKey();
 
 private:
     Ui::MainWindow *ui;

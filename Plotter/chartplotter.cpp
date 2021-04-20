@@ -1,145 +1,76 @@
-#include <QTimer>
-#include <QWheelEvent>
-#include <QMouseEvent>
-
 #include "chartplotter.h"
 #include "Core/global.h"
-#include "Groups/Candles/stockitem.h"
 
 namespace Plotter {
 
-ChartPlotter::ChartPlotter(QWidget *parent) : QGraphicsView(parent)
+
+ChartPlotter::ChartPlotter(QObject *parent) : QObject(parent)
 {
-    //Минимальные размеры виджета
-    setMinimumWidth(100);
-    setMinimumHeight(100);
+    chart = new QChart();
+    chart->setTheme(QChart::ChartThemeBrownSand);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    setViewportUpdateMode(SmartViewportUpdate);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);   //отключим скроллбар по вертикали
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); //отключим скроллбар по горизонтали
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);    //растягиваем содержимое по виджету
-    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);   //Включаем сглаживание
+    chartView = new QChartView(chart);
+    chartView->setBackgroundBrush(QColor(243, 236, 224));
+    chartView->setRenderHint(QPainter::Antialiasing);
 
-
-    graphicScene = new QGraphicsScene();   // Инициализируем сцену для отрисовки
-    setScene(graphicScene);
-
-    horizontalAxis = new HorizontalDateAxis;
-    horizontalAxis->setDataRange(100);
-    horizontalAxis->setDataOffset(-75);
-    graphicScene->addItem(horizontalAxis);
-
-    verticalAxis = new Axis(Axis::VERTICAL);
-    verticalAxis->setDataRange(1500);
-    verticalAxis->setDataOffset(0);
-
-    //Инициализируем Таймер
-    plotTimer = new QTimer(this);
-    //Подключаем СЛОТ для отрисовки к таймеру
-    connect(plotTimer, SIGNAL(timeout()), this, SLOT(drawScene()));
-    //Запускаем таймар для начальной отрисовки
-    uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", QVariant(5)).toUInt();
-    plotTimer->start(plotInterval);
+    connect(&dbLoader, &DbCandlesLoader::candlesRecieved, this, &ChartPlotter::updateCandles);
 }
 
 ChartPlotter::~ChartPlotter()
 {
-    delete horizontalAxis;
-    delete verticalAxis;
-    for (auto &it : items)
-        delete it.second;
+
 }
 
-void ChartPlotter::setDrawStockKey(const Data::StockKey &_stockKey)
+void ChartPlotter::setStockKey(Data::StockKey &&stockKey)
 {
-    if (curStockKey == _stockKey)
-        return;
+    chart->setTitle("Apple");
+    key = std::move(stockKey);
+    Data::Range range;
+    range.setRange(QDateTime::currentDateTime(), -48 * 60 * 60);
+    //dbLoader.setStockKey(key, std::move(range));
+}
 
-    curStockKey = _stockKey;
+QChartView *ChartPlotter::getWidget()
+{
+    return chartView;
+}
 
-    //Все группы с ключем curStockKey делаем видимыми, остальные скрываем
-    for (auto &it : items)
-        it.second->setVisible(it.second->getStockKey() == curStockKey);
+void ChartPlotter::updateCandles()
+{
+    QReadLocker locker(&Glo.stocks->rwMutex);
+    const Data::Candles &candles = Glo.stocks->getStock(key);
 
-    //Если группы для данной акции нет, добавляем ее
-    QString stringKey = curStockKey.keyToString();
-    if (items.find(stringKey) == items.end()) {
-        StockItem *newGroup = new StockItem;
-        newGroup->setAxis(horizontalAxis);
-        newGroup->setAxis(verticalAxis);
-        newGroup->setStockKey(curStockKey);
-        graphicScene->addItem(newGroup);
-        items[stringKey] = newGroup;
+    QCandlestickSeries *acmeSeries = new QCandlestickSeries();
+    acmeSeries->setName("Acme Ltd");
+    acmeSeries->setIncreasingColor(QColor(Qt::green));
+    acmeSeries->setDecreasingColor(QColor(Qt::red));
+
+    QStringList categories;
+
+    for (const auto &it : candles) {
+        qreal timestamp = it.dateTime.toTime_t();
+        QCandlestickSet *set = new QCandlestickSet(timestamp);
+        set->setOpen(it.open);
+        set->setHigh(it.high);
+        set->setLow(it.low);
+        set->setClose(it.close);
+
+        acmeSeries->append(set);
+        categories << it.dateTime.toString();
     }
-}
 
-void ChartPlotter::wheelEvent(QWheelEvent *event)
-{
-    int steps = -0.5 * event->angleDelta().y();
+    chart->addSeries(acmeSeries);
+    chart->createDefaultAxes();
 
-    qreal deltaX = event->position().x() / width();
-    qreal deltaY = event->position().y() / height();
-    qreal anchorX = deltaX;
-    qreal anchorY = 1 - deltaY;
+    QBarCategoryAxis *axisX = qobject_cast<QBarCategoryAxis *>(chart->axes(Qt::Horizontal).at(0));
+    axisX->setCategories(categories);
+    QValueAxis *axisY = qobject_cast<QValueAxis *>(chart->axes(Qt::Vertical).at(0));
+    axisY->setMax(axisY->max() * 1.01);
+    axisY->setMin(axisY->min() * 0.99);
 
-    horizontalAxis->setScale(steps, anchorX);
-    verticalAxis->setScale(steps, anchorY);
-
-    event->accept();
-}
-
-void ChartPlotter::mouseMoveEvent(QMouseEvent *event)
-{
-    qreal dx = prevMousePos.x() - event->pos().x();
-    qreal dy = event->pos().y() - prevMousePos.y();
-
-    if (pressedButton == Qt::LeftButton) {
-        horizontalAxis->setMove(dx);
-        verticalAxis->setMove(dy);
-    } else if (pressedButton == Qt::MiddleButton) {
-        horizontalAxis->setScale(dx, mouseAnchorPos.x());
-        verticalAxis->setScale(dy, mouseAnchorPos.y());
-    }// else if (pressedButton == Qt::RightButton)
-
-    prevMousePos = event->pos();
-    event->accept();
-}
-
-void ChartPlotter::mousePressEvent(QMouseEvent *event)
-{
-    pressedButton = event->buttons();
-    prevMousePos = event->pos();
-
-    qreal wdth = width();
-    qreal hght = height();
-    qreal anchorX = prevMousePos.x() / wdth;
-    qreal anchorY = (hght - prevMousePos.y()) / hght;
-    mouseAnchorPos.setX(anchorX);
-    mouseAnchorPos.setY(anchorY);
-}
-
-void ChartPlotter::mouseReleaseEvent(QMouseEvent *event)
-{
-    pressedButton = event->buttons();
-}
-
-void ChartPlotter::resizeEvent(QResizeEvent *event)
-{
-    QRectF rec(0, -height(), width(), height());
-
-    setSceneRect(rec);
-    graphicScene->setSceneRect(rec);
-    verticalAxis->setSceneRect(rec);
-    horizontalAxis->setSceneRect(rec);
-
-    QGraphicsView::resizeEvent(event);  //запускаем событие родителького класса
-}
-
-
-void ChartPlotter::drawScene()
-{
-    for (const auto &it : items)
-        it.second->repaint();
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
 }
 
 }

@@ -20,7 +20,7 @@
 #define LOADSTOCK_H
 
 #include "Tasks/customcommand.h"
-#include "Data/daterange.h"
+#include "Data/range.h"
 #include "Data/Stock/stockkey.h"
 
 namespace Task {
@@ -34,7 +34,7 @@ public:
     LoadStock(QThread *parent = nullptr);
 
     //Задать данные для запуска задачь
-    void setData(const StockKey &stockKey, const DateRange &range = DateRange(), const uint minCandleCount = 1);
+    void setData(const StockKey &stockKey, const Range &range = Range(), const uint minCandleCount = 1);
 
     //Возвращает имя задачи
     QString getName() override;

@@ -18,7 +18,7 @@
 
 #include "stockkey.h"
 #include "candle.h"
-#include "Data/daterange.h"
+#include "Data/range.h"
 //#include "Core/safe_ptr.h"
 
 namespace Data {
@@ -49,7 +49,7 @@ public:
       * @param[IN] key - ключ акции
       * @return Если есть, возвращает пару: дату первой свечи и дату последней, если список свечей пуст то пустую пару QDateTime()
       * @details Свечи хранятся в отсортированном виде, и дата первой и последней свечи это интервал, за который есть данные */
-    DateRange getRange(const StockKey &key);
+    Range getRange(const StockKey &key);
 
 
     /** @brief Добавляет список свечей

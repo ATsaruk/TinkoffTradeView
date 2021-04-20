@@ -37,7 +37,7 @@ public:
       * @param[IN] to дата окончания интервала запроса (МСК)
       * @details Подробнее о формате запроса и ответа тут: https://tinkoffcreditsystems.github.io/invest-openapi/swagger-ui/#/market/get_market_candles
       * @return TRUE - запрос отправлен, FALSE - запрос не отправлен, отсутсвует токен авторизации (не стоит ждать ответа от сервера) */
-    [[nodiscard]] bool loadCandles(const Data::StockKey &stockKey, const Data::DateRange &range) override;
+    [[nodiscard]] bool loadCandles(const Data::StockKey &stockKey, const Data::Range &range) override;
 
 protected:
     /// Интерфейс для отправки POST/GET запросов

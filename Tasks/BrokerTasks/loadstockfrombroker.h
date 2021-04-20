@@ -33,7 +33,7 @@
 #include "Tasks/ibasetask.h"
 #include "Data/Stock/stockkey.h"
 #include "Data/Stock/candle.h"
-#include "Data/daterange.h"
+#include "Data/range.h"
 
 namespace Task {
 using namespace Data;
@@ -52,7 +52,7 @@ public:
     QString getName() override;
 
     //Задание исходных данных для загрузки
-    void setData(const StockKey &stockKey_, const DateRange &range, const qint64 minCandleCount = 1);
+    void setData(const StockKey &stockKey_, const Range &range, const qint64 minCandleCount = 1);
 
     //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
     static qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
@@ -61,9 +61,9 @@ protected:
     size_t minCandles;      //Минимальное количество свечей, которое должно быть загружено
     StockKey stockKey;      //ключ акции
 
-    DateRange curRange;     //Текущий подинтервал загрузки
-    DateRange loadRange;    //Полный интервал загрузки
-    DateRange extraRange;   //Дополнительный 2 недельный интервал в начале (нужно для загрузки через новогодние праздники)
+    Range curRange;     //Текущий подинтервал загрузки
+    Range loadRange;    //Полный интервал загрузки
+    Range extraRange;   //Дополнительный 2 недельный интервал в начале (нужно для загрузки через новогодние праздники)
 
     //Список полученных свечей
     Candles candles;

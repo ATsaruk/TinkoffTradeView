@@ -1,5 +1,5 @@
-#ifndef DATERANGE_H
-#define DATERANGE_H
+#ifndef RANGE_H
+#define RANGE_H
 
 #include <QDateTime>
 
@@ -8,16 +8,16 @@ namespace Data {
 
 /** @ingroup Data
   * @brief Класс содержит поля начало и конец диапазона и предоставляет методы для работы с ними */
-class DateRange
+class Range
 {
 public:
-    DateRange();
-    DateRange(DateRange &&range);
-    DateRange(const DateRange &range);
-    DateRange(const QDateTime &begin_, const QDateTime &end_);
-    DateRange(const QDateTime &&begin_, const QDateTime &&end_);
-    void operator= (DateRange &&range);
-    void operator= (const DateRange &range);
+    Range();
+    Range(Range &&range);
+    Range(const Range &range);
+    Range(const QDateTime &begin_, const QDateTime &end_);
+    Range(const QDateTime &&begin_, const QDateTime &&end_);
+    void operator= (Range &&range);
+    void operator= (const Range &range);
 
     ///@return начало диапазона
     const QDateTime& getBegin() const;
@@ -32,13 +32,13 @@ public:
     ///@return TRUE - если date находится внутри диапазона (нестрогая проверка <=, >=)
     bool contains(const QDateTime &date) const;
     ///@return TRUE - если диапазон range является поддиапазоном (нестрогая проверка <=, >=)
-    bool contains(const DateRange &range) const;
+    bool contains(const Range &range) const;
 
     /**
      * @brief Определяет имеют ли текущий диапазон пересечение с range
      * @return TRUE - если между диапазонами нет "зазора"
      */
-    bool isIntersected(const DateRange &range) const;
+    bool isIntersected(const Range &range) const;
 
     ///Задает начало диапазона
     void setBegin(const QDateTime &begin_);
@@ -60,7 +60,7 @@ public:
     void displace(const long &beginSecs, const long &endSecs);
 
     ///Ограничивает диапазон, делает не больше чем range
-    void constrain(const DateRange &range);
+    void constrain(const Range &range);
 
     /**
      * @brief Удаляет часть диапазона
@@ -74,14 +74,14 @@ public:
      * 3. Если диапазоны пересекаются, и range находится справа, то this->end = range.begin.
      * 4. Если диапазоны пересекаются, и range находится слева, то this->begin = range.end.
      */
-    void remove(const DateRange &range);
+    void remove(const Range &range);
 
     /**
      * @brief Расширяет текущий диапазон
      * @param[IN] range - диапазон с которым будет сложен текущий диапазон
      * @return диапазон начало которого соответствует min(begin, range.begin), а конеч соответсует max(end, range.end).
      */
-    void extend(const DateRange &range);
+    void extend(const Range &range);
 
 private:
     QDateTime begin;
@@ -90,4 +90,4 @@ private:
 
 }
 
-#endif // DATERANGE_H
+#endif // RANGE_H

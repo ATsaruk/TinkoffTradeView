@@ -1,59 +1,59 @@
-#include "daterange.h"
+#include "range.h"
 
 namespace Data {
 
-DateRange::DateRange()
+Range::Range()
 {
 
 }
 
-DateRange::DateRange(DateRange &&range)
+Range::Range(Range &&range)
 {
     begin = std::move(range.begin);
     end = std::move(range.end);
 }
 
-DateRange::DateRange(const DateRange &range)
+Range::Range(const Range &range)
 {
     begin = range.begin;
     end = range.end;
 }
 
-DateRange::DateRange(const QDateTime &begin_, const QDateTime &end_)
+Range::Range(const QDateTime &begin_, const QDateTime &end_)
 {
     begin = begin_;
     end = end_;
 }
 
-DateRange::DateRange(const QDateTime &&begin_, const QDateTime &&end_)
+Range::Range(const QDateTime &&begin_, const QDateTime &&end_)
 {
     begin = std::move(begin_);
     end = std::move(end_);
 }
 
-void DateRange::operator=(DateRange &&range)
+void Range::operator=(Range &&range)
 {
     begin = std::move(range.begin);
     end = std::move(range.end);
 }
 
-void DateRange::operator=(const DateRange &range)
+void Range::operator=(const Range &range)
 {
     begin = range.begin;
     end = range.end;
 }
 
-const QDateTime &DateRange::getBegin() const
+const QDateTime &Range::getBegin() const
 {
     return begin;
 }
 
-const QDateTime &DateRange::getEnd() const
+const QDateTime &Range::getEnd() const
 {
     return end;
 }
 
-bool DateRange::isValid() const
+bool Range::isValid() const
 {
     if (!begin.isValid() || !end.isValid())
         return false;
@@ -63,7 +63,7 @@ bool DateRange::isValid() const
     return true;
 }
 
-qint64 DateRange::toSec() const
+qint64 Range::toSec() const
 {
     if (!isValid())
         return 0;
@@ -71,7 +71,7 @@ qint64 DateRange::toSec() const
     return begin.secsTo(end);
 }
 
-bool DateRange::contains(const QDateTime &date) const
+bool Range::contains(const QDateTime &date) const
 {
     if (!isValid() || !date.isValid())
         return false;
@@ -79,7 +79,7 @@ bool DateRange::contains(const QDateTime &date) const
     return begin <= date && date <= end;
 }
 
-bool DateRange::contains(const DateRange &range) const
+bool Range::contains(const Range &range) const
 {
     if (!isValid() || !range.isValid())
         return false;
@@ -87,7 +87,7 @@ bool DateRange::contains(const DateRange &range) const
     return contains(range.begin) && contains(range.end);
 }
 
-bool DateRange::isIntersected(const DateRange &range) const
+bool Range::isIntersected(const Range &range) const
 {
     if (!isValid() || !range.isValid())
         return false;
@@ -95,17 +95,17 @@ bool DateRange::isIntersected(const DateRange &range) const
     return !(begin > range.end || end < range.begin);
 }
 
-void DateRange::setBegin(const QDateTime &begin_)
+void Range::setBegin(const QDateTime &begin_)
 {
     begin = begin_;
 }
 
-void DateRange::setEnd(const QDateTime &end_)
+void Range::setEnd(const QDateTime &end_)
 {
     end = end_;
 }
 
-void DateRange::setRange(const QDateTime &date, const long &duration)
+void Range::setRange(const QDateTime &date, const long &duration)
 {
     if (!date.isValid())
         return;
@@ -119,7 +119,7 @@ void DateRange::setRange(const QDateTime &date, const long &duration)
     }
 }
 
-void DateRange::displace(const long &beginSecs, const long &endSecs)
+void Range::displace(const long &beginSecs, const long &endSecs)
 {
     if (!isValid())
         return;
@@ -128,7 +128,7 @@ void DateRange::displace(const long &beginSecs, const long &endSecs)
     end = end.addSecs(endSecs);
 }
 
-void DateRange::constrain(const DateRange &range)
+void Range::constrain(const Range &range)
 {
     if (!isValid() || !range.isValid())
         return;
@@ -140,7 +140,7 @@ void DateRange::constrain(const DateRange &range)
         end = range.end;
 }
 
-void DateRange::remove(const DateRange &range)
+void Range::remove(const Range &range)
 {
     if (!isIntersected(range))
         return; //диапазоны не пересекаются
@@ -151,7 +151,7 @@ void DateRange::remove(const DateRange &range)
         begin = range.end;
 }
 
-void DateRange::extend(const DateRange &range)
+void Range::extend(const Range &range)
 {
     if (isValid() && range.isValid()) {
         begin = std::min(begin, range.begin);

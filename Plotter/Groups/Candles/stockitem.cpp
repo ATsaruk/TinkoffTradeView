@@ -46,7 +46,7 @@ void StockItem::updateData()
     long displayedCandlesCount = hAxis->getRange();
     long intervalSec = curStockKey.intervalToSec();
 
-    Data::DateRange range;;
+    Data::Range range;;
     if (candleItems.empty()) {
         range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
         loadData(range);
@@ -208,7 +208,7 @@ const QDateTime StockItem::getDateByIndex(const long index)
     return QDateTime();
 }
 
-void StockItem::loadData(const Data::DateRange &range)
+void StockItem::loadData(const Data::Range &range)
 {
     isDataRequested = true;
     uint candleCount = hAxis->getRange() / 3.;

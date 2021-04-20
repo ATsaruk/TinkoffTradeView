@@ -24,7 +24,7 @@ SOURCES += \
     Data/Stock/candle.cpp \
     Data/Stock/stockkey.cpp \
     Data/Stock/stocks.cpp \
-    Data/daterange.cpp \
+    Data/range.cpp \
     DataBase/Query/stocksquery.cpp \
     DataBase/idatabase.cpp \
     DataBase/postgresql.cpp \
@@ -57,7 +57,7 @@ HEADERS += \
     Data/Stock/candle.h \
     Data/Stock/stockkey.h \
     Data/Stock/stocks.h \
-    Data/daterange.h \
+    Data/range.h \
     DataBase/Query/stocksquery.h \
     DataBase/idatabase.h \
     DataBase/postgresql.h \

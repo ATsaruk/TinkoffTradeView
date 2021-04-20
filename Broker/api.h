@@ -10,7 +10,7 @@
 #include <QMutex>
 
 #include "Data/Stock/stockkey.h"
-#include "Data/daterange.h"
+#include "Data/range.h"
 
 namespace Broker {
 
@@ -39,7 +39,7 @@ public:
       * @param[IN] from дата начала интервала запроса (МСК)
       * @param[IN] to дата окончания интервала запроса (МСК)
       * @return TRUE - запрос отправлен, FALSE - ошибка отправки (не стоит ждать ответа от сервера) */
-    [[nodiscard]] virtual bool loadCandles(const Data::StockKey &stockKey, const Data::DateRange &range) = 0;
+    [[nodiscard]] virtual bool loadCandles(const Data::StockKey &stockKey, const Data::Range &range) = 0;
 
 
 signals:

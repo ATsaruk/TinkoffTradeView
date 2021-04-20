@@ -16,7 +16,7 @@
 
 #include "candleitem.h"
 #include "../chartgroup.h"
-#include "Data/daterange.h"
+#include "Data/range.h"
 
 namespace Plotter {
 
@@ -41,7 +41,7 @@ protected:
     void updatePriceRange();
     const QDateTime getDateByIndex(const long index);
 
-    void loadData(const Data::DateRange &range);
+    void loadData(const Data::Range &range);
     void addCandle(const Data::Candle &candleData);
     void addCandles();
 

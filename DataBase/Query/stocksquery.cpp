@@ -36,7 +36,7 @@ void StocksQuery::placeCandles(IDataBase *db, const StockKey &key, Candles &cand
     }
 }
 
-void StocksQuery::retrieveCandles(IDataBase *db, const StockKey &key, Candles &candles, const Range &range)
+void StocksQuery::retrieveCandles(IDataBase *db, const StockKey &key, Candles &candles, const DateRange &range)
 {
     QMutexLocker locker(&db->mutex);
 

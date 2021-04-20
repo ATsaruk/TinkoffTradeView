@@ -19,7 +19,7 @@ LoadStockFromDb::~LoadStockFromDb()
     logDebug << "loadStockFromDbTask;~loadStockFromDbTask();-destructor!";
 }
 
-void LoadStockFromDb::setData(const StockKey &stockKey, const Range &range_, const uint minCandleCount)
+void LoadStockFromDb::setData(const StockKey &stockKey, const DateRange &range_, const uint minCandleCount)
 {
     key = stockKey;
     range = range_;

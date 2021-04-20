@@ -1,10 +1,11 @@
-QT       += core gui charts network sql
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-# C++ 20
-CONFIG += c++2a
-QMAKE_CXXFLAGS += -std=c++2a
+CONFIG += c++11
+
+# C++ 17
+QMAKE_CXXFLAGS += -std=c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -17,7 +18,6 @@ SOURCES += \
     Core/Logs/ilogger.cpp \
     Core/Logs/imultilogger.cpp \
     Core/Logs/msgboxlogger.cpp \
-    Core/database.cpp \
     Core/global.cpp \
     Core/config.cpp \
     Core/loggerlist.cpp \
@@ -26,9 +26,13 @@ SOURCES += \
     Data/Stock/stocks.cpp \
     Data/daterange.cpp \
     DataBase/Query/stocksquery.cpp \
-    DataBase/stocktablemodel.cpp \
-    Plotter/CandlesLoader/candlesloader.cpp \
-    Plotter/CandlesLoader/dbcandlesloader.cpp \
+    DataBase/idatabase.cpp \
+    DataBase/postgresql.cpp \
+    Plotter/Axis/axis.cpp \
+    Plotter/Axis/horizontaldateaxis.cpp \
+    Plotter/Groups/Candles/candleitem.cpp \
+    Plotter/Groups/Candles/stockitem.cpp \
+    Plotter/Groups/chartgroup.cpp \
     Plotter/chartplotter.cpp \
     Tasks/BrokerTasks/loadstockfrombroker.cpp \
     Tasks/Commands/loadstock.cpp \
@@ -48,7 +52,6 @@ HEADERS += \
     Core/Logs/imultilogger.h \
     Core/Logs/msgboxlogger.h \
     Core/config.h \
-    Core/database.h \
     Core/global.h \
     Core/loggerlist.h \
     Data/Stock/candle.h \
@@ -56,9 +59,13 @@ HEADERS += \
     Data/Stock/stocks.h \
     Data/daterange.h \
     DataBase/Query/stocksquery.h \
-    DataBase/stocktablemodel.h \
-    Plotter/CandlesLoader/candlesloader.h \
-    Plotter/CandlesLoader/dbcandlesloader.h \
+    DataBase/idatabase.h \
+    DataBase/postgresql.h \
+    Plotter/Axis/axis.h \
+    Plotter/Axis/horizontaldateaxis.h \
+    Plotter/Groups/Candles/candleitem.h \
+    Plotter/Groups/Candles/stockitem.h \
+    Plotter/Groups/chartgroup.h \
     Plotter/chartplotter.h \
     Tasks/BrokerTasks/loadstockfrombroker.h \
     Tasks/Commands/loadstock.h \

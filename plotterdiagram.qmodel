@@ -49,12 +49,11 @@
                          </base-DElement>
                          <object>{23cfceb9-7166-440b-9459-1aab4aee117a}</object>
                          <name>ChartPlotter</name>
-                         <pos>x:430;y:360</pos>
-                         <rect>x:-45;y:-35;w:90;h:70</rect>
+                         <pos>x:185;y:355</pos>
+                         <rect>x:-40;y:-30;w:80;h:60</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
-                       <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
                     </item>
@@ -65,13 +64,129 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{2fe9b024-a1b0-4694-94f5-a7ad6b0788e9}</uid>
+                           <uid>{b44ecbc6-5ab1-4ead-b977-d2812841e424}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{970f6895-a3b4-42a5-bcb2-125668191a7e}</object>
-                         <name>CandlesLoader</name>
-                         <pos>x:695;y:225</pos>
-                         <rect>x:-45;y:-30;w:90;h:60</rect>
+                         <object>{0821de7b-a77d-49d4-98ad-69546733d5cd}</object>
+                         <name>Axis</name>
+                         <pos>x:890;y:335</pos>
+                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{4fefe4bc-0082-4ff3-9c76-239c6dc6faec}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{eb7f71b3-e8f6-4e77-a209-ef030849512b}</object>
+                         <name>HorizontalDateAxis</name>
+                         <pos>x:705;y:265</pos>
+                         <rect>x:-55;y:-30;w:110;h:60</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{79e4ffe1-966f-4776-9f53-36ea7d6e0cf9}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{8fe550bc-1d59-4702-9123-e599918eaea5}</object>
+                         <name>VerticalAxis</name>
+                         <pos>x:690;y:375</pos>
+                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DInheritance">
+                      <DInheritance>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{79b2ced2-6324-446e-bb3b-e16c69a2bda5}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{aa6b7eb4-4a5d-4d49-9cab-e11b37713b55}</object>
+                         <a>{4fefe4bc-0082-4ff3-9c76-239c6dc6faec}</a>
+                         <b>{b44ecbc6-5ab1-4ead-b977-d2812841e424}</b>
+                        </DRelation>
+                       </base-DRelation>
+                      </DInheritance>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DInheritance">
+                      <DInheritance>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{f6070fac-2a01-4bee-9c73-448896d25a2e}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{ec5c354c-537b-4081-805d-68bc2eec48b6}</object>
+                         <a>{79e4ffe1-966f-4776-9f53-36ea7d6e0cf9}</a>
+                         <b>{b44ecbc6-5ab1-4ead-b977-d2812841e424}</b>
+                        </DRelation>
+                       </base-DRelation>
+                      </DInheritance>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{4db540d0-f3fb-4252-9dbc-728c96f03f67}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{84041be0-ab26-446a-84af-85c85fc9248e}</object>
+                         <name>CandleItem</name>
+                         <pos>x:690;y:515</pos>
+                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{4ec057f7-6557-42d1-aa3e-96910b4ce650}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</object>
+                         <name>StockItem</name>
+                         <pos>x:495;y:515</pos>
+                         <rect>x:-40;y:-30;w:80;h:60</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -85,25 +200,32 @@
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{82d293c7-6148-4543-8801-27e133269fe6}</uid>
+                           <uid>{7adf0623-9aaa-496d-af8f-b702395562dd}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{25d76cce-3696-436c-b0e8-71ad36f900db}</object>
-                         <a>{b9f1fd63-9250-461c-ac1c-f5252322ec8d}</a>
-                         <b>{2fe9b024-a1b0-4694-94f5-a7ad6b0788e9}</b>
+                         <object>{c52a3b8c-663f-49fe-949c-746bedb893e3}</object>
+                         <a>{4ec057f7-6557-42d1-aa3e-96910b4ce650}</a>
+                         <b>{4db540d0-f3fb-4252-9dbc-728c96f03f67}</b>
                         </DRelation>
                        </base-DRelation>
                        <a>
                         <DAssociationEnd>
+                         <cradinality>1</cradinality>
                          <navigable>true</navigable>
+                         <kind>2</kind>
                         </DAssociationEnd>
                        </a>
+                       <b>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                        </DAssociationEnd>
+                       </b>
                       </DAssociation>
                      </instance>
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1618541217701</last-modified>
+                  <last-modified>1617906040566</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -126,54 +248,8 @@
                    </MElement>
                   </base-MElement>
                   <name>ChartPlotter</name>
-                  <relations>
-                   <handles>
-                    <handles>
-                     <qlist>
-                      <item>
-                       <handle>
-                        <uid>{25d76cce-3696-436c-b0e8-71ad36f900db}</uid>
-                        <target>
-                         <instance type="MAssociation">
-                          <MAssociation>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{25d76cce-3696-436c-b0e8-71ad36f900db}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{23cfceb9-7166-440b-9459-1aab4aee117a}</a>
-                             <b>{970f6895-a3b4-42a5-bcb2-125668191a7e}</b>
-                            </MRelation>
-                           </base-MRelation>
-                           <a>
-                            <MAssociationEnd>
-                             <navigable>true</navigable>
-                            </MAssociationEnd>
-                           </a>
-                          </MAssociation>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                     </qlist>
-                    </handles>
-                   </handles>
-                  </relations>
                  </MObject>
                 </base-MObject>
-                <members>
-                 <qlist>
-                  <item>
-                   <MClassMember>
-                    <uid>{844cba15-a44e-4cb9-94a6-451482621966}</uid>
-                    <type>1</type>
-                    <declaration>-StockKey key</declaration>
-                   </MClassMember>
-                  </item>
-                 </qlist>
-                </members>
                </MClass>
               </instance>
              </target>
@@ -423,27 +499,6 @@
                     </handles>
                    </handles>
                   </relations>
-                 </MObject>
-                </base-MObject>
-               </MClass>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{970f6895-a3b4-42a5-bcb2-125668191a7e}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{970f6895-a3b4-42a5-bcb2-125668191a7e}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>CandlesLoader</name>
                  </MObject>
                 </base-MObject>
                </MClass>

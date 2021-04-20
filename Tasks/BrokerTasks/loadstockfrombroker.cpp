@@ -28,7 +28,7 @@ QString LoadStockFromBroker::getName()
     return "TaskLoadStocksFromBroker";
 }
 
-void LoadStockFromBroker::setData(const StockKey &stockKey_, const Range &range, const qint64 minCandleCount)
+void LoadStockFromBroker::setData(const StockKey &stockKey_, const DateRange &range, const qint64 minCandleCount)
 {
     stockKey = stockKey_;
     loadRange = range;

@@ -20,7 +20,7 @@ long Stocks::getCandlesCount(const StockKey &key)
     return stocks[key.keyToString()].size();
 }
 
-Range Stocks::getRange(const StockKey &key)
+DateRange Stocks::getRange(const StockKey &key)
 {
     QReadLocker lock(&rwMutex);
 
@@ -28,7 +28,7 @@ Range Stocks::getRange(const StockKey &key)
     if (curCandles.empty())
         throw std::logic_error("candles is empty");
 
-    return Range(curCandles.front().dateTime,
+    return DateRange(curCandles.front().dateTime,
                      curCandles.back().dateTime);
 }
 

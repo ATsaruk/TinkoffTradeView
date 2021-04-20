@@ -13,9 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     Glo.init(this);
 
     plotter = new Plotter::ChartPlotter;
-    setCentralWidget(plotter->getWidget());
+    setCentralWidget(plotter);
 
-    plotter->setStockKey(getStockKey());
+    plotter->setDrawStockKey(getStockKey());
 }
 
 MainWindow::~MainWindow()
@@ -23,7 +23,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-Data::StockKey MainWindow::getStockKey()
+const Data::StockKey MainWindow::getStockKey()
 {
     Data::StockKey key = {"BBG000B9XRY4", Data::StockKey::INTERVAL::MIN15};    //temp
     return key;
@@ -31,7 +31,7 @@ Data::StockKey MainWindow::getStockKey()
 
 void MainWindow::on_actUpdate_triggered()
 {
-    plotter->setStockKey(getStockKey());
+    plotter->setDrawStockKey(getStockKey());
 }
 
 void MainWindow::on_actExit_triggered()

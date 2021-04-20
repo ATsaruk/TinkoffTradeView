@@ -35,14 +35,14 @@ public:
     ~LoadStockFromDb();
 
     //Задание исходных данных для загрузки
-    void setData(const StockKey &stockKey, const Range &range_ = Range(), const uint minCandleCount = 1);
+    void setData(const StockKey &stockKey, const DateRange &range_ = DateRange(), const uint minCandleCount = 1);
 
     //Возвращает имя класса владельца
     QString getName() override;
 
 protected:
     uint minCount;      //Минимальное количество свечей, которое должно быть загружено
-    Range range;    //Интервал загрузки
+    DateRange range;    //Интервал загрузки
     StockKey key;       //Ключ акции
 
     //Запустить задачу

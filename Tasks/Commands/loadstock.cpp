@@ -12,7 +12,7 @@ LoadStock::LoadStock(QThread *parent)
     logDebug << "CommandLoadStock;CommandLoadStock();+constructor!";
 }
 
-void LoadStock::setData(const StockKey &stockKey, const Range &range, const uint minCandleCount)
+void LoadStock::setData(const StockKey &stockKey, const DateRange &range, const uint minCandleCount)
 {
     //Задача на загрузку данных из БД
     addTask <LoadStockFromDb> (stockKey, range, minCandleCount);

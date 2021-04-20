@@ -1,12 +1,11 @@
 #include "global.h"
 
 #include "Broker/Tinkoff/tinkoff.h"
+#include "DataBase/postgresql.h"
 #include "Logs/filelogger.h"
 #include "Logs/msgboxlogger.h"
-#include "database.h"
 
 namespace Core {
-
 
 Global &Global::get()
 {
@@ -21,11 +20,9 @@ Global::Global()
 
 Global::~Global()
 {
-    Database::disconnect();
-
     delete taskManager;
     delete broker;
-    //delete dataBase;
+    delete dataBase;
     delete stocks;
     delete logger;
     delete conf;
@@ -42,10 +39,8 @@ void Global::init(QObject *parent)
     taskManager = new Task::Manager(parent->thread());
 
     stocks = new Data::Stocks;
-    //dataBase = new DB::PostgreSql;
+    dataBase = new DB::PostgreSql;
     broker = new Broker::TinkoffApi;
-
-    Database::connect();
 
     // Что бы не пропустить ни одного предупреждения или ошибки выводим их дополнительно на экран! Можно удалить
     logger->add<MsgBoxLogger>(logTags[2]);

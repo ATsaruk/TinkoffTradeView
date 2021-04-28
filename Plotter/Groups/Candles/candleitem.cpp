@@ -9,10 +9,10 @@ CandleItem::CandleItem(const Data::Candle &_candle)
 {
     candle = _candle;
 
-    QColor redPen     = Glo.conf->getValue("ChartPlotter/CandleItem/redPen",     QColor(128,   0, 0)).value<QColor>();
-    QColor greenPen   = Glo.conf->getValue("ChartPlotter/CandleItem/greePen",    QColor(  0, 128, 0)).value<QColor>();
-    QColor redBrush   = Glo.conf->getValue("ChartPlotter/CandleItem/redBrush",   QColor(196,   0, 0)).value<QColor>();
-    QColor greenBrush = Glo.conf->getValue("ChartPlotter/CandleItem/greenBrush", QColor(  0, 196, 0)).value<QColor>();
+    QColor redPen     = Glo.conf->getValue("ChartPlotter/CandleItem/redPen",     QColor(235, 77, 92)).value<QColor>();
+    QColor greenPen   = Glo.conf->getValue("ChartPlotter/CandleItem/greePen",    QColor(83, 185, 135)).value<QColor>();
+    QColor redBrush   = Glo.conf->getValue("ChartPlotter/CandleItem/redBrush",   QColor(235, 77, 92)).value<QColor>();
+    QColor greenBrush = Glo.conf->getValue("ChartPlotter/CandleItem/greenBrush", QColor(83, 185, 135)).value<QColor>();
 
     //Красный для медвежей свечи, зеленый для бычей свечи
     bool isBearCandle = candle.open > candle.close;

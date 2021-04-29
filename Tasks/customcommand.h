@@ -217,7 +217,7 @@ public:
     *    TaskManager::get()->addTask <CommandLoadStock> (curStockKey, beginTime, endTime, candleCount);
     */
     template <class T, typename... N>
-    typename std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
+    std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
     addTask(N ... args)
     {
         QMutexLocker locker(&mutex);

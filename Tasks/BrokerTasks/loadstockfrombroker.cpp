@@ -129,7 +129,7 @@ void LoadStockFromBroker::finishTask()
 
         Candles newCandles;
         newCandles = Glo.stocks->insertCandles(stockKey, candles);
-        DB::StocksQuery::placeCandles(Glo.dataBase, stockKey, newCandles);
+        DB::StocksQuery::insertCandles(Glo.dataBase, stockKey, newCandles);
     }
     emit finished();
 }

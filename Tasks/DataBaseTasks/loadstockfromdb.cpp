@@ -37,14 +37,13 @@ QString LoadStockFromDb::getName()
 
 void LoadStockFromDb::exec()
 {
-    //Получаем доступ к свечной информации
     Candles candles;
 
     //2 недели это новогодние каникулы
     QDateTime twoWeeksAgo = range.getBegin().addSecs(-14 * 86400); //86400 - число секунд в сутках
+
     while (candles.size() < minCount) {
-        //Загрузка свечных данных из БД
-        DB::StocksQuery::retrieveCandles(Glo.dataBase, key, candles, range);
+        DB::StocksQuery::loadCandles(Glo.dataBase, key, candles, range);
 
         long interval = LoadStockFromBroker::getMaxLoadInterval(key.interval());
         range.displace(-interval, -interval);

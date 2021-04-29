@@ -15,10 +15,10 @@ class StocksQuery
 public:
     StocksQuery();
 
-    //Помещает список свечей candles в БД (таблица stocks)
-    static void placeCandles(IDataBase *db, const StockKey &key, Candles &candles);
-    //Извлекает свечи из базы данных (таблица stocks) в структуру candles
-    static void retrieveCandles(IDataBase *db, const StockKey &key, Candles &candles, const Range &range = Range());
+    //Вставляет список свечей candles в БД (таблица stocks)
+    static void insertCandles(IDataBase *db, const StockKey &key, Candles &candles);
+    //Загружает свечи из базы данных (таблица stocks) в структуру candles
+    static void loadCandles(IDataBase *db, const StockKey &key, Candles &candles, const Range &range = Range());
 };
 
 }

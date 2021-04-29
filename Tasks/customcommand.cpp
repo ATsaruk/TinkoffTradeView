@@ -89,7 +89,8 @@ void CustomCommand::runNextTask()
     connect(task, &IBaseTask::finished,  this, &CustomCommand::taskFinished);
     connect(this, &CustomCommand::stopAll, task, &IBaseTask::stop);
 
-    logDebug << QString("%1;runNextTask();started : %2;tasksLeft = %3").arg(getName(), task->getName()).arg(taskList.size());
+    logDebug << QString("%1;runNextTask();started : %2;tasksLeft = %3")
+                .arg(getName(), task->getName()).arg(taskList.size());
 
     task->start();
 }
@@ -100,10 +101,12 @@ void CustomCommand::taskFinished()
 
     //Удаляем завершившуюся задачу
     if ( auto task = dynamic_cast<IBaseTask*>(sender()) ) {
-        logDebug << QString("%1;taskFinished();finished: %2;tasksLeft = %3").arg(getName(), task->getName()).arg(taskList.size());
+        logDebug << QString("%1;taskFinished();finished: %2;tasksLeft = %3")
+                    .arg(getName(), task->getName()).arg(taskList.size());
         delete task;
     } else
-        logCritical << QString("%1;taskFinished();can't get task!;tasksLeft = %2").arg(getName()).arg(taskList.size());
+        logCritical << QString("%1;taskFinished();can't get task!;tasksLeft = %2")
+                       .arg(getName()).arg(taskList.size());
 
     //Запускаем следующую или завершаем выполнение
     if (!taskList.empty() && !isStopRequested)

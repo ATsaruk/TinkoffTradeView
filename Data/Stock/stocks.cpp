@@ -29,42 +29,38 @@ Range Stocks::getRange(const StockKey &key)
         throw std::logic_error("candles is empty");
 
     return Range(curCandles.front().dateTime,
-                     curCandles.back().dateTime);
+                 curCandles.back().dateTime);
 }
 
-Candles Stocks::insertCandles(const StockKey &key, Candles &candles)
+Candles Stocks::insertCandles(const StockKey &key, const Candles &candles)
 {
     Candles newCandles;
     if (candles.empty())
-        return newCandles;     //Информация может отстутствовать, например если загрузка была за выходной день
+        return newCandles;
 
     QWriteLocker lock(&rwMutex);
-
     Candles &dataCandles = stocks[key.keyToString()];
-    dataCandles.reserve(dataCandles.size() + candles.size());
 
-    bool isChanged = false;
-    for (auto &newCandle : candles) {
-        //Проверяем наличие свечи candle в списке candlesData.candles
-        bool isExisted = std::any_of( dataCandles.begin(), dataCandles.end(), [&newCandle] (const auto& candle) {return candle == newCandle;} );
+    //Это лямбда функция которая проверяет отсутсвие свечи newCandle в списке dataCandles для copy_if
+    auto isCandleAbsent = [&dataCandles] (const auto& newCandle) {
+        auto isEqual = [&newCandle] (const auto& dataCandle) {
+            return dataCandle == newCandle;
+        };
+        return std::none_of( dataCandles.begin(), dataCandles.end(), isEqual );
+    };
 
-        //Если свеча не найдена, добавляем ее
-        if (!isExisted) {
-            dataCandles.push_back(newCandle);
-            newCandles.push_back(newCandle);
-            if (!isChanged)
-                isChanged = true;
-        }
-    }
+    newCandles.reserve(candles.size());
+    std::copy_if(candles.begin(), candles.end(), std::back_inserter(newCandles), isCandleAbsent);
 
-    std::sort(dataCandles.begin(), dataCandles.end());
+    if (!newCandles.empty()) {
+        dataCandles.reserve(dataCandles.size() + newCandles.size());
+        std::copy(newCandles.begin(), newCandles.end(), std::back_inserter(dataCandles));
+        std::sort(dataCandles.begin(), dataCandles.end());
 
-    if (isChanged) {
         emit dataChanged();
         logInfo << QString("DataStocks;insertStockData();Append;%1;candles;%2;%3")
                    .arg(newCandles.size()).arg(newCandles.front().dateTime.toString(), newCandles.back().dateTime.toString());
     }
-
     return newCandles;
 }
 

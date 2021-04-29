@@ -34,8 +34,8 @@ public:
 
 protected:
     QMutex mutex;
-    bool isWriteLog;
     QString tag;
+    bool isWriteLog;
 };
 
 }

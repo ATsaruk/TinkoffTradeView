@@ -11,7 +11,7 @@ CandlesSeries::CandlesSeries()
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
 
-    uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 10);
+    uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
     drawWait = plotInterval * 3 / 4;
     //connect(Glo.stocks, &DataStocks::dataChanged, this, &ChartCandlesGroup::dataChanged);
 }

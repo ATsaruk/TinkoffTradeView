@@ -54,11 +54,12 @@ public:
     void save(QString fileName = QString());
 
 private:
+    //Список настроек
+    std::unordered_map<QString, QVariant> settingsMap;
+
     QReadWriteLock lock;
     //Имя файла с настройками
     QString _fileName;
-    //Список настроек
-    std::unordered_map<QString, QVariant> settingsMap;
 
     //Добавляет параметр с ключем key и значением value в QJsonObject
     void toJSON(const QString &key, const QVariant &value, QJsonObject &obj) const;

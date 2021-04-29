@@ -51,10 +51,12 @@ protected slots:
 
 private:
     uint drawWait;
+    QMutex drawMutex;
+
     bool autoPriceRange = true;    //Перенести в ChartVerticalAxis!
     bool isDataRequested = false;
     bool isDataChanged = false;
-    QMutex drawMutex;
+
     //Данные для рисования
     std::map<long, CandleItem*>::iterator beginCandle;
     std::map<long, CandleItem*>::iterator endCandle;

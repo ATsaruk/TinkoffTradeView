@@ -122,9 +122,9 @@ void LoadStockFromBroker::finishTask()
 
         removeIncompleteCandle(candles);
 
-        Candles newCandles;
-        newCandles = Glo.stocks->insertCandles(stockKey, candles);
-        DB::StocksQuery::insertCandles(Glo.dataBase, stockKey, newCandles);
+        auto newCandles = Glo.stocks->insertCandles(stockKey, candles);
+        if (!newCandles.empty())
+            DB::StocksQuery::insertCandles(Glo.dataBase, stockKey, newCandles);
     }
 
     emit finished();

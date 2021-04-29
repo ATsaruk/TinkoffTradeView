@@ -60,7 +60,7 @@ public:
       * свечи будут проигнорированы. Добавлятся будут только новые свечи.\n
       * Перед добавлением свечей, запрашивается доступ на изменение данных.\n
       * После добавления свечей, производится сортировка свечей по дате и освобождение доступа к данным. */
-    Candles insertCandles(const StockKey &key, Candles &candles);
+    Candles insertCandles(const StockKey &key, const Candles &candles);
 
 signals:
     void dataChanged();

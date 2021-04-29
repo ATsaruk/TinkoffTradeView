@@ -21,7 +21,6 @@ namespace Broker {
   * @warning Перед началом работы с классом блокируем mutex, после окончания освобождаем. */
 class Api : public QObject
 {
-    Q_OBJECT
 public:
     QMutex mutex;
 
@@ -47,6 +46,9 @@ signals:
       * @details При получении ответа с сервера брокера отправляется сигнал getResopnse, в качестве параметра QByteArray
       * передаются полученные данные, для дальнейшей обработки. */
     void getResopnse(QByteArray);
+
+private:
+    Q_OBJECT
 };
 
 }

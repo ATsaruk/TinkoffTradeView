@@ -14,12 +14,12 @@ namespace Data {
   * @see DataStocks */
 struct Candle
 {
+    QDateTime dateTime; ///<дата/время начала свечи
     float open;         ///<цена открытия
     float close;        ///<цена закрытия
     float high;         ///<максимальная цена
     float low;          ///<минимальная цена
     uint64_t volume;    ///<объем торгов
-    QDateTime dateTime; ///<дата/время начала свечи
 
     explicit Candle() = default;
     Candle(Candle &&) noexcept = default;
@@ -44,7 +44,7 @@ struct Candle
 
 /** @ingroup Data
   * @brief Список свечной информации */
-typedef std::vector<Candle> Candles;
+using Candles = std::vector<Candle>;
 
 }
 

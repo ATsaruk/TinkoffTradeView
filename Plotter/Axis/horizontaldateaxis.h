@@ -9,7 +9,7 @@ namespace Plotter {
 class HorizontalDateAxis : public Axis
 {
 public:
-    HorizontalDateAxis();
+    explicit HorizontalDateAxis();
 
     //Определяем виртуальный метод, который возвращает область, в которой находится треугольник
     virtual QRectF boundingRect() const override;

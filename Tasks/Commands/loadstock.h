@@ -31,7 +31,7 @@ using namespace Data;
 class LoadStock : public CustomCommand
 {
 public:
-    LoadStock(QThread *parent = nullptr);
+    explicit LoadStock(QThread *parent = nullptr);
 
     //Задать данные для запуска задачь
     void setData(const StockKey &stockKey, const Range &range = Range(), const uint minCandleCount = 1);

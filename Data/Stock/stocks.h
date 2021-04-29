@@ -30,7 +30,7 @@ class Stocks : public QObject
 public:
     QReadWriteLock rwMutex;
 
-    Stocks();
+    explicit Stocks();
 
     /** @brief Предоставляет доступ к списку свечной информации
       * @todo возвращать потокобезопасную ссылку, который мы будет возвращать, который d конструкторе будет блокировать mutex, а в деструкторе отсобождать

@@ -42,7 +42,7 @@ namespace Core {
 class LoggerList
 {
 public:
-    LoggerList();
+    explicit LoggerList();
     ~LoggerList();
 
 

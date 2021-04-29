@@ -13,7 +13,7 @@ namespace Core {
 class MsgBoxLogger : public IMultiLogger
 {
 public:
-    MsgBoxLogger(const QString &tag_);
+    explicit MsgBoxLogger(const QString &tag_);
 
     /// Имя класса логгера
     QString getClassName() const override;

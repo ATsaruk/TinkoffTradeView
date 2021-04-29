@@ -7,12 +7,6 @@ Range::Range()
 
 }
 
-Range::Range(Range &&range)
-{
-    begin = std::move(range.begin);
-    end = std::move(range.end);
-}
-
 Range::Range(const Range &range)
 {
     begin = range.begin;
@@ -25,22 +19,30 @@ Range::Range(const QDateTime &begin_, const QDateTime &end_)
     end = end_;
 }
 
-Range::Range(const QDateTime &&begin_, const QDateTime &&end_)
+Range &Range::operator =(const Range &range)
 {
-    begin = std::move(begin_);
-    end = std::move(end_);
+    begin = range.begin;
+    end = range.end;
+    return *this;
 }
 
-void Range::operator=(Range &&range)
+Range::Range(Range &&range) noexcept
 {
     begin = std::move(range.begin);
     end = std::move(range.end);
 }
 
-void Range::operator=(const Range &range)
+Range::Range(QDateTime &&begin_, QDateTime &&end_) noexcept
 {
-    begin = range.begin;
-    end = range.end;
+    begin = std::move(begin_);
+    end = std::move(end_);
+}
+
+Range &Range::operator =(Range &&range) noexcept
+{
+    begin = std::move(range.begin);
+    end = std::move(range.end);
+    return *this;
 }
 
 const QDateTime &Range::getBegin() const

@@ -45,7 +45,7 @@ class LoadStockFromBroker : public IBaseTask
     Q_OBJECT
 
 public:
-    LoadStockFromBroker(QThread *parent = nullptr);
+    explicit LoadStockFromBroker(QThread *parent = nullptr);
     ~LoadStockFromBroker();
 
     //Возвращает имя класса владельца

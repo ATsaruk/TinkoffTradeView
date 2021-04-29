@@ -13,7 +13,7 @@ using namespace Data;
 class StocksQuery
 {
 public:
-    StocksQuery();
+    explicit StocksQuery();
 
     //Вставляет список свечей candles в БД (таблица stocks)
     static void insertCandles(IDataBase *db, const StockKey &key, Candles &candles);

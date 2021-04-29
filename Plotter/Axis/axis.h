@@ -14,7 +14,7 @@ class Axis : public QObject, public QGraphicsItem
 public:
     enum AXIS_TYPE : uint8_t { HORIZONTAL, VERTICAL };
 
-    Axis(const AXIS_TYPE _axisType);
+    explicit Axis(const AXIS_TYPE _axisType);
     virtual ~Axis();
 
     const AXIS_TYPE& getAxisType();

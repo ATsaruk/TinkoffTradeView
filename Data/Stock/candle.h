@@ -21,10 +21,10 @@ struct Candle
     uint64_t volume;    ///<объем торгов
     QDateTime dateTime; ///<дата/время начала свечи
 
-    Candle() = default;
-    Candle(Candle &&) = default;
+    explicit Candle() = default;
+    Candle(Candle &&) noexcept = default;
     Candle(const Candle &) = default;
-    Candle& operator =(Candle&&) = default;
+    Candle& operator =(Candle&&) noexcept = default;
     Candle& operator =(const Candle&) = default;
 
     /** @brief Заполняет данные по свечи из Json объекта

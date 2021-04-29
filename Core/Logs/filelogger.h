@@ -15,7 +15,7 @@ namespace Core {
 class FileLogger : public IMultiLogger
 {
 public:
-    FileLogger(const QString &tag);
+    explicit FileLogger(const QString &tag);
     ~FileLogger();
 
     /// Имя класса логгера

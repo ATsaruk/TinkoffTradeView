@@ -14,7 +14,7 @@ namespace Plotter {
 class CandleItem : public QGraphicsItem
 {
 public:
-    CandleItem(const Data::Candle &_candle);
+    explicit CandleItem(const Data::Candle &_candle);
 
     const Data::Candle& getData();
 

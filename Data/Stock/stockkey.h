@@ -32,7 +32,7 @@ public:
         WEEK    ///< Свечи длительностью 1 неделя
     };
 
-    StockKey() ;
+    explicit StockKey() ;
     StockKey(const QString &figi, const INTERVAL &interval) ;
 
     ///Возвращает figi акции

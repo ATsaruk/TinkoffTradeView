@@ -31,7 +31,7 @@ using namespace Data;
 class LoadStockFromDb : public IBaseTask
 {
 public:
-    LoadStockFromDb(QThread *parent = nullptr);
+    explicit LoadStockFromDb(QThread *parent = nullptr);
     ~LoadStockFromDb();
 
     //Задание исходных данных для загрузки

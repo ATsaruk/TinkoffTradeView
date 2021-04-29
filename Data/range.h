@@ -11,13 +11,15 @@ namespace Data {
 class Range
 {
 public:
-    Range();
-    Range(Range &&range);
+    explicit Range();
+
     Range(const Range &range);
     Range(const QDateTime &begin_, const QDateTime &end_);
-    Range(const QDateTime &&begin_, const QDateTime &&end_);
-    void operator= (Range &&range);
-    void operator= (const Range &range);
+    Range& operator= (const Range &range);
+
+    Range(Range &&range) noexcept;
+    Range(QDateTime &&begin_, QDateTime &&end_) noexcept;
+    Range& operator= (Range &&range) noexcept;
 
     ///@return начало диапазона
     const QDateTime& getBegin() const;

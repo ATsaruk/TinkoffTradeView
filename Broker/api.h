@@ -25,7 +25,7 @@ class Api : public QObject
 public:
     QMutex mutex;
 
-    Api() { }
+    explicit Api() { }
     virtual ~Api() { }
 
 

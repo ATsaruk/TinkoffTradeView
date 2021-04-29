@@ -9,7 +9,7 @@ namespace DB {
 class PostgreSql : public IDataBase
 {
 public:
-    PostgreSql();
+    explicit PostgreSql();
 
     //Получение QSqlDatabase
     QSqlDatabase& get() override;

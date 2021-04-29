@@ -44,7 +44,7 @@ namespace Core {
 class IMultiLogger : public ILogger
 {
 public:
-    IMultiLogger(const QString &tag_);
+    explicit IMultiLogger(const QString &tag_);
     ~IMultiLogger();
 
     /// Имя класса логгера

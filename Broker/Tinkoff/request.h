@@ -14,7 +14,7 @@ namespace Broker {
 class Request : public QObject
 {
 public:
-    Request();
+    explicit Request();
     ~Request();
 
 

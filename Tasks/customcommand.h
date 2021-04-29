@@ -199,8 +199,8 @@ class CustomCommand : public IBaseTask
     Q_OBJECT
 
 public:
-    CustomCommand(const QString &customCommandName = QString("CustomCommand"));
-    CustomCommand(QThread *parent, const QString &customCommandName = QString("CustomCommand"));
+    explicit CustomCommand(const QString &customCommandName = QString("CustomCommand"));
+    explicit CustomCommand(QThread *parent, const QString &customCommandName = QString("CustomCommand"));
     ~CustomCommand();
 
     //Возвращает имя задачи

@@ -14,7 +14,7 @@ class IDataBase
 public:
     QMutex mutex;
 
-    IDataBase();
+    explicit IDataBase();
     virtual ~IDataBase();
 
     //Получение QSqlDatabase

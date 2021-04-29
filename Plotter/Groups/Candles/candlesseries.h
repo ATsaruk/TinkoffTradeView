@@ -24,7 +24,7 @@ namespace Plotter {
 class CandlesSeries : public ChartSeries
 {
 public:
-    CandlesSeries();
+    explicit CandlesSeries();
     ~CandlesSeries();
 
 public slots:

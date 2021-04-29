@@ -22,7 +22,7 @@ namespace Broker {
 class TinkoffApi : public Api
 {
 public:
-    TinkoffApi();
+    explicit TinkoffApi();
     ~TinkoffApi();
 
     /** @brief Отправляет запрос на получение списка всех акций

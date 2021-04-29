@@ -15,7 +15,7 @@ class ChartSeries : public QObject, public QGraphicsItemGroup
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    ChartSeries();
+    explicit ChartSeries();
     virtual ~ChartSeries();
 
     void attachAxis(Axis *_axis);

@@ -37,7 +37,7 @@ class Manager final : public CustomCommand
     Q_OBJECT
 
 public:
-    Manager(QThread *parent);
+    explicit Manager(QThread *parent);
 
     //Возвращает имя задачи
     QString getName() override;

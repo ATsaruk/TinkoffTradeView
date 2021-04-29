@@ -16,7 +16,7 @@ namespace Core {
 class ILogger
 {
 public:
-    ILogger(const QString &tag_);
+    explicit ILogger(const QString &tag_);
     virtual ~ILogger();
 
     /// Возвращает тэг

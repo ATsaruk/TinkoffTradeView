@@ -15,7 +15,7 @@ class Config
 {
 public:
     /// Загружает настройки из файла
-    Config(const QString &fileName = QString("config.cfg"));
+    explicit Config(const QString &fileName = QString("config.cfg"));
     /// Сохраняются настройки в файл
     ~Config();
 

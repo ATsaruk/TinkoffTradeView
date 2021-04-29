@@ -5,7 +5,7 @@
 
 #include "Axis/axis.h"
 #include "Axis/horizontaldateaxis.h"
-#include "Groups/chartgroup.h"
+#include "Groups/chartseries.h"
 
 class QTimer;
 class QWheelEvent;
@@ -13,8 +13,6 @@ class QMouseEvent;
 
 namespace Plotter {
 
-
-typedef std::unordered_map<QString, ChartGroup*> GraphicsGroup_t;
 
 ///Класс рисования графика акций
 class ChartPlotter : public QGraphicsView
@@ -46,16 +44,15 @@ private:
     Qt::MouseButtons pressedButton;     //Идентефикаторы нажатых кнопок
 
     //temp
-    HorizontalDateAxis *horizontalAxis;
-    Axis *verticalAxis;
+    HorizontalDateAxis *dateAxis;
+    Axis *priceAxis;
     //temp
 
     QTimer *plotTimer;                  //Таймер для перерисовки сцены
     QGraphicsScene *graphicScene;       //сцена для отрисовки
-    GraphicsGroup_t items;              //группы объектов
 
     //Данные для рисования
-    Data::StockKey curStockKey;
+    Data::StockKey stockKey;
 };
 
 }

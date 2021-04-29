@@ -8,24 +8,24 @@
  *     - при увеличении графика пересчет не производится, а только отображаются свечи у которых параметр strength < currentCandlesCount
  */
 
-#ifndef STOCKITEM_H
-#define STOCKITEM_H
+#ifndef CANDLESSERIES_H
+#define CANDLESSERIES_H
 
 #include <QMutex>
 #include <QObject>
 
 #include "candleitem.h"
-#include "../chartgroup.h"
+#include "../chartseries.h"
 #include "Data/range.h"
 
 namespace Plotter {
 
 
-class StockItem : public ChartGroup
+class CandlesSeries : public ChartSeries
 {
 public:
-    StockItem();
-    ~StockItem();
+    CandlesSeries();
+    ~CandlesSeries();
 
 public slots:
     void repaint() override;
@@ -63,4 +63,4 @@ private:
 
 }
 
-#endif // STOCKITEM_H
+#endif // CANDLESSERIES_H

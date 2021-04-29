@@ -17,16 +17,6 @@ Config::~Config()
     save();
 }
 
-QVariant Config::getValue(const QString &key, const QVariant &defaultValue)
-{
-    QReadLocker locker(&lock);
-
-    if (settingsMap.find(key) == settingsMap.end())
-        settingsMap[key] = defaultValue;
-
-    return settingsMap[key];
-}
-
 void Config::setValue(QString &&key, QVariant &&value)
 {
     QWriteLocker locker(&lock);

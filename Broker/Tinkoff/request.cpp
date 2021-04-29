@@ -13,10 +13,10 @@ constexpr auto defaultWebSocetUri = "wss://api-invest.tinkoff.ru/openapi/md/v1/m
 
 Request::Request()
 {
-    sandMode = Glo.conf->getValue("Tinkoff/sandMode", QVariant(false)).toBool();
+    sandMode = Glo.conf->getValue("Tinkoff/sandMode", false);
     initMode();
 
-    webSocketBaseUri = Glo.conf->getValue("Tinkoff/webSocketBaseUri", QVariant(defaultWebSocetUri)).toString();
+    webSocketBaseUri = Glo.conf->getValue("Tinkoff/webSocketBaseUri", QString(defaultWebSocetUri));
 }
 
 Request::~Request()
@@ -91,11 +91,11 @@ void Request::setSandMode(const bool sand)
 void Request::initMode()
 {
     if (isSandMode()) {
-        baseUri = Glo.conf->getValue("Tinkoff/sandboxBaseUri", QVariant(defaultSandBaseUri)).toString();
-        tokenFile = Glo.conf->getValue("Tinkoff/fileSandKey", QVariant(defaultSandFileToken)).toString();
+        baseUri = Glo.conf->getValue("Tinkoff/sandboxBaseUri", QString(defaultSandBaseUri));
+        tokenFile = Glo.conf->getValue("Tinkoff/fileSandKey", QString(defaultSandFileToken));
     } else {
-        baseUri = Glo.conf->getValue("Tinkoff/baseURi", QVariant(defaultWorkBaseUri)).toString();
-        tokenFile = Glo.conf->getValue("Tinkoff/fileKey", QVariant(defaultWorkFileToken)).toString();
+        baseUri = Glo.conf->getValue("Tinkoff/baseURi", QString(defaultWorkBaseUri));
+        tokenFile = Glo.conf->getValue("Tinkoff/fileKey", QString(defaultWorkFileToken));
     }
 
     authToken.clear();

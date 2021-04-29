@@ -1,4 +1,4 @@
-#include "stockitem.h"
+#include "candlesseries.h"
 
 #include "Core/globals.h"
 #include "Plotter/Axis/axis.h"
@@ -6,7 +6,7 @@
 
 namespace Plotter {
 
-StockItem::StockItem()
+CandlesSeries::CandlesSeries()
 {
     isDataRequested = false;
     isDataChanged = false;
@@ -14,18 +14,18 @@ StockItem::StockItem()
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
 
-    uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", QVariant(10)).toUInt();
+    uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 10);
     drawWait = 3 * plotInterval / 4;
     //connect(Glo.stocks, &DataStocks::dataChanged, this, &ChartCandlesGroup::dataChanged);
 }
 
-StockItem::~StockItem()
+CandlesSeries::~CandlesSeries()
 {
     for (auto &it : candleItems)
         delete it.second;
 }
 
-void StockItem::repaint()
+void CandlesSeries::repaint()
 {
     if (drawMutex.tryLock(drawWait)) {
         if (isDataChanged) {
@@ -38,7 +38,7 @@ void StockItem::repaint()
     drawMutex.unlock();
 }
 
-void StockItem::updateData()
+void CandlesSeries::updateData()
 {
     if (isDataRequested)
         return;
@@ -59,7 +59,7 @@ void StockItem::updateData()
     }
 }
 
-bool StockItem::clear()
+bool CandlesSeries::clear()
 {
     //Если в текущий момент запрошены свечные данные, то пока мы их не обработаем, мы не может произвести очистку
     if (isDataRequested)
@@ -82,7 +82,7 @@ bool StockItem::clear()
     return true;
 }
 
-void StockItem::updateScale()
+void CandlesSeries::updateScale()
 {
     isScaled = false;
 
@@ -106,7 +106,7 @@ void StockItem::updateScale()
  * Свечи, которые стали невидны скрывает, новые свечи отображает
  * И обновляем масштаб всех видимых свечей
  */
-void StockItem::scaleByXAxis()
+void CandlesSeries::scaleByXAxis()
 {
     ///Определяем новый индекс начали интервала отображения свечей
     long firstDisplayedIntex = hAxis->getOffset();
@@ -137,7 +137,7 @@ void StockItem::scaleByXAxis()
     setX(-1 * firstDisplayedIntex * xScale);
 }
 
-void StockItem::scaleByYAxis()
+void CandlesSeries::scaleByYAxis()
 {
     qreal yScale = vAxis->getScale();
     for (auto it = beginCandle; it != endCandle; ++it)
@@ -153,7 +153,7 @@ void StockItem::scaleByYAxis()
  * Если первичный ключ first_iterator'а БОЛЬШЕ чем первичный ключ second_iterator'а, это означает,
  * что мы будем скрывать свечи из интервала [second_iterator..first_iterator] (т.к. у нас не reverse_iterator)
  */
-void StockItem::setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator)
+void CandlesSeries::setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator)
 {
     //Принцип определения параметра visible описан выше
     bool visible  = first_iterator->first < second_iterator->first;
@@ -179,7 +179,7 @@ void StockItem::setCandleVisible(const std::map<long, CandleItem*>::iterator &fi
     }
 }
 
-void StockItem::updatePriceRange()
+void CandlesSeries::updatePriceRange()
 {
     qreal minPrice = beginCandle->second->getData().low;
     qreal maxPrice = beginCandle->second->getData().high;
@@ -201,24 +201,24 @@ void StockItem::updatePriceRange()
     //autoPriceRange = false;   //while settings autoPriceRange off is absent
 }
 
-const QDateTime StockItem::getDateByIndex(const long index)
+const QDateTime CandlesSeries::getDateByIndex(const long index)
 {
     if (candleItems.find(index) != candleItems.end())
         return candleItems[index]->getData().dateTime;
     return QDateTime();
 }
 
-void StockItem::loadData(const Data::Range &range)
+void CandlesSeries::loadData(const Data::Range &range)
 {
     isDataRequested = true;
     uint candleCount = hAxis->getRange() / 3.;
     auto *command = NEW_TASK<Task::LoadStock>(curStockKey, range, candleCount);
-    connect(command, &Task::IBaseTask::finished, this, &StockItem::dataChanged);
+    connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::dataChanged);
     //connect(command, &Task::IBaseTask::finished, this, &StockItem::loadTaskFinished);
 }
 
 //Добавление 1 свечи, поиск нового индекса
-void StockItem::addCandle(const Data::Candle &candleData)
+void CandlesSeries::addCandle(const Data::Candle &candleData)
 {
     long index = 0.;
     if (!candleItems.empty()) {
@@ -242,7 +242,7 @@ void StockItem::addCandle(const Data::Candle &candleData)
 }
 
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
-void StockItem::addCandles()
+void CandlesSeries::addCandles()
 {
     bool isCandlesAdded = false;
     QReadLocker lock(&Glo.stocks->rwMutex);
@@ -274,13 +274,13 @@ void StockItem::addCandles()
     isDataRequested = false;
 }
 
-void StockItem::dataChanged()
+void CandlesSeries::dataChanged()
 {
     addCandles();
     //isDataChanged = true;
 }
 
-void StockItem::loadTaskFinished()
+void CandlesSeries::loadTaskFinished()
 {
     isDataRequested = false;
 }

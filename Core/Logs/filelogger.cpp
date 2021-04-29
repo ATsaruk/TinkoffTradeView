@@ -10,9 +10,9 @@ namespace Core {
 FileLogger::FileLogger(const QString &tag)
     : IMultiLogger(tag)
 {
-    isWriteLog = Glo.conf->getValue(QString("Log/%1").arg(tag), QVariant(true)).toBool();
+    isWriteLog = Glo.conf->getValue(QString("Log/%1").arg(tag), true);
 
-    QString dirName = Glo.conf->getValue("Log/dir", QVariant("Logs")).toString();
+    QString dirName = Glo.conf->getValue("Log/dir", QString("Logs"));
 
     QDir dir(dirName);
     dir.mkpath(QDate::currentDate().toString("yyyy_MM_dd"));

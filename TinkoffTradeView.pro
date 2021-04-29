@@ -4,8 +4,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11 c++14 c++17 c++2a
 
-# C++ 17
-#QMAKE_CXXFLAGS += -std=c++17
+#uncomment to disable std::assert warnings!
+#DEFINES += NDEBUG
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -31,8 +31,8 @@ SOURCES += \
     Plotter/Axis/axis.cpp \
     Plotter/Axis/horizontaldateaxis.cpp \
     Plotter/Groups/Candles/candleitem.cpp \
-    Plotter/Groups/Candles/stockitem.cpp \
-    Plotter/Groups/chartgroup.cpp \
+    Plotter/Groups/Candles/candlesseries.cpp \
+    Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
     Tasks/BrokerTasks/loadstockfrombroker.cpp \
     Tasks/Commands/loadstock.cpp \
@@ -64,8 +64,8 @@ HEADERS += \
     Plotter/Axis/axis.h \
     Plotter/Axis/horizontaldateaxis.h \
     Plotter/Groups/Candles/candleitem.h \
-    Plotter/Groups/Candles/stockitem.h \
-    Plotter/Groups/chartgroup.h \
+    Plotter/Groups/Candles/candlesseries.h \
+    Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
     Tasks/BrokerTasks/loadstockfrombroker.h \
     Tasks/Commands/loadstock.h \
@@ -78,16 +78,10 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
-INCLUDEPATH += C:/Program Files/PostgreSQL/10/include
-#LIBS+= C:/Program Files/PostgreSQL/10/lib/libpq.dll
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-#uncomment to disable std::assert warnings!
-DEFINES += NDEBUG
 
 RESOURCES += \
   source.qrc

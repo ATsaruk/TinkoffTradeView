@@ -1,5 +1,5 @@
-#ifndef CHARTGROUP_H
-#define CHARTGROUP_H
+#ifndef CHARTSERIES_H
+#define CHARTSERIES_H
 
 #include <QGraphicsItemGroup>
 
@@ -9,16 +9,16 @@
 namespace Plotter {
 
 
-class ChartGroup : public QObject, public QGraphicsItemGroup
+class ChartSeries : public QObject, public QGraphicsItemGroup
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    ChartGroup();
-    virtual ~ChartGroup();
+    ChartSeries();
+    virtual ~ChartSeries();
 
-    void setAxis(Axis *_axis);
+    void attachAxis(Axis *_axis);
 
     void setStockKey(const Data::StockKey &stockKey);
     const Data::StockKey& getStockKey();
@@ -42,4 +42,4 @@ protected:
 
 }
 
-#endif // CHARTGROUP_H
+#endif // CHARTSERIES_H

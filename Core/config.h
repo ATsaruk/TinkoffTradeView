@@ -19,15 +19,22 @@ public:
     /// Сохраняются настройки в файл
     ~Config();
 
-
     /** @brief Возвращает значение параметра
       * @param[IN] key ключ параметра
       * @param[IN] defaultValue значение параметра по умолчания
       * @return значение параметра с ключем key, если такого ключа в списке нет, то вернет переданное defaultValue
       * @return Возвращает значение параметра с ключем key, если такого параметра не найдено, то вернет переданное defaultValue,
       * а так же создаст параметр с ключем key и инициализирует его значением defaultValue. */
-    QVariant getValue(const QString &key, const QVariant &defaultValue = QVariant());
+    template<typename T>
+    std::enable_if_t<std::is_constructible_v<QVariant, T>, T>
+    getValue(const QString &key, T &&defaultValue) {
+        QReadLocker locker(&lock);
 
+        if (settingsMap.count(key))
+            settingsMap[key] = std::move(defaultValue);
+
+        return settingsMap[key].value<T>();
+    }
 
     /** @brief Сохраняет значение параметра
       * @param[IN] key ключ параметра

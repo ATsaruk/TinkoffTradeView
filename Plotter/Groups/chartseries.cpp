@@ -1,30 +1,30 @@
 #include <QThread>
 
-#include "chartgroup.h"
+#include "chartseries.h"
 
 namespace Plotter {
 
-ChartGroup::ChartGroup()
+ChartSeries::ChartSeries()
 {
     isScaled = false;
 }
 
-ChartGroup::~ChartGroup()
+ChartSeries::~ChartSeries()
 {
 
 }
 
-void ChartGroup::setAxis(Axis *_axis)
+void ChartSeries::attachAxis(Axis *_axis)
 {
     if (_axis->getAxisType() == Axis::HORIZONTAL)
         hAxis = _axis;
     else
         vAxis = _axis;
 
-    connect(_axis, &Axis::scaled, this, &ChartGroup::setScalse);
+    connect(_axis, &Axis::scaled, this, &ChartSeries::setScalse);
 }
 
-void ChartGroup::setStockKey(const Data::StockKey &stockKey)
+void ChartSeries::setStockKey(const Data::StockKey &stockKey)
 {
     while (!clear())
         QThread::msleep(1);
@@ -34,12 +34,12 @@ void ChartGroup::setStockKey(const Data::StockKey &stockKey)
     updateData();
 }
 
-const Data::StockKey &ChartGroup::getStockKey()
+const Data::StockKey &ChartSeries::getStockKey()
 {
     return curStockKey;
 }
 
-void ChartGroup::setScalse()
+void ChartSeries::setScalse()
 {
     isScaled = true;
 }

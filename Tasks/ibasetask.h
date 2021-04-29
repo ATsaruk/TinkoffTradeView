@@ -119,7 +119,7 @@ signals:
 
 protected:
     //Запрос на остановку задачи
-    bool isStopRequested;
+    bool isStopRequested = false;
     //Поток в котором будет выполняться данная задача
     QThread *taskThread;
 

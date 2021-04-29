@@ -8,14 +8,11 @@ namespace Plotter {
 
 CandlesSeries::CandlesSeries()
 {
-    isDataRequested = false;
-    isDataChanged = false;
-    autoPriceRange = true;
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
 
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 10);
-    drawWait = 3 * plotInterval / 4;
+    drawWait = plotInterval * 3 / 4;
     //connect(Glo.stocks, &DataStocks::dataChanged, this, &ChartCandlesGroup::dataChanged);
 }
 

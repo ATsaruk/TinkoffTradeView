@@ -55,7 +55,7 @@ public:
     void setData(const StockKey &stockKey_, const Range &range, const qint64 minCandleCount = 1);
 
     //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
-    static qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
+    qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
 
 protected:
     size_t minCandles;      //Минимальное количество свечей, которое должно быть загружено
@@ -75,7 +75,7 @@ protected:
     bool sendRequest();
 
     //Формируем временной интервал, на котором требуется загрузка данных
-    bool initRanges();
+    void initRanges();
 
     bool checkRange();
 

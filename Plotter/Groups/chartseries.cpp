@@ -6,7 +6,7 @@ namespace Plotter {
 
 ChartSeries::ChartSeries()
 {
-    isScaled = false;
+
 }
 
 ChartSeries::~ChartSeries()

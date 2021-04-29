@@ -2,13 +2,14 @@
 
 #include "axis.h"
 #include "horizontaldateaxis.h"
+#include "Core/globals.h"
 
 namespace Plotter {
 
 HorizontalDateAxis::HorizontalDateAxis()
     : Axis(AXIS_TYPE::HORIZONTAL)
 {
-    axisHeight = 20;
+    axisHeight = Glo.conf->getValue("ChartPlotter/Axis/height", 20);
 }
 
 QRectF HorizontalDateAxis::boundingRect() const

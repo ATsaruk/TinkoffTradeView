@@ -31,7 +31,7 @@ signals:
     void changed();
 
 protected:
-    bool isScaled;
+    bool isScaled = false;
     Axis *hAxis;     //horizontal axis
     Axis *vAxis;     //vertical axis
     Data::StockKey curStockKey;

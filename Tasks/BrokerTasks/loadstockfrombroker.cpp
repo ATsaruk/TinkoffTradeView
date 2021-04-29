@@ -8,9 +8,9 @@
 
 namespace Task {
 
-constexpr quint64 SECS_IN_ONE_DAY   = 3600 * 24;
-constexpr quint64 SECS_IN_ONE_WEEK  = 3600 * 24 * 7;
-constexpr quint64 SECS_IN_ONE_MONTH = 3600 * 24 * 30;
+constexpr quint64 SECS_IN_ONE_DAY   = 24 * 3600;
+constexpr quint64 SECS_IN_ONE_WEEK  = 7 * SECS_IN_ONE_DAY;
+constexpr quint64 SECS_IN_ONE_MONTH = 30 * SECS_IN_ONE_DAY;
 
 LoadStockFromBroker::LoadStockFromBroker(QThread *parent)
     : IBaseTask(parent)
@@ -30,6 +30,9 @@ QString LoadStockFromBroker::getName()
 
 void LoadStockFromBroker::setData(const StockKey &stockKey_, const Range &range, const qint64 minCandleCount)
 {
+    if (!range.isValid())
+        throw std::invalid_argument("LoadStockFromBroker::setData: invalid loadRange!");
+
     stockKey = stockKey_;
     loadRange = range;
     minCandles = minCandleCount;
@@ -37,10 +40,7 @@ void LoadStockFromBroker::setData(const StockKey &stockKey_, const Range &range,
 
 void LoadStockFromBroker::exec()
 {
-    if (!initRanges()) {
-        emit finished();
-        return; //нечего загружать
-    }
+    initRanges();
 
     Glo.broker->mutex.lock();
     connect(Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
@@ -66,18 +66,13 @@ bool LoadStockFromBroker::sendRequest()
     return true;
 }
 
-bool LoadStockFromBroker::initRanges()
+void LoadStockFromBroker::initRanges()
 {
-    if ( !loadRange.isValid() )
-        return false;
-
-    extraRange.setRange(loadRange.getEnd(), -14 * 24 * 3600 - loadRange.toSec());
+    extraRange.setRange(loadRange.getEnd(), -2 * SECS_IN_ONE_WEEK - loadRange.toSec());
 
     qint64 maxLoadRange = getMaxLoadInterval(stockKey.interval());
     curRange.setRange(loadRange.getBegin(), maxLoadRange);
     curRange.constrain(extraRange);
-
-    return true;
 }
 
 bool LoadStockFromBroker::checkRange()
@@ -131,6 +126,7 @@ void LoadStockFromBroker::finishTask()
         newCandles = Glo.stocks->insertCandles(stockKey, candles);
         DB::StocksQuery::insertCandles(Glo.dataBase, stockKey, newCandles);
     }
+
     emit finished();
 }
 
@@ -149,10 +145,9 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
     //https://tinkoffcreditsystems.github.io/invest-openapi/swagger-ui/#/market/get_market_candles
     QJsonObject payload(root.value("payload").toObject());
 
-    try {
+    try {  //StockKey::fromJson кидается исключениями
         StockKey recievedKey;
-        //payload содержит ключ акции
-        recievedKey.fromJson(payload);   //тоже кидается исключениями
+        recievedKey.fromJson(payload);   //payload содержит ключ акции
         if(recievedKey != stockKey) {
             QString errorCode = QString("TaskLoadStockFromBroker;onResponse();recievedKey(%1) != key(%2);answer=%3")
                     .arg(recievedKey.keyToString(), stockKey.keyToString(), answer);

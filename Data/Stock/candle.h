@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <QDateTime>
+#include <QJsonObject>
 
 namespace Data {
 
@@ -19,6 +20,12 @@ struct Candle
     float low;          ///<минимальная цена
     uint64_t volume;    ///<объем торгов
     QDateTime dateTime; ///<дата/время начала свечи
+
+    Candle() = default;
+    Candle(Candle &&) = default;
+    Candle(const Candle &) = default;
+    Candle& operator =(Candle&&) = default;
+    Candle& operator =(const Candle&) = default;
 
     /** @brief Заполняет данные по свечи из Json объекта
       * @param[OUT] candle структура свечной информации, в которую будет помещен результат

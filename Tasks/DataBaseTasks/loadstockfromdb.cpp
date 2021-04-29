@@ -8,6 +8,9 @@
 
 namespace Task {
 
+constexpr auto SECS_IN_ONE_DAY = 24 * 3600;
+constexpr auto SECS_IN_TWO_WEEK = 14 * SECS_IN_ONE_DAY;
+
 LoadStockFromDb::LoadStockFromDb(QThread *parent)
     : IBaseTask(parent)
 {
@@ -19,15 +22,14 @@ LoadStockFromDb::~LoadStockFromDb()
     logDebug << "loadStockFromDbTask;~loadStockFromDbTask();-destructor!";
 }
 
-void LoadStockFromDb::setData(const StockKey &stockKey, const Range &range_, const uint minCandleCount)
+void LoadStockFromDb::setData(const StockKey &stockKey, const Range &range, const uint minCandleCount)
 {
-    key = stockKey;
-    range = range_;
-    minCount = minCandleCount;
+    if (!range.isValid())
+        throw std::invalid_argument("LoadStockFromDb::setData: invalid loadRange!");
 
-    qint64 minLoadInterval = (minCount + 1) * key.intervalToSec();
-    if (range.toSec() < minLoadInterval)
-        range.setRange(range.getEnd(), -minLoadInterval);
+    key = stockKey;
+    loadRange = range;
+    minCount = minCandleCount;
 }
 
 QString LoadStockFromDb::getName()
@@ -37,34 +39,36 @@ QString LoadStockFromDb::getName()
 
 void LoadStockFromDb::exec()
 {
-    Candles candles;
-
     //2 недели это новогодние каникулы
-    QDateTime twoWeeksAgo = range.getBegin().addSecs(-14 * 86400); //86400 - число секунд в сутках
+    QDateTime twoWeeksAgo = loadRange.getBegin().addSecs(-SECS_IN_TWO_WEEK);
 
-    while (candles.size() < minCount) {
-        DB::StocksQuery::loadCandles(Glo.dataBase, key, candles, range);
-
-        long interval = LoadStockFromBroker::getMaxLoadInterval(key.interval());
-        range.displace(-interval, -interval);
-        if (range.getBegin() < twoWeeksAgo)
-            break;
-
-        //Если пришел запрос на остановку задачи
+    Candles candles;
+    while (true) {
         if (isStopRequested) {
             emit finished();
             return;
         }
+
+        DB::StocksQuery::loadCandles(Glo.dataBase, key, candles, loadRange);
+        if (candles.size() >= minCount)
+            break;
+
+        //Если после загрузки недостаточно свечей, загружаем дополнительно 1 день, предшествующий loadRange
+        loadRange.setRange(loadRange.getBegin().addSecs(-SECS_IN_ONE_DAY), SECS_IN_ONE_DAY);
+
+        if (loadRange.getBegin() < twoWeeksAgo) {
+            //Дополнительный 2 недельный интервал загружен и надостаточно свечей,
+            //значит их нету в БД или указано заведомо завышенное minCandleCount
+            break;
+        }
     }
 
-    if (!candles.empty())
+    if (!candles.empty()) {
+        Glo.stocks->insertCandles(key, candles);
         logInfo << QString("TaskLoadStockFromDb;exec();loaded;%1;candles;%2;%3")
                    .arg(candles.size()).arg(candles.front().dateTime.toString(), candles.back().dateTime.toString());
+    }
 
-    //Добавляем данные в общий список акций
-    Glo.stocks->insertCandles(key, candles);
-
-    //Отпавляем сигнал о завершении задачи
     emit finished();
 }
 

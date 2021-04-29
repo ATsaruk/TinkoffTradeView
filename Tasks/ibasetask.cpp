@@ -7,7 +7,6 @@ namespace Task {
 
 IBaseTask::IBaseTask(QThread *parent)
 {
-    isStopRequested = false;
     isRootTask = parent == nullptr;
 
     if (isRootTask) {    //Это корневая задача, создаем поток, и перемещаемся в него

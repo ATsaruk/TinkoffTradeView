@@ -53,7 +53,7 @@ protected slots:
     virtual void taskFinished() override;
 
 private:
-    uint16_t taskCount;   //общее кол-во запущенных задач
+    uint16_t taskCount = 0;   //общее кол-во запущенных задач
     uint16_t maxTaskCount;
 
     //Функция перенесена в секцию private, что бы нельзя было зарегестрировать задачу класса Manager

@@ -13,7 +13,6 @@ Manager::Manager(QThread *parent)
     //была отдельным потоком, и обнулением мы лишаем их родительского потока и они создадут свои потоки
     taskThread = nullptr;
 
-    taskCount = 0;
     maxTaskCount = QThread::idealThreadCount() * 2;
     logDebug << QString("TaskManager;TaskManager();+constructor!");
 }

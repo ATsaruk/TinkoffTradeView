@@ -30,7 +30,7 @@ public:
     getValue(const QString &key, T &&defaultValue) {
         QReadLocker locker(&lock);
 
-        if (settingsMap.count(key))
+        if (settingsMap.count(key) == 0)
             settingsMap[key] = std::move(defaultValue);
 
         return settingsMap[key].value<T>();

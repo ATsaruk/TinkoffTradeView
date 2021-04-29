@@ -1,9 +1,3 @@
-#include "customcommand.h"
-#include "Core/globals.h"
-
-namespace Task {
-
-
 /* CustomCommand(nullptr...
  * Если в качестве QThread *parent передается nullptr, это означает что создается корневая комманда
  * например:
@@ -23,6 +17,12 @@ namespace Task {
  *
  *   TaskManager::get()->registerTask(rootCommand);
  */
+#include "customcommand.h"
+#include "Core/globals.h"
+
+namespace Task {
+
+
 CustomCommand::CustomCommand(const QString &customCommandName)
     : CustomCommand(nullptr, customCommandName)
 {
@@ -32,7 +32,6 @@ CustomCommand::CustomCommand(const QString &customCommandName)
 CustomCommand::CustomCommand(QThread *parent, const QString &customCommandName)
     : IBaseTask(parent)
 {
-    taskCount = 0;
     setCommandName(customCommandName);
 }
 
@@ -42,13 +41,11 @@ CustomCommand::~CustomCommand()
     logDebug << "CustomCommand;~CustomCommand();-destructor!";
 }
 
-//Возвращает имя задачи
 QString CustomCommand::getName()
 {
     return name;
 }
 
-//Задание имени комманды
 void CustomCommand::setCommandName(QString customCommandName)
 {
     //Если первая бука прописная, меняем её на заглавную
@@ -60,7 +57,6 @@ void CustomCommand::setCommandName(QString customCommandName)
     name = QString("Custom%1").arg(customCommandName);
 }
 
-//Регистрация задачи
 void CustomCommand::registerTask(IBaseTask *newTask)
 {
     QMutexLocker locker(&mutex);
@@ -72,87 +68,48 @@ void CustomCommand::registerTask(IBaseTask *newTask)
         logWarning << "CustomCommand;registerTask();try register task with other thread";
 }
 
-//Запускает следующую в очереди задачу
 void CustomCommand::exec()
 {
     runNextTask();
 }
 
-//Отправляет сигнал всем запущенным задачам на остановку (сигнал подключается в функции runNextTask)
 void CustomCommand::stop()
 {
     emit stopAll();
 }
 
-/* Возвращает сколько задач можно запускать паралельно (по уммолчанию 1 - последовательный запуск задач)
- * При переопределении данной функции, нужно что бы запускаемые задачи находились в разных потоках!
- * Данная функция была сделана для TaskManager'а, т.к. в нем могут выполнятся паралельно разные задачи
- * Каждая комманда помещена в отдельный поток и попытки создавать потоки внутри потоков ни к чему хорошему
- * не приводили, вернее создавать их не проблема, проблема потом возникает при удалении.
- * В общем оставялем эту функцию "как есть"
- *
- * Если все же понадобится мультипоточность внутри одной задачи, в теории втутри задачи в функции exec()
- * можно создать задачи для TaskManager::get()->addTask <нужная задача> () и подключится к сигналу о завершении.
- * Создать нужное количество таких задачь, TaskManager запустит их паралельно, нужно проверять.
- */
-uint CustomCommand::getMaxExecTask()
-{
-    return 1;
-}
-
-/* Запускает задачи из очереди
- * Одновременно может работать не более getMaxExecTask() x2 задач
- * Достаем очередную задачу из очереди, подключаемся к сигналу завершения задачи (что бы по завершении запустить следующую)
- * Увеличиваем счетчик запущенных задач и запускам задачу
- */
 void CustomCommand::runNextTask()
 {
     QMutexLocker locker(&mutex);
 
-    uint maxTaskCount = getMaxExecTask();
-    //Запуск задач из очереди, их может быть одновременно не более чем getMaxExecTask() задач
-    while (taskCount < maxTaskCount) {
-        if (taskList.empty())
-            break;  //Задач больше нет
+    if (taskList.isEmpty())
+        throw std::logic_error("CustomCommand: Call runNextTask() with empty taskList!");
 
-        IBaseTask *task = taskList.dequeue();
-        connect(task, &IBaseTask::finished,  this, &CustomCommand::taskFinished);
-        connect(this, &CustomCommand::stopAll, task, &IBaseTask::stop);
+    IBaseTask *task = taskList.dequeue();
+    connect(task, &IBaseTask::finished,  this, &CustomCommand::taskFinished);
+    connect(this, &CustomCommand::stopAll, task, &IBaseTask::stop);
 
-        taskCount++;
-        logDebug << QString("%1;runNextTask();started : %2;taskCount = %3/%4").arg(getName(), task->getName()).arg(taskCount).arg(taskList.size()+1);
-        task->start();
-    }
+    logDebug << QString("%1;runNextTask();started : %2;tasksLeft = %3").arg(getName(), task->getName()).arg(taskList.size());
+
+    task->start();
 }
 
-/* Обработка сигнала завершения задачи
- * Уменьшяем счетчик числа запущенных комманд, если есть задачи в очереди, запускаем следующую задачу
- * Если задач в очереди нет и все запущенные команды завершились (taskCount == 0), завершаем выполнение отправкой соответсвующего сигнала
- */
 void CustomCommand::taskFinished()
 {
     QMutexLocker locker(&mutex);
 
-    if (taskCount > 0) {
-        taskCount--;
-
-        IBaseTask *task = static_cast<IBaseTask*>(sender());
-        if (task != nullptr) {
-            logDebug << QString("%1;taskFinished();finished: %2;taskCount = %3/%4").arg(getName(), task->getName()).arg(taskCount).arg(taskList.size());
-            //task->deleteLater();
-            delete task;
-        } else
-            logCritical << QString("%1;taskFinished();can't get task!;taskCount = %2/%3").arg(getName()).arg(taskCount).arg(taskList.size());
-
-        if (!taskList.isEmpty() && !isStopRequested)
-            //Если остались задачи в очереди и нет запроса на остановку, то запускаем следующую задачу
-            runNextTask();
-        else if (taskCount == 0)
-            //Если список задач пуст (или пришел запрос на остановку задачи) и все активные задачи завершены, отправляем сигнал о завершении
-            emit finished();
+    //Удаляем завершившуюся задачу
+    if ( auto task = dynamic_cast<IBaseTask*>(sender()) ) {
+        logDebug << QString("%1;taskFinished();finished: %2;tasksLeft = %3").arg(getName(), task->getName()).arg(taskList.size());
+        delete task;
     } else
-        //Такого быть не должно, если произошло, пишем в лог!
-        logCritical << QString("%1;taskFinished();task finished but taskCount == 0").arg(getName());
+        logCritical << QString("%1;taskFinished();can't get task!;tasksLeft = %2").arg(getName()).arg(taskList.size());
+
+    //Запускаем следующую или завершаем выполнение
+    if (!taskList.empty() && !isStopRequested)
+        runNextTask();
+    else
+        emit finished();
 }
 
 }

@@ -45,11 +45,17 @@ public:
     //Регистрация новой заявки
     void registerTask(IBaseTask *newTask) override;
 
-protected:
-    //Возвращает сколько задач можно запускать паралельно
-    uint getMaxExecTask() override;
+protected slots:
+    //Запуск очередной задачи
+    virtual void runNextTask() override;
+
+    //Обработка завершения работы потока
+    virtual void taskFinished() override;
 
 private:
+    uint16_t taskCount;   //общее кол-во запущенных задач
+    uint16_t maxTaskCount;
+
     //Функция перенесена в секцию private, что бы нельзя было зарегестрировать задачу класса Manager
     QThread* getThread() override;
 };

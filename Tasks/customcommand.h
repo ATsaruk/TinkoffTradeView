@@ -232,7 +232,7 @@ public:
 
 protected:
     QRecursiveMutex mutex;
-    QQueue<IBaseTask*> taskList;        //очередь обычных задач на запуск
+    QQueue<IBaseTask*> taskList;  //очередь задач на запуск
 
     //Основной цикл выполнения задачи
     void exec() override;
@@ -240,22 +240,20 @@ protected:
     //Остановить задату
     void stop() override;
 
-    //Возвращает сколько задач можно запускать паралельно (по уммолчанию 1 : последовательный запуск задач)
-    virtual uint getMaxExecTask();
-
 protected slots:
     //Запуск очередной задачи
     virtual void runNextTask();
 
-    //Обработка завершения работы потока
+    //Обработка завершения потока
     virtual void taskFinished();
 
 signals:
+    //Сигнал остановки всех задач
     void stopAll();
 
 private:
-    uint16_t taskCount;             //общее кол-во запущенных задач
-    QString name;                   //Имя задачи
+    //Имя задачи
+    QString name;
 };
 
 }

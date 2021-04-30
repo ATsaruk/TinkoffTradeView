@@ -39,23 +39,17 @@ Candles Stocks::insertCandles(const StockKey &key, const Candles &candles)
         return newCandles;
 
     QWriteLocker lock(&rwMutex);
-    Candles &dataCandles = stocks[key.keyToString()];
+    Candles &stock = stocks[key.keyToString()];
 
-    //Это лямбда функция которая проверяет отсутсвие свечи newCandle в списке dataCandles для copy_if
-    auto isCandleAbsent = [&dataCandles] (const auto& newCandle) {
-        auto isEqual = [&newCandle] (const auto& dataCandle) {
-            return dataCandle == newCandle;
-        };
-        return std::none_of( dataCandles.begin(), dataCandles.end(), isEqual );
-    };
-
-    newCandles.reserve(candles.size());
-    std::copy_if(candles.begin(), candles.end(), std::back_inserter(newCandles), isCandleAbsent);
+    std::copy_if(candles.begin(),
+                 candles.end(),
+                 std::back_inserter(newCandles),
+                 [&stock] (const auto& candle) { return std::count(stock.begin(), stock.end(), candle) == 0; } );
 
     if (!newCandles.empty()) {
-        dataCandles.reserve(dataCandles.size() + newCandles.size());
-        std::copy(newCandles.begin(), newCandles.end(), std::back_inserter(dataCandles));
-        std::sort(dataCandles.begin(), dataCandles.end());
+        stock.reserve(stock.size() + newCandles.size());
+        std::copy(newCandles.begin(), newCandles.end(), std::back_inserter(stock));
+        std::sort(stock.begin(), stock.end());
 
         emit dataChanged();
         logInfo << QString("DataStocks;insertStockData();Append;%1;candles;%2;%3")

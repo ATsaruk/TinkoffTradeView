@@ -4,22 +4,25 @@
 
 namespace Data {
 
-void Candle::fromJson(const QJsonObject &json)
+Candle Candle::fromJson(const QJsonObject &json)
 {
-    open = json.value("o").toDouble();
-    close = json.value("c").toDouble();
-    high = json.value("h").toDouble();
-    low = json.value("l").toDouble();
-    volume = json.value("v").toInt();
+    Candle newCandle;
+    newCandle.open = json.value("o").toDouble();
+    newCandle.close = json.value("c").toDouble();
+    newCandle.high = json.value("h").toDouble();
+    newCandle.low = json.value("l").toDouble();
+    newCandle.volume = json.value("v").toInt();
 
     //QDateTime от брокера приходт со непонятной временной зоной, которая потом создает кучу проблем, приходится пересобирать дату
     const QDateTime &j = json.value("time").toVariant().toDateTime().addSecs(3*60*60);
-    dateTime = QDateTime( QDate(j.date().year(),
-                                j.date().month(),
-                                j.date().day()),
-                          QTime(j.time().hour(),
-                                j.time().minute(),
-                                j.time().second()) );
+    newCandle.dateTime = QDateTime( QDate(j.date().year(),
+                                          j.date().month(),
+                                          j.date().day()),
+                                    QTime(j.time().hour(),
+                                          j.time().minute(),
+                                          j.time().second()) );
+
+    return newCandle;
 }
 
 }

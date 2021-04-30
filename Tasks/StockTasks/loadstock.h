@@ -20,7 +20,11 @@
 #define LOADSTOCK_H
 
 #include "Tasks/customcommand.h"
+#include "Tasks/Interfaces/OutputCandles.h"
+#include "Tasks/Interfaces/InputStockKey_Range.h"
+
 #include "Data/range.h"
+#include "Data/Stock/candle.h"
 #include "Data/Stock/stockkey.h"
 
 namespace Task {
@@ -28,16 +32,35 @@ using namespace Data;
 
 
 ///Команда получения данных по акции
-class LoadStock : public CustomCommand
+class LoadStock : public CustomCommand, public InputStockKey_Range, public OutputCandles
 {
 public:
     explicit LoadStock(QThread *parent = nullptr);
 
     //Задать данные для запуска задачь
-    void setData(const StockKey &stockKey, const Range &range = Range(), const uint minCandleCount = 1);
+    void setData(const StockKey &stockKey, const Range &range = Range()) override;
+
+    void setMinCandleCount(const uint minCandleCount_);
 
     //Возвращает имя задачи
     QString getName() override;
+
+    Candles& getCandles() override;
+
+protected:
+    void exec() override;
+
+    void loadFromBroker(const Range &range);
+
+protected slots:
+    //Обработка завершения потока
+    virtual void taskFinished() override;
+
+private:
+    Candles candles;
+    StockKey key;         //Ключ акции
+    Range loadRange;      //Загружаемый итнервал
+    uint minCandleCount = 1;
 };
 
 }

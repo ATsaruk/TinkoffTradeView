@@ -113,6 +113,8 @@ public slots:
     //Остановить задату
     virtual void stop();
 
+    int isFinishedSignalHasConnection();
+
 signals:
     //Сигнал о завершении работы
     void finished();

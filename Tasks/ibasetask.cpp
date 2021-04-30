@@ -1,4 +1,5 @@
 #include <QThread>
+#include <QMetaMethod>
 #include <QApplication>
 
 #include "ibasetask.h"
@@ -42,6 +43,12 @@ void IBaseTask::start()
 void IBaseTask::stop()
 {
     isStopRequested = true;
+}
+
+int IBaseTask::isFinishedSignalHasConnection()
+{
+    auto signalFinished = QMetaMethod::fromSignal(&IBaseTask::finished);
+    return signalFinished.parameterCount();
 }
 
 }

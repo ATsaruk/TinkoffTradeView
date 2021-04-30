@@ -59,7 +59,7 @@ void CustomCommand::setCommandName(QString customCommandName)
 
 void CustomCommand::registerTask(IBaseTask *newTask)
 {
-    QMutexLocker locker(&mutex);
+    //QMutexLocker locker(&mutex);
 
     //Регистрация возможна только есть задачи работают в одном потоке
     if (newTask->getThread() == taskThread)
@@ -80,7 +80,7 @@ void CustomCommand::stop()
 
 void CustomCommand::runNextTask()
 {
-    QMutexLocker locker(&mutex);
+    //QMutexLocker locker(&mutex);
 
     if (taskList.isEmpty())
         throw std::logic_error("CustomCommand: Call runNextTask() with empty taskList!");
@@ -97,7 +97,7 @@ void CustomCommand::runNextTask()
 
 void CustomCommand::taskFinished()
 {
-    QMutexLocker locker(&mutex);
+    //QMutexLocker locker(&mutex);
 
     //Удаляем завершившуюся задачу
     if ( auto task = dynamic_cast<IBaseTask*>(sender()) ) {

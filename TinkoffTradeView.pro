@@ -34,9 +34,8 @@ SOURCES += \
     Plotter/Groups/Candles/candlesseries.cpp \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
-    Tasks/BrokerTasks/loadstockfrombroker.cpp \
-    Tasks/Commands/loadstock.cpp \
-    Tasks/DataBaseTasks/loadstockfromdb.cpp \
+    Tasks/StockTasks/loadstockfrombroker.cpp \
+    Tasks/StockTasks/loadstock.cpp \
     Tasks/customcommand.cpp \
     Tasks/ibasetask.cpp \
     Tasks/manager.cpp \
@@ -67,9 +66,10 @@ HEADERS += \
     Plotter/Groups/Candles/candlesseries.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
-    Tasks/BrokerTasks/loadstockfrombroker.h \
-    Tasks/Commands/loadstock.h \
-    Tasks/DataBaseTasks/loadstockfromdb.h \
+    Tasks/Interfaces/InputStockKey_Range.h \
+    Tasks/Interfaces/OutputCandles.h \
+    Tasks/StockTasks/loadstockfrombroker.h \
+    Tasks/StockTasks/loadstock.h \
     Tasks/customcommand.h \
     Tasks/ibasetask.h \
     Tasks/manager.h \

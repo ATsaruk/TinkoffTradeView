@@ -45,14 +45,15 @@ public:
     //Регистрация новой заявки
     void registerTask(IBaseTask *newTask) override;
 
-protected slots:
     //Запуск очередной задачи
     virtual void runNextTask() override;
 
+protected slots:
     //Обработка завершения работы потока
     virtual void taskFinished() override;
 
 private:
+    QRecursiveMutex mutex;
     uint16_t taskCount = 0;   //общее кол-во запущенных задач
     uint16_t maxTaskCount;
 

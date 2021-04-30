@@ -32,15 +32,17 @@
 
 #include "Tasks/ibasetask.h"
 #include "Data/Stock/stockkey.h"
-#include "Data/Stock/candle.h"
 #include "Data/range.h"
+#include "Data/Stock/candle.h"
+#include "Tasks/Interfaces/InputStockKey_Range.h"
+#include "Tasks/Interfaces/OutputCandles.h"
 
 namespace Task {
 using namespace Data;
 
 
 ///Задача загрузки свечей из БД за указанный временной интервал
-class LoadStockFromBroker : public IBaseTask
+class LoadStockFromBroker : public IBaseTask, public InputStockKey_Range, public OutputCandles
 {
     Q_OBJECT
 
@@ -52,18 +54,18 @@ public:
     QString getName() override;
 
     //Задание исходных данных для загрузки
-    void setData(const StockKey &stockKey_, const Range &range, const qint64 minCandleCount = 1);
+    void setData(const StockKey &stockKey_, const Range &range) override;
+
+    Candles& getCandles() override;
 
     //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
-    qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
+    static qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
 
 protected:
-    size_t minCandles;      //Минимальное количество свечей, которое должно быть загружено
     StockKey stockKey;      //ключ акции
 
     Range curRange;     //Текущий подинтервал загрузки
     Range loadRange;    //Полный интервал загрузки
-    Range extraRange;   //Дополнительный 2 недельный интервал в начале (нужно для загрузки через новогодние праздники)
 
     //Список полученных свечей
     Candles candles;
@@ -74,24 +76,23 @@ protected:
     //Запрос данных у брокера
     bool sendRequest();
 
-    //Формируем временной интервал, на котором требуется загрузка данных
-    void initRanges();
-
-    bool checkRange();
-
-    bool loadExtraRange();
-
     //Смещает начало очередного интервала загрузки
-    void shiftCurRange();
+    bool getNextLoadRange();
 
     //Освобождение ресурсов и сохранение полученных данных
     void finishTask();
+
+    //Читает свечи из QJsonDocument'а
+    bool readCandles(const QByteArray &answer);
+
+    bool checkStockKey(const QJsonObject &payload);
 
 protected slots:
     //Обработка отвера с сервера брокера
     void onResponse(QByteArray answer);
 
 private:
+
     //Удаляет незавершенную свечу
     void removeIncompleteCandle(Candles &candles);
 };

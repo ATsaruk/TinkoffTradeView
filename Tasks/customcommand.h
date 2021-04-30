@@ -220,7 +220,7 @@ public:
     std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
     addTask(N ... args)
     {
-        QMutexLocker locker(&mutex);
+        //QMutexLocker locker(&mutex);
         T *newTask = new T(taskThread);
         newTask->setData(args ...);
         registerTask(newTask);
@@ -231,7 +231,7 @@ public:
     virtual void registerTask(IBaseTask *newTask);
 
 protected:
-    QRecursiveMutex mutex;
+    //QRecursiveMutex mutex;
     QQueue<IBaseTask*> taskList;  //очередь задач на запуск
 
     //Основной цикл выполнения задачи
@@ -240,10 +240,10 @@ protected:
     //Остановить задату
     void stop() override;
 
-protected slots:
     //Запуск очередной задачи
     virtual void runNextTask();
 
+protected slots:
     //Обработка завершения потока
     virtual void taskFinished();
 

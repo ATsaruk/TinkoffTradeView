@@ -27,15 +27,15 @@ struct Candle
     Candle& operator =(Candle&&) noexcept = default;
     Candle& operator =(const Candle&) = default;
 
-    Candle(const QDateTime &_date, const float &_open, const float &_close, const float &_high, const float &_low, const uint _volume)
-        : dateTime(_date), open(_open), close(_close), high(_high), low(_low), volume(_volume) { }
+    Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const uint volume_)
+        : dateTime(date_), open(open_), close(close_), high(high_), low(low_), volume(volume_) { }
 
     /** @brief Заполняет данные по свечи из Json объекта
       * @param[OUT] candle структура свечной информации, в которую будет помещен результат
       * @param[IN] json объект в котором содержится свечная информация
       * @details Вспомогательная статическая функция, для заполнения данных по свечи из json объекта,
       * можно использовать при анализе ответа от брокера. */
-    void fromJson(const QJsonObject &json);
+    static Candle fromJson(const QJsonObject &json);
 
     friend bool operator>  (const Candle &c1, const Candle &c2) { return (c1.dateTime >  c2.dateTime); }
     friend bool operator<  (const Candle &c1, const Candle &c2) { return (c1.dateTime <  c2.dateTime); }

@@ -46,7 +46,7 @@ protected:
     void addCandles();
 
 protected slots:
-    void dataChanged();
+    void loadCandlesFinished();
     void loadTaskFinished();
 
 private:

@@ -2,7 +2,7 @@
 
 #include "Core/globals.h"
 #include "Plotter/Axis/axis.h"
-#include "Tasks/Commands/loadstock.h"
+#include "Tasks/StockTasks/loadstock.h"
 
 namespace Plotter {
 
@@ -208,10 +208,9 @@ const QDateTime CandlesSeries::getDateByIndex(const long index)
 void CandlesSeries::loadData(const Data::Range &range)
 {
     isDataRequested = true;
-    uint candleCount = hAxis->getRange() / 3.;
-    auto *command = NEW_TASK<Task::LoadStock>(curStockKey, range, candleCount);
-    connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::dataChanged);
-    //connect(command, &Task::IBaseTask::finished, this, &StockItem::loadTaskFinished);
+    auto *command = NEW_TASK<Task::LoadStock>(curStockKey, range);
+    command->setMinCandleCount( hAxis->getRange() / 3. );
+    //connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::loadCandlesFinished);
 }
 
 //Добавление 1 свечи, поиск нового индекса
@@ -271,9 +270,16 @@ void CandlesSeries::addCandles()
     isDataRequested = false;
 }
 
-void CandlesSeries::dataChanged()
+void CandlesSeries::loadCandlesFinished()
 {
-    addCandles();
+    if ( Task::LoadStock *task = dynamic_cast<Task::LoadStock*>(sender()) ) {
+        task->disconnect();
+        //disconnect(task, nullptr, this, nullptr);
+        if (!task->isFinishedSignalHasConnection())
+            delete task;
+
+        addCandles();
+    }
     //isDataChanged = true;
 }
 

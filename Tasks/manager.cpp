@@ -61,7 +61,9 @@ void Manager::taskFinished()
     if ( IBaseTask *task = dynamic_cast<IBaseTask*>(sender()) ) {
         logDebug << QString("%1;taskFinished();finished: %2;taskCount = %3/%4")
                     .arg(getName(), task->getName()).arg(taskCount).arg(taskList.size());
-        delete task;
+        int cnt = task->isFinishedSignalHasConnection();
+        if (cnt == 1)
+            delete task;
     } else
         logCritical << QString("%1;taskFinished();can't get task!;taskCount = %2/%3")
                        .arg(getName()).arg(taskCount).arg(taskList.size());

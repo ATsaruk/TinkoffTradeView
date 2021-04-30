@@ -114,18 +114,18 @@ void LoadStockFromBroker::shiftCurRange()
 
 void LoadStockFromBroker::finishTask()
 {
-    Glo.broker->mutex.unlock();
+    removeIncompleteCandle(candles);
 
-    if ( !candles.empty() && !isStopRequested ) {
-        logInfo << QString("TaskLoadStocksFromBroker;finishTask();loaded;%1;candles;%2;%3")
-                   .arg(candles.size()).arg(candles.front().dateTime.toString(), candles.back().dateTime.toString());
-
-        removeIncompleteCandle(candles);
-
+    if ( !candles.empty() ) {
         auto newCandles = Glo.stocks->insertCandles(stockKey, candles);
         if (!newCandles.empty())
             DB::StocksQuery::insertCandles(Glo.dataBase, stockKey, newCandles);
+
+        logInfo << QString("TaskLoadStocksFromBroker;finishTask();loaded;%1;candles;%2;%3")
+                   .arg(candles.size()).arg(candles.front().dateTime.toString(), candles.back().dateTime.toString());
     }
+
+    Glo.broker->mutex.unlock();
 
     emit finished();
 }

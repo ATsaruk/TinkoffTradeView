@@ -8,9 +8,6 @@
 
 namespace Task {
 
-constexpr auto SECS_IN_ONE_DAY = 24 * 3600;
-constexpr auto SECS_IN_TWO_WEEK = 14 * SECS_IN_ONE_DAY;
-
 LoadStockFromDb::LoadStockFromDb(QThread *parent)
     : IBaseTask(parent)
 {
@@ -39,29 +36,7 @@ QString LoadStockFromDb::getName()
 
 void LoadStockFromDb::exec()
 {
-    //2 недели это новогодние каникулы
-    QDateTime twoWeeksAgo = loadRange.getBegin().addSecs(-SECS_IN_TWO_WEEK);
-
-    Candles candles;
-    while (true) {
-        if (isStopRequested) {
-            emit finished();
-            return;
-        }
-
-        DB::StocksQuery::loadCandles(Glo.dataBase, key, candles, loadRange);
-        if (candles.size() >= minCount)
-            break;
-
-        //Если после загрузки недостаточно свечей, загружаем дополнительно 1 день, предшествующий loadRange
-        loadRange.setRange(loadRange.getBegin().addSecs(-SECS_IN_ONE_DAY), SECS_IN_ONE_DAY);
-
-        if (loadRange.getBegin() < twoWeeksAgo) {
-            //Дополнительный 2 недельный интервал загружен и надостаточно свечей,
-            //значит их нету в БД или указано заведомо завышенное minCandleCount
-            break;
-        }
-    }
+    Candles candles = DB::StocksQuery::loadCandles(Glo.dataBase, key, loadRange);
 
     if (!candles.empty()) {
         Glo.stocks->insertCandles(key, candles);

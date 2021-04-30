@@ -36,12 +36,12 @@ void StocksQuery::insertCandles(IDataBase *db, const StockKey &key, Candles &can
     }
 }
 
-void StocksQuery::loadCandles(IDataBase *db, const StockKey &key, Candles &candles, const Range &range)
+Candles StocksQuery::loadCandles(IDataBase *db, const StockKey &key, const Range &range)
 {
     QMutexLocker locker(&db->mutex);
 
     if (!db->isOpen())
-        return;
+        return Candles();
 
     QString interval = key.intervalToString();
     QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(key.figi(), interval);
@@ -53,28 +53,25 @@ void StocksQuery::loadCandles(IDataBase *db, const StockKey &key, Candles &candl
          * свеча на 10:00:00 она относится к диапазону 10:00:00 - 10:15:00 */
     }
 
-    QSqlQuery query( db->get() );
+    QSqlQuery query(db->get());
     if (!query.exec(load)) {
         logCritical << QString("StocksQuery;retrieveCandles();Error can't read calndles;%1;%2")
                        .arg(query.lastError().databaseText(), query.lastError().driverText());
-        return;
     }
 
-    candles.reserve(candles.size() + query.size());
+    Candles candles;
+    candles.reserve(query.size());
 
     while (query.next()) {
-        Candle candle;
-
-        //Заполняем свечную информацию
-        candle.dateTime = query.value(2).toDateTime();
-        candle.open = query.value(3).toReal();
-        candle.close = query.value(4).toReal();
-        candle.high = query.value(5).toReal();
-        candle.low = query.value(6).toReal();
-        candle.volume = query.value(7).toLongLong();
-
-        candles.push_back( std::move(candle) );
+        candles.emplace_back( query.value(2).toDateTime(),   //dateTime
+                              query.value(3).toReal(),       //open
+                              query.value(4).toReal(),       //close
+                              query.value(5).toReal(),       //high
+                              query.value(6).toReal(),       //low
+                              query.value(7).toLongLong() ); //volume
     }
+
+    return candles;
 }
 
 }

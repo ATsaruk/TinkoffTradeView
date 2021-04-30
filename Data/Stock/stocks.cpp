@@ -34,13 +34,11 @@ Range Stocks::getRange(const StockKey &key)
 
 Candles Stocks::insertCandles(const StockKey &key, const Candles &candles)
 {
-    Candles newCandles;
-    if (candles.empty())
-        return newCandles;
-
     QWriteLocker lock(&rwMutex);
+
     Candles &stock = stocks[key.keyToString()];
 
+    Candles newCandles;
     std::copy_if(candles.begin(),
                  candles.end(),
                  std::back_inserter(newCandles),

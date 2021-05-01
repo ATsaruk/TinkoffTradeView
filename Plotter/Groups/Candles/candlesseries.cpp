@@ -4,6 +4,10 @@
 #include "Plotter/Axis/axis.h"
 #include "Tasks/StockTasks/loadstock.h"
 
+
+#include "DataBase/Query/stocksquery.h"
+
+
 namespace Plotter {
 
 CandlesSeries::CandlesSeries()
@@ -210,7 +214,7 @@ void CandlesSeries::loadData(const Data::Range &range)
     isDataRequested = true;
     auto *command = NEW_TASK<Task::LoadStock>(curStockKey, range);
     command->setMinCandleCount( hAxis->getRange() / 3. );
-    //connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::loadCandlesFinished);
+    connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::loadCandlesFinished);
 }
 
 //Добавление 1 свечи, поиск нового индекса
@@ -272,14 +276,7 @@ void CandlesSeries::addCandles()
 
 void CandlesSeries::loadCandlesFinished()
 {
-    if ( Task::LoadStock *task = dynamic_cast<Task::LoadStock*>(sender()) ) {
-        task->disconnect();
-        //disconnect(task, nullptr, this, nullptr);
-        if (!task->isFinishedSignalHasConnection())
-            delete task;
-
-        addCandles();
-    }
+    addCandles();
     //isDataChanged = true;
 }
 

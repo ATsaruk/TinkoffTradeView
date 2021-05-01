@@ -34,15 +34,15 @@
 #include "Data/Stock/stockkey.h"
 #include "Data/range.h"
 #include "Data/Stock/candle.h"
-#include "Tasks/Interfaces/InputStockKey_Range.h"
-#include "Tasks/Interfaces/OutputCandles.h"
+#include "Tasks/Interfaces/inputinterfaces.h"
+#include "Tasks/Interfaces/outputinterfaces.h"
 
 namespace Task {
 using namespace Data;
 
 
 ///Задача загрузки свечей из БД за указанный временной интервал
-class LoadStockFromBroker : public IBaseTask, public InputStockKey_Range, public OutputCandles
+class LoadStockFromBroker : public IBaseTask, public InputStockKeyAndRange, public OutputCandles
 {
     Q_OBJECT
 
@@ -56,7 +56,7 @@ public:
     //Задание исходных данных для загрузки
     void setData(const StockKey &stockKey_, const Range &range) override;
 
-    Candles& getCandles() override;
+    Candles& getResult() override;
 
     //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
     static qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);

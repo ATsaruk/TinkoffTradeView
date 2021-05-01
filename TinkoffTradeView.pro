@@ -39,6 +39,7 @@ SOURCES += \
     Tasks/customcommand.cpp \
     Tasks/ibasetask.cpp \
     Tasks/manager.cpp \
+    Tasks/sequencecommand.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -66,13 +67,15 @@ HEADERS += \
     Plotter/Groups/Candles/candlesseries.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
-    Tasks/Interfaces/InputStockKey_Range.h \
-    Tasks/Interfaces/OutputCandles.h \
+    Tasks/Interfaces/inputinterfaces.h \
+    Tasks/Interfaces/interfases.h \
+    Tasks/Interfaces/outputinterfaces.h \
     Tasks/StockTasks/loadstockfrombroker.h \
     Tasks/StockTasks/loadstock.h \
     Tasks/customcommand.h \
     Tasks/ibasetask.h \
     Tasks/manager.h \
+    Tasks/sequencecommand.h \
     mainwindow.h
 
 FORMS += \

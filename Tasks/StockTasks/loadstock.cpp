@@ -28,7 +28,7 @@ QString LoadStock::getName()
     return "CommandLoadStock";
 }
 
-Candles &LoadStock::getCandles()
+Candles &LoadStock::getResult()
 {
     return candles;
 }
@@ -36,6 +36,9 @@ Candles &LoadStock::getCandles()
 void LoadStock::exec()
 {
     candles = DB::StocksQuery::loadCandles(Glo.dataBase, key, loadRange);
+    Glo.stocks->insertCandles(key, candles);
+
+    /// @todo проверить достаточно ли загружено свечей из БД, если недостаточно, пробуем загружать доп. 2 недели
 
     Range range = loadRange;
     if (!candles.empty()) {
@@ -46,6 +49,8 @@ void LoadStock::exec()
         } else
             range = Range();
     }
+
+    /// @todo подрезать время загрузки с учетом ночного интервала
 
     loadFromBroker(range);
 }
@@ -70,7 +75,7 @@ void LoadStock::taskFinished()
                     .arg(getName(), task->getName()).arg(taskList.size());
     }
 
-    auto brokerCandles = task->getCandles();
+    auto brokerCandles = task->getResult();
     delete task;
 
     const auto &allCandles = candles;
@@ -78,6 +83,13 @@ void LoadStock::taskFinished()
                  brokerCandles.end(),
                  std::back_inserter(candles),
                  [&allCandles] (const auto& candle) { return std::count(allCandles.begin(), allCandles.end(), candle) == 0; } );
+
+
+    /// @todo проверить достаточно ли загружено свечей от брокера, если недостаточно, загружаем доп. 2 недели
+
+    newCandles = Glo.stocks->insertCandles(key, candles);
+    if (!newCandles.empty())
+        DB::StocksQuery::insertCandles(Glo.dataBase, key, newCandles);
 
     //if (candles.size() >= minCandleCount) {
         emit finished();

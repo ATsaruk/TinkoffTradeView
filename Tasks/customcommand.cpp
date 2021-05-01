@@ -23,38 +23,16 @@
 namespace Task {
 
 
-CustomCommand::CustomCommand(const QString &customCommandName)
-    : CustomCommand(nullptr, customCommandName)
-{
-    logDebug << QString("Custom%1;Custom%1();+constructor!").arg(customCommandName);
-}
-
-CustomCommand::CustomCommand(QThread *parent, const QString &customCommandName)
+CustomCommand::CustomCommand(QThread *parent)
     : IBaseTask(parent)
 {
-    setCommandName(customCommandName);
+
 }
 
 CustomCommand::~CustomCommand()
 {
     emit stopAll();
     logDebug << "CustomCommand;~CustomCommand();-destructor!";
-}
-
-QString CustomCommand::getName()
-{
-    return name;
-}
-
-void CustomCommand::setCommandName(QString customCommandName)
-{
-    //Если первая бука прописная, меняем её на заглавную
-    QChar first = customCommandName.at(0).toUpper();
-    if(first.isLower())
-        customCommandName.replace(0, 1, first);
-
-    //Сохраняем имя команды, для динамически сформированных комманд всегда будет префикс Custom
-    name = QString("Custom%1").arg(customCommandName);
 }
 
 void CustomCommand::registerTask(IBaseTask *newTask)
@@ -103,7 +81,7 @@ void CustomCommand::taskFinished()
     if ( auto task = dynamic_cast<IBaseTask*>(sender()) ) {
         logDebug << QString("%1;taskFinished();finished: %2;tasksLeft = %3")
                     .arg(getName(), task->getName()).arg(taskList.size());
-        delete task;
+        task->deleteLater();
     } else
         logCritical << QString("%1;taskFinished();can't get task!;tasksLeft = %2")
                        .arg(getName()).arg(taskList.size());

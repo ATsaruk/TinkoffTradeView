@@ -94,7 +94,7 @@ QString LoadStockFromBroker::getName()
     return "TaskLoadStocksFromBroker";
 }
 
-Candles& LoadStockFromBroker::getCandles()
+Candles& LoadStockFromBroker::getResult()
 {
     return candles;
 }

@@ -20,8 +20,8 @@
 #define LOADSTOCK_H
 
 #include "Tasks/customcommand.h"
-#include "Tasks/Interfaces/OutputCandles.h"
-#include "Tasks/Interfaces/InputStockKey_Range.h"
+#include "Tasks/Interfaces/outputinterfaces.h"
+#include "Tasks/Interfaces/inputinterfaces.h"
 
 #include "Data/range.h"
 #include "Data/Stock/candle.h"
@@ -32,7 +32,7 @@ using namespace Data;
 
 
 ///Команда получения данных по акции
-class LoadStock : public CustomCommand, public InputStockKey_Range, public OutputCandles
+class LoadStock : public CustomCommand, public InputStockKeyAndRange, public OutputCandles
 {
 public:
     explicit LoadStock(QThread *parent = nullptr);
@@ -45,7 +45,7 @@ public:
     //Возвращает имя задачи
     QString getName() override;
 
-    Candles& getCandles() override;
+    Candles& getResult() override;
 
 protected:
     void exec() override;
@@ -58,6 +58,7 @@ protected slots:
 
 private:
     Candles candles;
+    Candles newCandles;
     StockKey key;         //Ключ акции
     Range loadRange;      //Загружаемый итнервал
     uint minCandleCount = 1;

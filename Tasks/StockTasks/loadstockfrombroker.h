@@ -42,33 +42,30 @@ using namespace Data;
 
 
 ///Задача загрузки свечей из БД за указанный временной интервал
-class LoadStockFromBroker : public IBaseTask, public InputStockKeyAndRange, public OutputCandles
+class LoadStockFromBroker : public IBaseTask, public InputRange, public OutputCandles
 {
     Q_OBJECT
 
 public:
-    explicit LoadStockFromBroker(QThread *parent = nullptr);
+    explicit LoadStockFromBroker(const StockKey &stockKey_);
     ~LoadStockFromBroker();
 
     //Возвращает имя класса владельца
     QString getName() override;
 
     //Задание исходных данных для загрузки
-    void setData(const StockKey &stockKey_, const Range &range) override;
+    void setData(const Range &range) override;
 
-    Candles& getResult() override;
+    Stock& getResult() override;
 
     //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
     static qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
 
 protected:
-    StockKey stockKey;      //ключ акции
+    Stock stock;      //ключ акции
 
     Range curRange;     //Текущий подинтервал загрузки
     Range loadRange;    //Полный интервал загрузки
-
-    //Список полученных свечей
-    Candles candles;
 
     //Запустить задачу
     void exec() override;
@@ -94,7 +91,7 @@ protected slots:
 private:
 
     //Удаляет незавершенную свечу
-    void removeIncompleteCandle(Candles &candles);
+    void removeIncompleteCandle();
 };
 
 }

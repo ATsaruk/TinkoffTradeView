@@ -15,6 +15,7 @@
 
 #include <QObject>
 #include <QReadWriteLock>
+#include <forward_list>
 
 #include "stockkey.h"
 #include "candle.h"
@@ -22,6 +23,16 @@
 //#include "Core/safe_ptr.h"
 
 namespace Data {
+
+struct Stock
+{
+    StockKey key;
+    Candles candles;
+
+    explicit Stock();
+    explicit Stock(const StockKey &key_);
+    bool operator==(const Stock &other) const;
+};
 
 
 /// Класс хранит свечные данные по акциям.
@@ -38,7 +49,7 @@ public:
       * @return Список свечной информации для акции с ключем StockKey
       * @details Вызывает метод getAccess(READ); базового класса IBaseData, после получения доступа
       * @warning По завершению работы с данными необходимо вызвать метод releaseStocks() */
-    const Candles& getStock(const StockKey &key);
+    const Candles& getCandles(const StockKey &key);
 
 
     /// Возвращает количество свечей по акции key
@@ -60,17 +71,17 @@ public:
       * свечи будут проигнорированы. Добавлятся будут только новые свечи.\n
       * Перед добавлением свечей, запрашивается доступ на изменение данных.\n
       * После добавления свечей, производится сортировка свечей по дате и освобождение доступа к данным. */
-    Candles insertCandles(const StockKey &key, const Candles &candles);
+    Stock insertCandles(const Stock &appendStock);
 
 signals:
     void dataChanged();
 
 protected:
-    /** @brief Список акций
-      * @param QString - ключ акции StockKey::keyToString();
-      * @param CandlesDataVector - список свечных данных для данного ключа */
-    std::unordered_map<QString, Candles> stocks;
-    //Core::SafePtr< std::unordered_map<QString, Candles> > stocks;
+    /// @brief Список акций
+    std::forward_list<Stock> stocks;
+    //std::unordered_map<QString, Candles> stocks;
+
+    Stock& findStock(const StockKey &key);
 
 private:
     Q_OBJECT

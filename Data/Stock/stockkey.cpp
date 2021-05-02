@@ -17,6 +17,13 @@ StockKey::StockKey(const QString &figi, const INTERVAL &interval)
     _interval = interval;
 }
 
+StockKey &StockKey::operator =(const StockKey &other)
+{
+    _figi = other.figi();
+    _interval = other.interval();
+    return *this;
+}
+
 const QString &StockKey::figi() const
 {
     return _figi;

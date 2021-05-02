@@ -11,17 +11,18 @@ StocksQuery::StocksQuery()
 
 }
 
-void StocksQuery::insertCandles(IDataBase *db, const StockKey &key, Candles &candles)
+void StocksQuery::insertCandles(const Stock &stock)
 {
+    auto db = Glo.dataBase;
     QMutexLocker locker(&db->mutex);
 
     if (!db->isOpen())
         return;
 
-    QString interval = key.intervalToString();
-    for (const auto &it: candles) {
+    QString interval = stock.key.intervalToString();
+    for (const auto &it: stock.candles) {
         QString insert = QString("INSERT INTO stocks (figi, interval, time, open, close, high, low, volume) VALUES ('%1', '%2', '%3', %4, %5, %6, %7, %8)")
-                .arg(key.figi(),
+                .arg(stock.key.figi(),
                      interval,
                      it.dateTime.toString("yyyy-MM-dd hh:mm:ss"))
                 .arg(it.open)
@@ -36,15 +37,16 @@ void StocksQuery::insertCandles(IDataBase *db, const StockKey &key, Candles &can
     }
 }
 
-Candles StocksQuery::loadCandles(IDataBase *db, const StockKey &key, const Range &range)
+void StocksQuery::loadCandles(Stock &stock, const Range &range)
 {
+    auto db = Glo.dataBase;
     QMutexLocker locker(&db->mutex);
 
     if (!db->isOpen())
-        return Candles();
+        return ;
 
-    QString interval = key.intervalToString();
-    QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(key.figi(), interval);
+    QString interval = stock.key.intervalToString();
+    QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(stock.key.figi(), interval);
 
     if (range.isValid()) {
         load += QString(" and time>='%1'").arg(range.getBegin().toString("dd.MM.yyyy hh:mm:ss"));
@@ -59,19 +61,15 @@ Candles StocksQuery::loadCandles(IDataBase *db, const StockKey &key, const Range
                        .arg(query.lastError().databaseText(), query.lastError().driverText());
     }
 
-    Candles candles;
-    candles.reserve(query.size());
-
+    stock.candles.reserve(stock.candles.size() + query.size());
     while (query.next()) {
-        candles.emplace_back( query.value(2).toDateTime(),   //dateTime
-                              query.value(3).toReal(),       //open
-                              query.value(4).toReal(),       //close
-                              query.value(5).toReal(),       //high
-                              query.value(6).toReal(),       //low
-                              query.value(7).toLongLong() ); //volume
+        stock.candles.emplace_back( query.value(2).toDateTime(),   //dateTime
+                                    query.value(3).toReal(),       //open
+                                    query.value(4).toReal(),       //close
+                                    query.value(5).toReal(),       //high
+                                    query.value(6).toReal(),       //low
+                                    query.value(7).toLongLong() ); //volume
     }
-
-    return candles;
 }
 
 }

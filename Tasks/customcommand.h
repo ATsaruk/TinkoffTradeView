@@ -199,7 +199,7 @@ class CustomCommand : public IBaseTask
     Q_OBJECT
 
 public:
-    explicit CustomCommand(QThread *parent);
+    explicit CustomCommand();
     ~CustomCommand();
 
     /* Добавление новой задачи
@@ -214,8 +214,7 @@ public:
     addTask(N ... args)
     {
         //QMutexLocker locker(&mutex);
-        T *newTask = new T(taskThread);
-        newTask->setData(args ...);
+        T *newTask = new T(args ...);
         registerTask(newTask);
         return newTask;
     }

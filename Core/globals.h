@@ -53,7 +53,7 @@ public:
     static Globals &get();
     ~Globals();
 
-    void init(QObject *parent);
+    void init();
 
 protected:
     Globals();

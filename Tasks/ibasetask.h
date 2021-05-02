@@ -106,6 +106,9 @@ public:
     //Возвращает поток, в котором находится данный экземпляр класса
     virtual QThread* getThread();
 
+    //Устанавливаем поток, в котором будет выполняться задача
+    void setThread(QThread *parent);
+
 public slots:
     //Основная функция, запускает задачу (taskThread->start())
     virtual void start() final;
@@ -125,7 +128,7 @@ protected:
     //Поток в котором будет выполняться данная задача
     QThread *taskThread;
 
-    IBaseTask(QThread *parent);
+    IBaseTask();
 
     //Функция которая будет вызвана при запуске потока (QThread)
     virtual void exec() = 0;

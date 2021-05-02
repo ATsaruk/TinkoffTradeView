@@ -5,9 +5,11 @@
 
 namespace Task {
 
-Manager::Manager(QThread *parent)
-    : CustomCommand(parent)
+Manager::Manager()
+    : CustomCommand()
 {
+    setThread(nullptr);
+
     //Обнуляем taskThread, если этого не сделать, то при вызове addTask() для новых задач, им будет передан taskThread
     //в качестве родительского потока и они будут создаваться внутри этого потока, а нам нужно что бы каждая задача
     //была отдельным потоком, и обнулением мы лишаем их родительского потока и они создадут свои потоки

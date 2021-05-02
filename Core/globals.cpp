@@ -28,7 +28,7 @@ Globals::~Globals()
     delete conf;
 }
 
-void Globals::init(QObject *parent)
+void Globals::init()
 {
     conf = new Config("config.cfg");
 
@@ -36,7 +36,7 @@ void Globals::init(QObject *parent)
     for (const auto &it : logTags)
         logger->add(it);
 
-    taskManager = new Task::Manager(parent->thread());
+    taskManager = new Task::Manager;
 
     stocks = new Data::Stocks;
     dataBase = new DB::PostgreSql;

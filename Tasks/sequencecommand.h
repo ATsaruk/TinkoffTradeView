@@ -12,38 +12,40 @@ namespace Task {
 class SequenceCommand : public IBaseTask, public InputInterface, public OutputInterface
 {
 public:
-    explicit SequenceCommand(QThread *thread, IBaseTask *baseTask);
+    explicit SequenceCommand(IBaseTask *baseTask);
 
-    template <class T>
+    template <class T, typename... N>
     std::enable_if_t<std::is_base_of_v<IBaseTask, T> && std::is_base_of_v<OutputInterface, T>, T*>
-    attachFront()
+    attachFront(N ... args)
     {
         InputInterface *input = dynamic_cast<InputInterface*>(taskList.front());
         if (input == nullptr)
             throw std::logic_error("SequenceCommand::attachFront: taskList.front() has no InputInterface!");
 
-        T *newTask = new T(taskThread);
+        T *newTask = new T(args ...);
         InterfaceType outputInterface = newTask->getOutputInterfaceName();
         InterfaceType inputInterface = input->getInputInterfaceName();
         assert(outputInterface != inputInterface && "SequenceCommand: interfaces are not compatible");
 
+        newTask->setThread(taskThread);
         taskList.push_front(newTask);
         return newTask;
     }
 
-    template <class T>
+    template <class T, typename... N>
     std::enable_if_t<std::is_base_of_v<IBaseTask, T> && std::is_base_of_v<InputInterface, T>, T*>
-    attachBack()
+    attachBack(N ... args)
     {
         OutputInterface *output = dynamic_cast<OutputInterface*>(taskList.back());
         if (output == nullptr)
             throw std::logic_error("SequenceCommand::attachFront: taskList.back() has no OutputInterface!");
 
-        T *newTask = new T(taskThread);
+        T *newTask = new T(args ...);
         InterfaceType inputInterface = newTask->getInputInterfaceName();
         InterfaceType outputInterface = output->getOutputInterfaceName();
         assert(inputInterface != outputInterface && "SequenceCommand: interfaces are not compatible");
 
+        newTask->setThread(taskThread);
         taskList.push_back(newTask);
         return newTask;
     }

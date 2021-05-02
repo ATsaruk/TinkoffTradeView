@@ -2,14 +2,14 @@
 #define OUTPUTINTERFACES_H
 
 #include "interfases.h"
-#include "Data/Stock/candle.h"
+#include "Data/Stock/stocks.h"
 
 namespace Task {
 
 
 struct OutputCandles : public OutputInterface {
-    virtual Data::Candles& getResult() = 0;
-    InterfaceType getOutputInterfaceName() override { return InterfaceType::candlesList; }
+    virtual Data::Stock& getResult() = 0;
+    InterfaceType getOutputInterfaceName() override { return InterfaceType::candles; }
 };
 
 }

@@ -5,21 +5,17 @@
 
 namespace Task {
 
-LoadStock::LoadStock(QThread *parent)
-    : CustomCommand(parent)
+LoadStock::LoadStock(const StockKey &stockKey, const uint minCandleCount_)
+    : CustomCommand()
 {
+    stock.key = stockKey;
+    minCandleCount = minCandleCount_;
     logDebug << "CommandLoadStock;CommandLoadStock();+constructor!";
 }
 
-void LoadStock::setData(const StockKey &stockKey, const Range &range)
+void LoadStock::setData(const Range &range)
 {
-    key = stockKey;
     loadRange = range;
-}
-
-void LoadStock::setMinCandleCount(const uint minCandleCount_)
-{
-    minCandleCount = minCandleCount_;
 }
 
 //Возвращает имя задачи
@@ -28,23 +24,23 @@ QString LoadStock::getName()
     return "CommandLoadStock";
 }
 
-Candles &LoadStock::getResult()
+Stock &LoadStock::getResult()
 {
-    return candles;
+    return stock;
 }
 
 void LoadStock::exec()
 {
-    candles = DB::StocksQuery::loadCandles(Glo.dataBase, key, loadRange);
-    Glo.stocks->insertCandles(key, candles);
+    DB::StocksQuery::loadCandles(stock, loadRange);
+    Glo.stocks->insertCandles(stock);
 
     /// @todo проверить достаточно ли загружено свечей из БД, если недостаточно, пробуем загружать доп. 2 недели
 
     Range range = loadRange;
-    if (!candles.empty()) {
-        if (auto endData = candles.back().dateTime.addSecs(key.intervalToSec()); endData < loadRange.getEnd()) {
+    if (!stock.candles.empty()) {
+        if (auto endData = stock.candles.back().dateTime.addSecs(stock.key.intervalToSec()); endData < loadRange.getEnd()) {
             range.setBegin(endData);
-        } else if (auto beginData = candles.front().dateTime; beginData > range.getBegin()) {
+        } else if (auto beginData = stock.candles.front().dateTime; beginData > range.getBegin()) {
             range.setEnd(beginData);
         } else
             range = Range();
@@ -58,7 +54,9 @@ void LoadStock::exec()
 void LoadStock::loadFromBroker(const Range &range)
 {
     //Закрузка недостающих данных от брокера
-    addTask <LoadStockFromBroker> (key, range);
+    auto task = new LoadStockFromBroker(stock.key);
+    task->setData(range);
+    registerTask(task);
 
     runNextTask();
 }
@@ -78,18 +76,18 @@ void LoadStock::taskFinished()
     auto brokerCandles = task->getResult();
     delete task;
 
-    const auto &allCandles = candles;
-    std::copy_if(brokerCandles.begin(),
-                 brokerCandles.end(),
-                 std::back_inserter(candles),
+    const auto &allCandles = stock.candles;
+    std::copy_if(brokerCandles.candles.begin(),
+                 brokerCandles.candles.end(),
+                 std::back_inserter(stock.candles),
                  [&allCandles] (const auto& candle) { return std::count(allCandles.begin(), allCandles.end(), candle) == 0; } );
 
 
     /// @todo проверить достаточно ли загружено свечей от брокера, если недостаточно, загружаем доп. 2 недели
 
-    newCandles = Glo.stocks->insertCandles(key, candles);
-    if (!newCandles.empty())
-        DB::StocksQuery::insertCandles(Glo.dataBase, key, newCandles);
+    newCandles = Glo.stocks->insertCandles(stock);
+    if (!newCandles.candles.empty())
+        DB::StocksQuery::insertCandles(newCandles);
 
     //if (candles.size() >= minCandleCount) {
         emit finished();

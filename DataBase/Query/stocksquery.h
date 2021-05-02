@@ -16,9 +16,9 @@ public:
     explicit StocksQuery();
 
     //Вставляет список свечей candles в БД (таблица stocks)
-    static void insertCandles(IDataBase *db, const StockKey &key, Candles &candles);
+    static void insertCandles(const Stock &stock);
     //Загружает свечи из базы данных (таблица stocks) в структуру candles
-    static Candles loadCandles(IDataBase *db, const StockKey &key, const Range &range = Range());
+    static void loadCandles(Stock &stock, const Range &range = Range());
 };
 
 }

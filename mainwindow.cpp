@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     //Инициализируем singleton
-    Glo.init(this);
+    Glo.init();
 
     plotter = new Plotter::ChartPlotter;
     setCentralWidget(plotter);
@@ -25,7 +25,7 @@ MainWindow::~MainWindow()
 
 const Data::StockKey MainWindow::getStockKey()
 {
-    Data::StockKey key = {"BBG000B9XRY4", Data::StockKey::INTERVAL::MIN15};    //temp
+    Data::StockKey key("BBG000B9XRY4", Data::StockKey::INTERVAL::MIN15);    //temp
     return key;
 }
 

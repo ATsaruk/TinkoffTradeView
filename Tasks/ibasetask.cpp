@@ -6,7 +6,22 @@
 
 namespace Task {
 
-IBaseTask::IBaseTask(QThread *parent)
+IBaseTask::IBaseTask()
+{
+
+}
+
+IBaseTask::~IBaseTask()
+{
+
+}
+
+QThread *IBaseTask::getThread()
+{
+    return taskThread;
+}
+
+void IBaseTask::setThread(QThread *parent)
 {
     isRootTask = parent == nullptr;
 
@@ -19,16 +34,6 @@ IBaseTask::IBaseTask(QThread *parent)
         taskThread = parent;
 
     this->moveToThread(taskThread);
-}
-
-IBaseTask::~IBaseTask()
-{
-
-}
-
-QThread *IBaseTask::getThread()
-{
-    return taskThread;
 }
 
 void IBaseTask::start()

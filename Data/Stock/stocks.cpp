@@ -8,23 +8,23 @@ Stocks::Stocks()
 
 }
 
-const Candles &Stocks::getStock(const StockKey &key)
+const Candles &Stocks::getCandles(const StockKey &key)
 {
-    return stocks[key.keyToString()];
+    return findStock(key).candles;
 }
 
 long Stocks::getCandlesCount(const StockKey &key)
 {
     QReadLocker lock(&rwMutex);
 
-    return stocks[key.keyToString()].size();
+    return findStock(key).candles.size();
 }
 
 Range Stocks::getRange(const StockKey &key)
 {
     QReadLocker lock(&rwMutex);
 
-    Candles &curCandles = stocks[key.keyToString()];
+    Candles &curCandles = findStock(key).candles;
     if (curCandles.empty())
         throw std::logic_error("candles is empty");
 
@@ -32,28 +32,54 @@ Range Stocks::getRange(const StockKey &key)
                  curCandles.back().dateTime);
 }
 
-Candles Stocks::insertCandles(const StockKey &key, const Candles &candles)
+Stock Stocks::insertCandles(const Stock &appendStock)
 {
     QWriteLocker lock(&rwMutex);
 
-    Candles &stock = stocks[key.keyToString()];
+    Candles &candles = findStock(appendStock.key).candles;
 
-    Candles newCandles;
-    std::copy_if(candles.begin(),
-                 candles.end(),
+    Stock resultStock(appendStock.key);
+    auto &newCandles = resultStock.candles;
+
+    std::copy_if(appendStock.candles.begin(),
+                 appendStock.candles.end(),
                  std::back_inserter(newCandles),
-                 [&stock] (const auto& candle) { return std::count(stock.begin(), stock.end(), candle) == 0; } );
+                 [&candles] (const auto& candle) { return std::count(candles.begin(), candles.end(), candle) == 0; } );
 
     if (!newCandles.empty()) {
-        stock.reserve(stock.size() + newCandles.size());
-        std::copy(newCandles.begin(), newCandles.end(), std::back_inserter(stock));
-        std::sort(stock.begin(), stock.end());
+        candles.reserve(candles.size() + newCandles.size());
+        std::copy(newCandles.begin(), newCandles.end(), std::back_inserter(candles));
+        std::sort(candles.begin(), candles.end());
 
         emit dataChanged();
         logInfo << QString("DataStocks;insertStockData();Append;%1;candles;%2;%3")
                    .arg(newCandles.size()).arg(newCandles.front().dateTime.toString(), newCandles.back().dateTime.toString());
     }
-    return newCandles;
+    return resultStock;
+}
+
+Stock &Stocks::findStock(const StockKey &key)
+{
+    return *(std::find_if(stocks.begin(),
+                          stocks.end(),
+                          [&key](const auto &it){
+        return key == it.key;
+    } ));
+}
+
+Stock::Stock()
+{
+
+}
+
+Stock::Stock(const StockKey &key_)
+{
+    key = key_;
+}
+
+bool Stock::operator==(const Stock &other) const
+{
+    return key == other.key;
 }
 
 }

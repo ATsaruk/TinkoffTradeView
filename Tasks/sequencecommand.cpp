@@ -5,8 +5,8 @@
 namespace Task {
 
 
-SequenceCommand::SequenceCommand(QThread *thread, IBaseTask *baseTask)
-    : IBaseTask(thread)
+SequenceCommand::SequenceCommand(IBaseTask *baseTask)
+    : IBaseTask()
 {
     taskList.push_back(baseTask);
 }

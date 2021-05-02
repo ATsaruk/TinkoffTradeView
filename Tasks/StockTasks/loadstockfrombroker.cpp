@@ -13,9 +13,10 @@ constexpr quint64 SECS_IN_ONE_DAY   = 24 * 3600;
 constexpr quint64 SECS_IN_ONE_WEEK  = 7 * SECS_IN_ONE_DAY;
 constexpr quint64 SECS_IN_ONE_MONTH = 30 * SECS_IN_ONE_DAY;
 
-LoadStockFromBroker::LoadStockFromBroker(QThread *parent)
-    : IBaseTask(parent)
+LoadStockFromBroker::LoadStockFromBroker(const StockKey &stockKey_)
+    : IBaseTask()
 {
+    stock.key = stockKey_;
     logDebug << "loadStocksFromBrokerTask;loadStocksFromBrokerTask();+constructor!";
 }
 
@@ -24,15 +25,14 @@ LoadStockFromBroker::~LoadStockFromBroker()
     logDebug << "loadStocksFromBrokerTask;~loadStocksFromBrokerTask();-destructor!";
 }
 
-void LoadStockFromBroker::setData(const StockKey &stockKey_, const Range &range)
+void LoadStockFromBroker::setData(const Range &range)
 {
     if (!range.isValid())
         throw std::invalid_argument("LoadStockFromBroker::setData: invalid loadRange!");
 
-    stockKey = stockKey_;
     loadRange = range;
 
-    qint64 maxLoadRange = getMaxLoadInterval(stockKey.interval());
+    qint64 maxLoadRange = getMaxLoadInterval(stock.key.interval());
     curRange.setRange(loadRange.getEnd(), -maxLoadRange);
     curRange.constrain(loadRange);
 }
@@ -51,7 +51,7 @@ bool LoadStockFromBroker::sendRequest()
     if (isStopRequested)
         return false;
 
-    if (!Glo.broker->loadCandles(stockKey, curRange))
+    if (!Glo.broker->loadCandles(stock.key, curRange))
         return false;
 
     return true;
@@ -70,11 +70,11 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    auto candleInterval = stockKey.intervalToSec();
+    auto candleInterval = stock.key.intervalToSec();
     if ( curRange.getBegin() < loadRange.getBegin().addSecs(candleInterval) )
         return false;
 
-    qint64 maxLoadRange = getMaxLoadInterval(stockKey.interval()) + candleInterval;
+    qint64 maxLoadRange = getMaxLoadInterval(stock.key.interval()) + candleInterval;
     curRange.displace(-maxLoadRange, -maxLoadRange);
     curRange.constrain(loadRange);
     return true;
@@ -84,7 +84,7 @@ void LoadStockFromBroker::finishTask()
 {
     Glo.broker->mutex.unlock();
 
-    removeIncompleteCandle(candles);
+    removeIncompleteCandle();
 
     emit finished();
 }
@@ -94,9 +94,9 @@ QString LoadStockFromBroker::getName()
     return "TaskLoadStocksFromBroker";
 }
 
-Candles& LoadStockFromBroker::getResult()
+Stock &LoadStockFromBroker::getResult()
 {
-    return candles;
+    return stock;
 }
 
 qint64 LoadStockFromBroker::getMaxLoadInterval(const StockKey::INTERVAL &interval)
@@ -140,9 +140,9 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
     QJsonArray candlesArray = payload.value("candles").toArray();
 
-    candles.reserve(candles.size() + candlesArray.size());
+    stock.candles.reserve(stock.candles.size() + candlesArray.size());
     for (const auto &it: candlesArray)
-        candles.emplace_back( Candle::fromJson(it.toObject()) );
+        stock.candles.emplace_back( Candle::fromJson(it.toObject()) );
 
     return true;
 }
@@ -152,9 +152,9 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
     try {  //StockKey::fromJson кидается исключениями
         StockKey recievedKey;
         recievedKey.fromJson(payload);   //payload содержит ключ акции
-        if(recievedKey != stockKey) {
+        if(recievedKey != stock.key) {
             QString errorCode = QString("LoadStockFromBroker;checkStockKey();recievedKey!=stockKey:;%1;%2")
-                    .arg(recievedKey.keyToString(), stockKey.keyToString());
+                    .arg(recievedKey.keyToString(), stock.key.keyToString());
             throw std::logic_error(errorCode.toUtf8().data());
         }
     }  catch (std::exception &error) {
@@ -172,18 +172,18 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
  * Т.к. в базе данных primary key для записи это figi + interval + time.
  * В итоге свеча так и останется незавершенной! это было вяснено постфактум, когда заметил отличие на моем графике и графике брокера!
  */
-void LoadStockFromBroker::removeIncompleteCandle(Candles &candles)
+void LoadStockFromBroker::removeIncompleteCandle()
 {
-    if(candles.empty())
+    if(stock.candles.empty())
         return;
 
-    Candle &lastCandle = candles.back();
+    Candle &lastCandle = stock.candles.back();
 
-    uint64_t candleDuration = stockKey.intervalToSec();
+    uint64_t candleDuration = stock.key.intervalToSec();
     QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
 
     if (timeCandleComplite > loadRange.getEnd())
-        candles.pop_back();
+        stock.candles.pop_back();
 }
 
 }

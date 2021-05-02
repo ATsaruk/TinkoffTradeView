@@ -23,8 +23,8 @@
 namespace Task {
 
 
-CustomCommand::CustomCommand(QThread *parent)
-    : IBaseTask(parent)
+CustomCommand::CustomCommand()
+    : IBaseTask()
 {
 
 }
@@ -38,6 +38,8 @@ CustomCommand::~CustomCommand()
 void CustomCommand::registerTask(IBaseTask *newTask)
 {
     //QMutexLocker locker(&mutex);
+
+    newTask->setThread(taskThread);
 
     //Регистрация возможна только есть задачи работают в одном потоке
     if (newTask->getThread() == taskThread)

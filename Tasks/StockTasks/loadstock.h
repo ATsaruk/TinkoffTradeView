@@ -32,20 +32,18 @@ using namespace Data;
 
 
 ///Команда получения данных по акции
-class LoadStock : public CustomCommand, public InputStockKeyAndRange, public OutputCandles
+class LoadStock : public CustomCommand, public InputRange, public OutputCandles
 {
 public:
-    explicit LoadStock(QThread *parent = nullptr);
+    explicit LoadStock(const StockKey &stockKey, const uint minCandleCount_ = 1);
 
     //Задать данные для запуска задачь
-    void setData(const StockKey &stockKey, const Range &range = Range()) override;
-
-    void setMinCandleCount(const uint minCandleCount_);
+    void setData(const Range &range = Range()) override;
 
     //Возвращает имя задачи
     QString getName() override;
 
-    Candles& getResult() override;
+    Stock& getResult() override;
 
 protected:
     void exec() override;
@@ -57,11 +55,10 @@ protected slots:
     virtual void taskFinished() override;
 
 private:
-    Candles candles;
-    Candles newCandles;
-    StockKey key;         //Ключ акции
+    Stock stock;
+    Stock newCandles;
     Range loadRange;      //Загружаемый итнервал
-    uint minCandleCount = 1;
+    uint minCandleCount;
 };
 
 }

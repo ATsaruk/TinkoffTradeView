@@ -32,8 +32,9 @@ public:
         WEEK    ///< Свечи длительностью 1 неделя
     };
 
-    explicit StockKey() ;
-    StockKey(const QString &figi, const INTERVAL &interval) ;
+    explicit StockKey();
+    explicit StockKey(const QString &figi, const INTERVAL &interval);
+    StockKey& operator =(const StockKey &other);
 
     ///Возвращает figi акции
     const QString &figi() const;

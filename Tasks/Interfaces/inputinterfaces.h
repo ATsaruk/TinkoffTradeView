@@ -8,10 +8,10 @@
 namespace Task {
 
 
-struct InputStockKeyAndRange : public InputInterface
+struct InputRange : public InputInterface
 {
-    virtual void setData(const Data::StockKey &stockKey, const Data::Range &range) = 0;
-    InterfaceType getInputInterfaceName() override { return InterfaceType::stockKeyAndRange; }
+    virtual void setData(const Data::Range &range) = 0;
+    InterfaceType getInputInterfaceName() override { return InterfaceType::range; }
 };
 
 }

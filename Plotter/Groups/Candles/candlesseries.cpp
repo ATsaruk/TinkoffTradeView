@@ -212,9 +212,13 @@ const QDateTime CandlesSeries::getDateByIndex(const long index)
 void CandlesSeries::loadData(const Data::Range &range)
 {
     isDataRequested = true;
-    auto *command = NEW_TASK<Task::LoadStock>(curStockKey, range);
-    command->setMinCandleCount( hAxis->getRange() / 3. );
+
+    uint minCandles = hAxis->getRange() / 3.;
+    auto *command = new Task::LoadStock(curStockKey, minCandles);
     connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::loadCandlesFinished);
+
+    command->setData(range);
+    Glo.taskManager->registerTask(command);
 }
 
 //Добавление 1 свечи, поиск нового индекса
@@ -246,7 +250,7 @@ void CandlesSeries::addCandles()
 {
     bool isCandlesAdded = false;
     QReadLocker lock(&Glo.stocks->rwMutex);
-    const Data::Candles &candlesData = Glo.stocks->getStock(curStockKey);
+    const Data::Candles &candlesData = Glo.stocks->getCandles(curStockKey);
     for (auto it = candlesData.rbegin(); it != candlesData.rend(); ++it) {
         bool isExist = false;
 

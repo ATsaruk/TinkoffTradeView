@@ -9,8 +9,8 @@ namespace Task {
 enum class InterfaceType : uint8_t
 {
     empty,
-    stockKeyAndRange,
-    candlesList
+    range,
+    candles
 };
 
 

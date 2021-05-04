@@ -2,6 +2,8 @@
 
 namespace Data {
 
+constexpr quint64 SECS_IN_ONE_DAY   = 24 * 3600;
+
 Range::Range()
 {
 
@@ -17,6 +19,11 @@ Range::Range(const QDateTime &begin_, const QDateTime &end_)
 {
     begin = begin_;
     end = end_;
+}
+
+Range::Range(const QDateTime &date, const long &duration)
+{
+    setRange(date, duration);
 }
 
 Range &Range::operator =(const Range &range)
@@ -114,11 +121,22 @@ void Range::setRange(const QDateTime &date, const long &duration)
 
     if (duration >= 0) {
         begin = date;
-        end = begin.addSecs(duration);
-    } else {    //duration < 0
+        end = date.addSecs(duration);
+    } else {
+        begin = date.addSecs(duration);
         end = date;
-        begin = end.addSecs(duration);
     }
+}
+
+void Range::addSecs(const long &secs)
+{
+    displace(secs, secs);
+}
+
+void Range::addDays(const long &days)
+{
+    long secs = days * SECS_IN_ONE_DAY;
+    displace(secs, secs);
 }
 
 void Range::displace(const long &beginSecs, const long &endSecs)

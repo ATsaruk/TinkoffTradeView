@@ -34,6 +34,21 @@ const StockKey::INTERVAL &StockKey::interval() const
     return _interval;
 }
 
+long StockKey::time() const
+{
+    switch (_interval) {
+      case INTERVAL::MIN1  : return 60;         break;
+      case INTERVAL::MIN5  : return 5*60;       break;
+      case INTERVAL::MIN15 : return 15*60;      break;
+      case INTERVAL::MIN30 : return 30*60;      break;
+      case INTERVAL::HOUR  : return 60*60;      break;
+      case INTERVAL::DAY   : return 24*60*60;   break;
+      case INTERVAL::WEEK  : return 7*24*60*60; break;
+    }
+    logCritical << "StockKey::intervalToSec;unknow interval";
+    throw std::bad_exception();
+}
+
 QString StockKey::intervalToString() const
 {
     switch (_interval) {
@@ -46,21 +61,6 @@ QString StockKey::intervalToString() const
       case INTERVAL::WEEK  : return QString("week");
     }
     logCritical << "StockKey::intervalToString;unknow interval";
-    throw std::bad_exception();
-}
-
-long StockKey::intervalToSec() const
-{
-    switch (_interval) {
-      case INTERVAL::MIN1  : return 60;         break;
-      case INTERVAL::MIN5  : return 5*60;       break;
-      case INTERVAL::MIN15 : return 15*60;      break;
-      case INTERVAL::MIN30 : return 30*60;      break;
-      case INTERVAL::HOUR  : return 60*60;      break;
-      case INTERVAL::DAY   : return 24*60*60;   break;
-      case INTERVAL::WEEK  : return 7*24*60*60; break;
-    }
-    logCritical << "StockKey::intervalToSec;unknow interval";
     throw std::bad_exception();
 }
 

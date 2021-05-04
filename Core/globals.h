@@ -31,7 +31,7 @@ namespace Core {
 #define logCritical *Core::Globals::get().logger->get("critical")
 
 ///Основная функция для запуска задач
-#define NEW_TASK Core::Globals::get().taskManager->addTask
+#define TaskManager Core::Globals::get().taskManager
 ///@}
 
 /** @ingroup Core

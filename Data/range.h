@@ -15,6 +15,7 @@ public:
 
     Range(const Range &range);
     Range(const QDateTime &begin_, const QDateTime &end_);
+    Range(const QDateTime &date, const long &duration);  //см. фунцию setRange(date, duration)
     Range& operator= (const Range &range);
 
     Range(Range &&range) noexcept;
@@ -57,6 +58,12 @@ public:
      * значит оно будет вычтено из date.
      */
     void setRange(const QDateTime &date, const long &duration);
+
+    ///Добавляет заданное число секунд к дате начала и дате конца (может быть отрицательным)
+    void addSecs(const long &secs);
+
+    ///Добавляет заданное число дней к дате начала и дате конца (может быть отрицательным)
+    void addDays(const long &days);
 
     ///Перемещает начало и конец диапазона на заданное число секунд
     void displace(const long &beginSecs, const long &endSecs);

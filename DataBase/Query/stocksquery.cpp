@@ -37,7 +37,7 @@ void StocksQuery::insertCandles(const Stock &stock)
     }
 }
 
-void StocksQuery::loadCandles(Stock &stock, const Range &range)
+void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateTime &end, const uint candleCount)
 {
     auto db = Glo.dataBase;
     QMutexLocker locker(&db->mutex);
@@ -48,12 +48,18 @@ void StocksQuery::loadCandles(Stock &stock, const Range &range)
     QString interval = stock.key.intervalToString();
     QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(stock.key.figi(), interval);
 
-    if (range.isValid()) {
-        load += QString(" and time>='%1'").arg(range.getBegin().toString("dd.MM.yyyy hh:mm:ss"));
-        load += QString(" and time<'%1'").arg(range.getEnd().toString("dd.MM.yyyy hh:mm:ss"));
+    if (begin.isValid())
+        load += QString(" and time>='%1'").arg(begin.toString("dd.MM.yyyy hh:mm:ss"));
+    if (end.isValid()) {
+        load += QString(" and time<'%1'").arg(end.toString("dd.MM.yyyy hh:mm:ss"));
         /* time<'%1' потому что если мы загружаем например 15 минутные свечи с 9:00:00 до 10:00:00,
          * свеча на 10:00:00 она относится к диапазону 10:00:00 - 10:15:00 */
     }
+
+    load += QString(" ORDER BY time DESC");
+
+    if (candleCount > 0)
+        load += QString(" LIMIT %1").arg(candleCount);
 
     QSqlQuery query(db->get());
     if (!query.exec(load)) {

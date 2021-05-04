@@ -6,14 +6,11 @@
 
 namespace Task {
 
+
 IBaseTask::IBaseTask()
+    : IFunction()
 {
-
-}
-
-IBaseTask::~IBaseTask()
-{
-
+    isFunc = false;
 }
 
 QThread *IBaseTask::getThread()
@@ -36,6 +33,16 @@ void IBaseTask::setThread(QThread *parent)
     this->moveToThread(taskThread);
 }
 
+bool IBaseTask::isFinished()
+{
+    return taskThread->isFinished();
+}
+
+void IBaseTask::waitForFinished()
+{
+    taskThread->wait();  ///@todo ПРОВЕРИТЬ!
+}
+
 void IBaseTask::start()
 {
     if (isRootTask) {
@@ -47,13 +54,10 @@ void IBaseTask::start()
 
 void IBaseTask::stop()
 {
-    isStopRequested = true;
-}
-
-int IBaseTask::isFinishedSignalHasConnection()
-{
-    auto signalFinished = QMetaMethod::fromSignal(&IBaseTask::finished);
-    return signalFinished.parameterCount();
+    if (isRootTask)
+        taskThread->terminate();
+    else
+        isStopRequested = true;
 }
 
 }

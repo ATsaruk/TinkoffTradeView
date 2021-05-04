@@ -19,46 +19,46 @@
 #ifndef LOADSTOCK_H
 #define LOADSTOCK_H
 
-#include "Tasks/customcommand.h"
-#include "Tasks/Interfaces/outputinterfaces.h"
-#include "Tasks/Interfaces/inputinterfaces.h"
+#include "Tasks/ibasecommand.h"
+#include "Tasks/Interfaces/interfase.h"
 
 #include "Data/range.h"
-#include "Data/Stock/candle.h"
-#include "Data/Stock/stockkey.h"
+#include "Data/Stock/stocks.h"
 
 namespace Task {
 using namespace Data;
 
 
 ///Команда получения данных по акции
-class LoadStock : public CustomCommand, public InputRange, public OutputCandles
+class LoadStock : public IBaseCommand
 {
 public:
     explicit LoadStock(const StockKey &stockKey, const uint minCandleCount_ = 1);
 
-    //Задать данные для запуска задачь
-    void setData(const Range &range = Range()) override;
-
-    //Возвращает имя задачи
-    QString getName() override;
-
-    Stock& getResult() override;
+    void setData(SharedInterface &inputData) override;
+    SharedInterface &getResult() override;
 
 protected:
     void exec() override;
-
-    void loadFromBroker(const Range &range);
+    void loadForwardFromBroker();
+    void loadBackwardFromBroker();
+    void startLoading();
+    void finishLoading();
+    void receiveResult(QObject *sender);
+    bool isLoadFinished();
 
 protected slots:
     //Обработка завершения потока
     virtual void taskFinished() override;
 
 private:
-    Stock stock;
-    Stock newCandles;
-    Range loadRange;      //Загружаемый итнервал
+    InterfaceWrapper<Range> range;
+    InterfaceWrapper<Stock> stock;
+    InterfaceWrapper<Stock> loadedCandles;
+    bool forwardLoading = false;
     uint minCandleCount;
+    QDateTime endLoadDate;
+
 };
 
 }

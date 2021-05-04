@@ -5,18 +5,15 @@
 #include "loadstockfrombroker.h"
 
 #include "Core/globals.h"
+#include "Broker/Tinkoff/tinkoff.h"
 #include "DataBase/Query/stocksquery.h"
 
 namespace Task {
 
-constexpr quint64 SECS_IN_ONE_DAY   = 24 * 3600;
-constexpr quint64 SECS_IN_ONE_WEEK  = 7 * SECS_IN_ONE_DAY;
-constexpr quint64 SECS_IN_ONE_MONTH = 30 * SECS_IN_ONE_DAY;
-
-LoadStockFromBroker::LoadStockFromBroker(const StockKey &stockKey_)
+LoadStockFromBroker::LoadStockFromBroker(const StockKey &stockKey)
     : IBaseTask()
 {
-    stock.key = stockKey_;
+    stock().key = stockKey;
     logDebug << "loadStocksFromBrokerTask;loadStocksFromBrokerTask();+constructor!";
 }
 
@@ -25,21 +22,17 @@ LoadStockFromBroker::~LoadStockFromBroker()
     logDebug << "loadStocksFromBrokerTask;~loadStocksFromBrokerTask();-destructor!";
 }
 
-void LoadStockFromBroker::setData(const Range &range)
-{
-    if (!range.isValid())
-        throw std::invalid_argument("LoadStockFromBroker::setData: invalid loadRange!");
-
-    loadRange = range;
-
-    qint64 maxLoadRange = getMaxLoadInterval(stock.key.interval());
-    curRange.setRange(loadRange.getEnd(), -maxLoadRange);
-    curRange.constrain(loadRange);
-}
 
 void LoadStockFromBroker::exec()
 {
     Glo.broker->mutex.lock();
+
+    assert(range().isValid() && "LoadStockFromBroker::setData: invalid loadRange!");
+
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock().key.interval());
+    curRange.setRange(range().getEnd(), -maxLoadRange);
+    curRange.constrain(range());
+
     connect(Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
     if (!sendRequest())
@@ -51,7 +44,7 @@ bool LoadStockFromBroker::sendRequest()
     if (isStopRequested)
         return false;
 
-    if (!Glo.broker->loadCandles(stock.key, curRange))
+    if (!Glo.broker->loadCandles(stock().key, curRange))
         return false;
 
     return true;
@@ -70,13 +63,13 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    auto candleInterval = stock.key.intervalToSec();
-    if ( curRange.getBegin() < loadRange.getBegin().addSecs(candleInterval) )
+    auto candleInterval = stock().key.time();
+    if ( curRange.getBegin() < range().getBegin().addSecs(candleInterval) )
         return false;
 
-    qint64 maxLoadRange = getMaxLoadInterval(stock.key.interval()) + candleInterval;
-    curRange.displace(-maxLoadRange, -maxLoadRange);
-    curRange.constrain(loadRange);
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock().key.interval()) + candleInterval;
+    curRange.addSecs(-maxLoadRange);
+    curRange.constrain(range());
     return true;
 }
 
@@ -84,7 +77,10 @@ void LoadStockFromBroker::finishTask()
 {
     Glo.broker->mutex.unlock();
 
-    removeIncompleteCandle();
+    if (!stock().candles.empty()) {
+        std::sort(stock().candles.begin(), stock().candles.end());
+        removeIncompleteCandle();
+    }
 
     emit finished();
 }
@@ -94,29 +90,14 @@ QString LoadStockFromBroker::getName()
     return "TaskLoadStocksFromBroker";
 }
 
-Stock &LoadStockFromBroker::getResult()
+void LoadStockFromBroker::setData(SharedInterface &inputData)
 {
-    return stock;
+    range = inputData;
 }
 
-qint64 LoadStockFromBroker::getMaxLoadInterval(const StockKey::INTERVAL &interval)
+SharedInterface &LoadStockFromBroker::getResult()
 {
-    switch (interval) {
-    case StockKey::INTERVAL::DAY  :   //no break;
-    case StockKey::INTERVAL::WEEK :
-        //Свечи длительностью 1 день и более загрузаются с максимальным интервалом 1 месяц
-        return SECS_IN_ONE_MONTH;
-
-    case StockKey::INTERVAL::HOUR :
-        //Свечи длительностью 1 час загрузаются с максимальным интервалом 1 неделя
-        return SECS_IN_ONE_WEEK;
-
-    default :
-        break;
-    }
-
-    //Все свечи длительностью меньше часа имеют максимальный интервал загрузки 1 сутки
-    return SECS_IN_ONE_DAY;
+    return *stock;
 }
 
 bool LoadStockFromBroker::readCandles(const QByteArray &answer)
@@ -140,9 +121,9 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
     QJsonArray candlesArray = payload.value("candles").toArray();
 
-    stock.candles.reserve(stock.candles.size() + candlesArray.size());
+    stock().candles.reserve(stock().candles.size() + candlesArray.size());
     for (const auto &it: candlesArray)
-        stock.candles.emplace_back( Candle::fromJson(it.toObject()) );
+        stock().candles.emplace_back( Candle::fromJson(it.toObject()) );
 
     return true;
 }
@@ -152,9 +133,9 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
     try {  //StockKey::fromJson кидается исключениями
         StockKey recievedKey;
         recievedKey.fromJson(payload);   //payload содержит ключ акции
-        if(recievedKey != stock.key) {
+        if(recievedKey != stock().key) {
             QString errorCode = QString("LoadStockFromBroker;checkStockKey();recievedKey!=stockKey:;%1;%2")
-                    .arg(recievedKey.keyToString(), stock.key.keyToString());
+                    .arg(recievedKey.keyToString(), stock().key.keyToString());
             throw std::logic_error(errorCode.toUtf8().data());
         }
     }  catch (std::exception &error) {
@@ -174,16 +155,13 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
  */
 void LoadStockFromBroker::removeIncompleteCandle()
 {
-    if(stock.candles.empty())
-        return;
+    Candle &lastCandle = stock().candles.back();
 
-    Candle &lastCandle = stock.candles.back();
-
-    uint64_t candleDuration = stock.key.intervalToSec();
+    uint64_t candleDuration = stock().key.time();
     QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
 
-    if (timeCandleComplite > loadRange.getEnd())
-        stock.candles.pop_back();
+    if (timeCandleComplite > range().getEnd())
+        stock().candles.pop_back();
 }
 
 }

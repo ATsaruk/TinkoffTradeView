@@ -42,11 +42,11 @@ public:
     ///Возвращает interval свечи
     const INTERVAL &interval()const;
 
+    ///Возвращает количество секунд в отрезке времени interval
+    long time() const;
+
     ///Преобразует значение interval в строку
     QString intervalToString() const;
-
-    ///Возвращает количество секунд в отрезке времени interval
-    long intervalToSec() const;
 
     ///Возвращает ключ акции в формате строки
     const QString keyToString() const;

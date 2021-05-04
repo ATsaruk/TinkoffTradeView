@@ -4,6 +4,10 @@
 
 namespace Broker {
 
+constexpr quint64 SECS_IN_ONE_DAY   = 24 * 3600;
+constexpr quint64 SECS_IN_ONE_WEEK  = 7 * SECS_IN_ONE_DAY;
+constexpr quint64 SECS_IN_ONE_MONTH = 30 * SECS_IN_ONE_DAY;
+
 TinkoffApi::TinkoffApi()
 {
     html = new Request;
@@ -52,6 +56,26 @@ bool TinkoffApi::loadCandles(const Data::StockKey &stockKey, const Data::Range &
     request += QString("&interval=%1").arg(stockKey.intervalToString());
 
     return html->sendGet(request);
+}
+
+qint64 TinkoffApi::getMaxLoadInterval(const Data::StockKey::INTERVAL &interval)
+{
+    switch (interval) {
+    case Data::StockKey::INTERVAL::DAY  :   //no break;
+    case Data::StockKey::INTERVAL::WEEK :
+        //Свечи длительностью 1 день и более загрузаются с максимальным интервалом 1 месяц
+        return SECS_IN_ONE_MONTH;
+
+    case Data::StockKey::INTERVAL::HOUR :
+        //Свечи длительностью 1 час загрузаются с максимальным интервалом 1 неделя
+        return SECS_IN_ONE_WEEK;
+
+    default :
+        break;
+    }
+
+    //Все свечи длительностью меньше часа имеют максимальный интервал загрузки 1 сутки
+    return SECS_IN_ONE_DAY;
 }
 
 }

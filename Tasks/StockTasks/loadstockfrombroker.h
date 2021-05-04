@@ -31,42 +31,30 @@
 #define LOADSTOCKFROMBROKER_H
 
 #include "Tasks/ibasetask.h"
-#include "Data/Stock/stockkey.h"
 #include "Data/range.h"
-#include "Data/Stock/candle.h"
-#include "Tasks/Interfaces/inputinterfaces.h"
-#include "Tasks/Interfaces/outputinterfaces.h"
+#include "Data/Stock/stocks.h"
 
 namespace Task {
 using namespace Data;
 
 
 ///Задача загрузки свечей из БД за указанный временной интервал
-class LoadStockFromBroker : public IBaseTask, public InputRange, public OutputCandles
+class LoadStockFromBroker : public IBaseTask
 {
     Q_OBJECT
 
 public:
-    explicit LoadStockFromBroker(const StockKey &stockKey_);
+    explicit LoadStockFromBroker(const StockKey &stockKey);
     ~LoadStockFromBroker();
 
     //Возвращает имя класса владельца
     QString getName() override;
 
-    //Задание исходных данных для загрузки
-    void setData(const Range &range) override;
+    void setData(SharedInterface &inputData) override;
 
-    Stock& getResult() override;
-
-    //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
-    static qint64 getMaxLoadInterval(const StockKey::INTERVAL &interval);
+    SharedInterface &getResult() override;
 
 protected:
-    Stock stock;      //ключ акции
-
-    Range curRange;     //Текущий подинтервал загрузки
-    Range loadRange;    //Полный интервал загрузки
-
     //Запустить задачу
     void exec() override;
 
@@ -84,14 +72,18 @@ protected:
 
     bool checkStockKey(const QJsonObject &payload);
 
+    //Удаляет незавершенную свечу
+    void removeIncompleteCandle();
+
 protected slots:
     //Обработка отвера с сервера брокера
     void onResponse(QByteArray answer);
 
 private:
+    InterfaceWrapper<Data::Range> range;
+    InterfaceWrapper<Data::Stock> stock;
 
-    //Удаляет незавершенную свечу
-    void removeIncompleteCandle();
+    Range curRange;     //Текущий подинтервал загрузки
 };
 
 }

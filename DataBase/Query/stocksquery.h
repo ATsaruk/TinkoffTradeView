@@ -18,7 +18,7 @@ public:
     //Вставляет список свечей candles в БД (таблица stocks)
     static void insertCandles(const Stock &stock);
     //Загружает свечи из базы данных (таблица stocks) в структуру candles
-    static void loadCandles(Stock &stock, const Range &range = Range());
+    static void loadCandles(Stock &stock, const QDateTime &begin, const QDateTime &end = QDateTime(), const uint candleCount = 0);
 };
 
 }

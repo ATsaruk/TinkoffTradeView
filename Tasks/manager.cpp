@@ -5,23 +5,14 @@
 
 namespace Task {
 
-Manager::Manager()
-    : CustomCommand()
+Manager::Manager(QObject *parent)
+    : QObject(parent), maxTaskCount(QThread::idealThreadCount() * 2)
 {
-    setThread(nullptr);
-
-    //Обнуляем taskThread, если этого не сделать, то при вызове addTask() для новых задач, им будет передан taskThread
-    //в качестве родительского потока и они будут создаваться внутри этого потока, а нам нужно что бы каждая задача
-    //была отдельным потоком, и обнулением мы лишаем их родительского потока и они создадут свои потоки
-    taskThread = nullptr;
-
-    maxTaskCount = QThread::idealThreadCount() * 2;
-    logDebug << QString("TaskManager;TaskManager();+constructor!");
 }
 
-QString Manager::getName()
+Manager::~Manager()
 {
-    return "TaskManager";
+    emit stopAll();
 }
 
 void Manager::registerTask(IBaseTask *newTask)
@@ -34,14 +25,20 @@ void Manager::registerTask(IBaseTask *newTask)
 
 void Manager::runNextTask()
 {
-    QMutexLocker locker(&mutex);
-
     //Запуск задач из очереди, их может быть одновременно не более чем maxTaskCount задач
     while (taskCount < maxTaskCount) {
         if (taskList.empty())
             break;  //Задач больше нет
+
+        IBaseTask *task = taskList.dequeue();
+        connect(task, &IBaseTask::finished,  this, &Manager::taskFinished);
+        connect(this, &Manager::stopAll, task, &IBaseTask::stop);
+
+        task->start();
         ++taskCount;
-        CustomCommand::runNextTask();
+
+        logDebug << QString("TaskManager;runNextTask();started : %1;tasks: %2/%3")
+                    .arg(task->getName()).arg(taskList.size()).arg(taskCount + taskList.size());
     }
 }
 
@@ -52,31 +49,22 @@ void Manager::runNextTask()
  */
 void Manager::taskFinished()
 {
-    if (taskCount == 0)  //Такого быть не должно! Завершилась задача, а запущенных задач 0!
-        throw std::logic_error(QString("%1;taskFinished();task finished but taskCount == 0")
-                               .arg(getName()).toStdString());
-
     QMutexLocker locker(&mutex);
 
-    //Удаляем завершившуюся задачу
+    assert(taskCount > 0 && "TaskManager;taskFinished();task finished but taskCount == 0");
     --taskCount;
-    if ( IBaseTask *task = dynamic_cast<IBaseTask*>(sender()) ) {
-        logDebug << QString("%1;taskFinished();finished: %2;taskCount = %3/%4")
-                    .arg(getName(), task->getName()).arg(taskCount).arg(taskList.size());
-        task->deleteLater();
-    } else
-        logCritical << QString("%1;taskFinished();can't get task!;taskCount = %2/%3")
-                       .arg(getName()).arg(taskCount).arg(taskList.size());
 
-    if (!taskList.isEmpty() && !isStopRequested)
-        runNextTask();    //Запускаем следующую задачу
-    else if (taskCount == 0)
-        emit finished();  //отправляем сигнал о завершении
-}
+    IBaseTask *task = dynamic_cast<IBaseTask*>(sender());
 
-QThread *Manager::getThread()
-{
-    return taskThread;
+    assert(task != nullptr && QString("TaskManager;taskFinished();can't get task!;tasks: %1/%2")
+            .arg(taskCount).arg(taskCount + taskList.size()).toStdString().data());
+
+    logDebug << QString("TaskManager;taskFinished();finished: %1;tasks: %2/%3")
+                    .arg(task->getName()).arg(taskCount).arg(taskCount + taskList.size());
+
+    task->deleteLater();
+
+    runNextTask();
 }
 
 }

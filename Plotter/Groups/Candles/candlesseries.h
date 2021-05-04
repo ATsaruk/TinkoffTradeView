@@ -23,6 +23,8 @@ namespace Plotter {
 
 class CandlesSeries : public ChartSeries
 {
+    Q_OBJECT
+
 public:
     explicit CandlesSeries();
     ~CandlesSeries();
@@ -41,9 +43,9 @@ protected:
     void updatePriceRange();
     const QDateTime getDateByIndex(const long index);
 
-    void loadData(const Data::Range &range);
-    void addCandle(const Data::Candle &candleData);
-    void addCandles();
+    void loadData(const Data::Range &loadRange);
+    void addCandle(Data::Candle &&candleData);
+    void addCandles(Data::Candles &&candles);
 
 protected slots:
     void loadCandlesFinished();

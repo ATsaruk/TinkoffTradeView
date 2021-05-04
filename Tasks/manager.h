@@ -22,7 +22,9 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "customcommand.h"
+#include <QObject>
+
+#include "ibasecommand.h"
 
 namespace Task {
 
@@ -32,33 +34,53 @@ namespace Task {
   * @details Класс предназначен для запуска других задач/комманд. Что бы задачу можно было запустить с помощью
   * addTask<TaskClass>(args...), у задачи должна быть реализована функция setData(...).
   */
-class Manager final : public CustomCommand
+class Manager : public QObject
 {
-    Q_OBJECT
-
 public:
-    explicit Manager();
+    explicit Manager(QObject *parent = nullptr);
+    ~Manager();
 
-    //Возвращает имя задачи
-    QString getName() override;
+    //Регистрирует задачу
+    void registerTask(IBaseTask *newTask);
 
-    //Регистрация новой заявки
-    void registerTask(IBaseTask *newTask) override;
+    /* Создаёт новую задачу
+    *  T - класс добавляемой задачи, наследник IFunction
+    *  inputData - входные данные необходимые для функции setData задачи
+    *  N...args - аргументы необходимые для функции конструктора задачи
+    *  Возвращает ссылку на созданную задачу (например для подключения к сигналу finished)
+    *  Пример:
+    *    Task::Manager::get()->createTask <LoadStock> (rangeInterface, stockKey, candleCount);
+    */
+    template<class T, typename... N>
+    std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
+    createTask(SharedInterface &inputData, N ... args)
+    {
+        QMutexLocker locker(&mutex);
+        T *newTask = new T(args ...);
+        newTask->setData(inputData);
+        newTask->setThread(nullptr);
+        registerTask(newTask);
+        return newTask;
+    }
 
-    //Запуск очередной задачи
-    virtual void runNextTask() override;
+signals:
+    void stopAll();
+
+protected:
+    void runNextTask();
 
 protected slots:
-    //Обработка завершения работы потока
-    virtual void taskFinished() override;
+    //Обработывет завершение работы задачи
+    virtual void taskFinished();
 
 private:
-    QRecursiveMutex mutex;
-    uint16_t taskCount = 0;   //общее кол-во запущенных задач
-    uint16_t maxTaskCount;
+    Q_OBJECT
 
-    //Функция перенесена в секцию private, что бы нельзя было зарегестрировать задачу класса Manager
-    QThread* getThread() override;
+    QRecursiveMutex mutex;
+    QQueue<IBaseTask*> taskList;  //очередь задач на запуск
+
+    const uint16_t maxTaskCount;
+    uint16_t taskCount = 0;   //общее кол-во запущенных задач
 };
 
 }

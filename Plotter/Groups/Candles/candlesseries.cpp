@@ -4,7 +4,6 @@
 #include "Plotter/Axis/axis.h"
 #include "Tasks/StockTasks/loadstock.h"
 
-
 #include "DataBase/Query/stocksquery.h"
 
 
@@ -29,10 +28,11 @@ CandlesSeries::~CandlesSeries()
 void CandlesSeries::repaint()
 {
     if (drawMutex.tryLock(drawWait)) {
-        if (isDataChanged) {
-            addCandles();
-            isDataChanged = false;
-        }
+        ///@todo подумать над методом обновления данных
+        //if (isDataChanged) {
+            //addCandles();
+            //isDataChanged = false;
+        //}
         if (isScaled)
             updateScale();
     }
@@ -45,7 +45,7 @@ void CandlesSeries::updateData()
         return;
 
     long displayedCandlesCount = hAxis->getRange();
-    long intervalSec = curStockKey.intervalToSec();
+    long intervalSec = curStockKey.time();
 
     Data::Range range;;
     if (candleItems.empty()) {
@@ -54,6 +54,7 @@ void CandlesSeries::updateData()
     } else {
         long offset = hAxis->getOffset();
         if (offset < candleItems.begin()->first) {
+            ///@todo проверить может быть в Glo.stocks->getRange() уже есть нужный диапазон?
             range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
             loadData(range);
         }
@@ -209,20 +210,18 @@ const QDateTime CandlesSeries::getDateByIndex(const long index)
     return QDateTime();
 }
 
-void CandlesSeries::loadData(const Data::Range &range)
+void CandlesSeries::loadData(const Data::Range &loadRange)
 {
     isDataRequested = true;
 
     uint minCandles = hAxis->getRange() / 3.;
-    auto *command = new Task::LoadStock(curStockKey, minCandles);
+    Task::InterfaceWrapper<Data::Range> range = loadRange;
+    auto *command = TaskManager->createTask<Task::LoadStock>(*range, curStockKey, minCandles);
     connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::loadCandlesFinished);
-
-    command->setData(range);
-    Glo.taskManager->registerTask(command);
 }
 
 //Добавление 1 свечи, поиск нового индекса
-void CandlesSeries::addCandle(const Data::Candle &candleData)
+void CandlesSeries::addCandle(Data::Candle &&candleData)
 {
     long index = 0.;
     if (!candleItems.empty()) {
@@ -235,7 +234,7 @@ void CandlesSeries::addCandle(const Data::Candle &candleData)
     if(candleItems.find(index) != candleItems.end())
         return; //Свеча уже существует
 
-    CandleItem *cndl = new CandleItem(candleData);
+    CandleItem *cndl = new CandleItem(std::forward<Data::Candle>(candleData));
     cndl->setCandleHorizontalScale(hAxis->getScale());
     cndl->setX(index * hAxis->getScale());
     if (index >= hAxis->getOffset() &&
@@ -246,12 +245,11 @@ void CandlesSeries::addCandle(const Data::Candle &candleData)
 }
 
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
-void CandlesSeries::addCandles()
+void CandlesSeries::addCandles(Data::Candles &&candles)
 {
     bool isCandlesAdded = false;
-    QReadLocker lock(&Glo.stocks->rwMutex);
-    const Data::Candles &candlesData = Glo.stocks->getCandles(curStockKey);
-    for (auto it = candlesData.rbegin(); it != candlesData.rend(); ++it) {
+    ///@todo переделать с использование стандартных алгритмов
+    for (auto it = candles.rbegin(); it != candles.rend(); ++it) {
         bool isExist = false;
 
         if (!candleItems.empty()) {
@@ -262,7 +260,7 @@ void CandlesSeries::addCandles()
         }
 
         if (!isExist) {
-            addCandle(*it);
+            addCandle(std::move(*it));
             isCandlesAdded = true;
         }
     }
@@ -280,7 +278,9 @@ void CandlesSeries::addCandles()
 
 void CandlesSeries::loadCandlesFinished()
 {
-    addCandles();
+    Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(sender());
+    Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
+    addCandles(std::move(stock().candles));
     //isDataChanged = true;
 }
 

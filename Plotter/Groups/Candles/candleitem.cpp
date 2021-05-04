@@ -1,13 +1,14 @@
 #include <QPainter>
+#include <type_traits>
 
 #include "candleitem.h"
 #include "Core/globals.h"
 
 namespace Plotter {
 
-CandleItem::CandleItem(const Data::Candle &_candle)
+CandleItem::CandleItem(Data::Candle &&_candle)
 {
-    candle = _candle;
+    candle = std::forward<Data::Candle>(_candle);
 
     QColor redPen     = Glo.conf->getValue("ChartPlotter/CandleItem/redPen", QColor(235, 77, 92));
     QColor redBrush   = Glo.conf->getValue("ChartPlotter/CandleItem/redBrush", QColor(235, 77, 92));

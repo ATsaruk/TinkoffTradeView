@@ -39,6 +39,9 @@ public:
       * @return TRUE - запрос отправлен, FALSE - запрос не отправлен, отсутсвует токен авторизации (не стоит ждать ответа от сервера) */
     [[nodiscard]] bool loadCandles(const Data::StockKey &stockKey, const Data::Range &range) override;
 
+    //Возвращает максимально допустимый интервал загрузки для primaryKey.interval
+    static qint64 getMaxLoadInterval(const Data::StockKey::INTERVAL &interval);
+
 protected:
     /// Интерфейс для отправки POST/GET запросов
     Request *html;

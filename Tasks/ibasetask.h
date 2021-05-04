@@ -1,4 +1,5 @@
-/* Паттерн компановщик, это класс Component, а класс Composite это CustomCommand
+/* @todo проверить актуальность написанного в этом блоке комментаниев ))) класс потерпел рефакторинг
+ * Паттерн компановщик, это класс Component, а класс Composite это CustomCommand
  * Тут есть одна заморочка с потоками, по задумке каждая задача должна выполнятся в отдельном потоке, но задача
  * может состоять из нескольких других задач, а те в свою очереь так же из подзадач и появляются проблемы с удалением
  * вложенных потоков...
@@ -89,53 +90,51 @@
 #ifndef IBASETASK_H
 #define IBASETASK_H
 
-#include <QObject>
+#include "ifunction.h"
 
 namespace Task {
 
 
 ///Базовый класс для задачи (паттерн компоновщик)
-class IBaseTask : public QObject
+class IBaseTask : public IFunction
 {
+    Q_OBJECT
+
 public:
-    virtual ~IBaseTask();
+    explicit IBaseTask();
 
-    //Возвращает имя задачи
-    virtual QString getName() = 0;
-
-    //Возвращает поток, в котором находится данный экземпляр класса
+    ///Возвращает поток, в котором находится данный экземпляр класса
     virtual QThread* getThread();
 
-    //Устанавливаем поток, в котором будет выполняться задача
+    ///Устанавливает поток, в котором будет выполняться задача
     void setThread(QThread *parent);
 
-public slots:
-    //Основная функция, запускает задачу (taskThread->start())
-    virtual void start() final;
+    ///Возвращает статус потока
+    bool isFinished();
 
-    //Остановить задату
+    ///Дожидается завершения выполнения потока
+    void waitForFinished();
+
+public slots:
+    ///Запускает выполнение задачи
+    virtual void start();
+
+    ///Устанавливает флаг, о необходимости остановки
     virtual void stop();
 
-    int isFinishedSignalHasConnection();
-
 signals:
-    //Сигнал о завершении работы
+    ///Сигнал о завершении работы
     void finished();
 
 protected:
-    //Запрос на остановку задачи
-    bool isStopRequested = false;
+    ///Производит нужные вычисления/операции, будет вызвана при запуске потока (QThread)
+    void exec() override = 0;
+
+protected:
     //Поток в котором будет выполняться данная задача
     QThread *taskThread;
 
-    IBaseTask();
-
-    //Функция которая будет вызвана при запуске потока (QThread)
-    virtual void exec() = 0;
-
 private:
-    Q_OBJECT
-
     //Признак того, что это корневая задача, она управляет выделением памяти, запуском, остановкой и удалением taskThread
     bool isRootTask;
 };

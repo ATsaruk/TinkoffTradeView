@@ -190,42 +190,67 @@
 #include <QRecursiveMutex>
 
 #include "ibasetask.h"
+#include "Tasks/Interfaces/interfase.h"
 
 namespace Task {
 
 
-class CustomCommand : public IBaseTask
+class IBaseCommand : public IBaseTask
 {
     Q_OBJECT
 
 public:
-    explicit CustomCommand();
-    ~CustomCommand();
+    explicit IBaseCommand(const QString commandName_);
+    ~IBaseCommand();
 
-    /* Добавление новой задачи
-    *  T - класс задачи наследние IBaseTask(или CustomCommand)
-    *  N... - аргументы необходимые для функции setData()
+    QString getName() override;
+
+    void setData(SharedInterface &inputData) override;
+    SharedInterface &getResult() override;
+
+    //Реристрирует задачу
+    virtual void registerFunc(IFunction *newTask);
+
+    /* Создаёт и запускает функцию
+    *  T - класс добавляемой задачи, наследник IFunction
+    *  N...args - аргументы необходимые для функции конструктора задачи
     *  Возвращает ссылку на созданную задачу (например для подключения к сигналу finished)
     *  Пример:
-    *    TaskManager::get()->addTask <CommandLoadStock> (curStockKey, beginTime, endTime, candleCount);
+    *    TaskManager::get()->addTask <LoadStock> (rangeInterface, stockKey, candleCount);
     */
     template <class T, typename... N>
-    std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
-    addTask(N ... args)
+    std::enable_if_t<std::is_base_of_v<IFunction, T>, T*>
+    execFunc(SharedInterface &inputData, N ... args)
     {
-        //QMutexLocker locker(&mutex);
+        T *newFunc = new T(args ...);
+        assert(newFunc->isFunction() && "Can't exec task! use createTask!");
+        newFunc->setData(inputData);
+        newFunc->exec();
+        return newFunc;
+    }
+
+    /* Создаёт новую задачу
+    *  T - класс добавляемой задачи, наследник IFunction
+    *  N...args - аргументы необходимые для функции конструктора задачи
+    *  Возвращает ссылку на созданную задачу (например для подключения к сигналу finished)
+    *  Пример:
+    *    TaskManager::get()->addTask <LoadStock> (rangeInterface, stockKey, candleCount);
+    */
+    template <class T, typename... N>
+    std::enable_if_t<std::is_base_of_v<IFunction, T>, T*>
+    createTask(N ... args)
+    {
         T *newTask = new T(args ...);
-        registerTask(newTask);
+        newTask->setThread(taskThread);
+        registerFunc(newTask);
         return newTask;
     }
 
-    //Реристрация новой задачи
-    virtual void registerTask(IBaseTask *newTask);
+signals:
+    //Сигнал остановки всех задач
+    void stopAll();
 
 protected:
-    //QRecursiveMutex mutex;
-    QQueue<IBaseTask*> taskList;  //очередь задач на запуск
-
     //Основной цикл выполнения задачи
     void exec() override;
 
@@ -233,15 +258,21 @@ protected:
     void stop() override;
 
     //Запуск очередной задачи
-    virtual void runNextTask();
+    virtual void runNextTask(IFunction *previousTask = nullptr);
+
+    virtual void execTask(IBaseTask *task);
 
 protected slots:
     //Обработка завершения потока
     virtual void taskFinished();
 
-signals:
-    //Сигнал остановки всех задач
-    void stopAll();
+protected:
+    //QRecursiveMutex mutex;
+    QQueue<IFunction*> taskList;  //очередь задач на запуск
+
+private:
+    QString commandName;
+    IFunction *lastTask = nullptr;
 };
 
 }

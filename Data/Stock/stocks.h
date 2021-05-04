@@ -32,6 +32,9 @@ struct Stock
     explicit Stock();
     explicit Stock(const StockKey &key_);
     bool operator==(const Stock &other) const;
+
+    Stock appendStock(const Stock &appendStock);
+    Candles appendCandles(const Candles &appendCandles);
 };
 
 
@@ -71,7 +74,7 @@ public:
       * свечи будут проигнорированы. Добавлятся будут только новые свечи.\n
       * Перед добавлением свечей, запрашивается доступ на изменение данных.\n
       * После добавления свечей, производится сортировка свечей по дате и освобождение доступа к данным. */
-    Stock insertCandles(const Stock &appendStock);
+    Stock insertCandles(const Stock &stock);
 
 signals:
     void dataChanged();

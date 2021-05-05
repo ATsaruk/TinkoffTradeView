@@ -101,19 +101,16 @@ class IBaseTask : public IFunction
     Q_OBJECT
 
 public:
-    explicit IBaseTask();
+    explicit IBaseTask(QString taskname);
 
     ///Возвращает поток, в котором находится данный экземпляр класса
-    virtual QThread* getThread();
+    QThread* getThread();
 
     ///Устанавливает поток, в котором будет выполняться задача
     void setThread(QThread *parent);
 
     ///Возвращает статус потока
     bool isFinished();
-
-    ///Дожидается завершения выполнения потока
-    void waitForFinished();
 
 public slots:
     ///Запускает выполнение задачи

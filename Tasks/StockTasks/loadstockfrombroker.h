@@ -47,9 +47,6 @@ public:
     explicit LoadStockFromBroker(const StockKey &stockKey);
     ~LoadStockFromBroker();
 
-    //Возвращает имя класса владельца
-    QString getName() override;
-
     void setData(SharedInterface &inputData) override;
 
     SharedInterface &getResult() override;

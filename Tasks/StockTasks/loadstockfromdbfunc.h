@@ -14,7 +14,6 @@ class LoadStockFromDbFunc : public IFunction
 public:
     explicit LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount_ = 1);
 
-    QString getName() override;
     void exec() override;
     void setData(SharedInterface &inputData) override;
     SharedInterface &getResult() override;

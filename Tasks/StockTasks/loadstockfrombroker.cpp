@@ -11,15 +11,13 @@
 namespace Task {
 
 LoadStockFromBroker::LoadStockFromBroker(const StockKey &stockKey)
-    : IBaseTask()
+    : IBaseTask("LoadStockFromBroker")
 {
     stock().key = stockKey;
-    logDebug << "loadStocksFromBrokerTask;loadStocksFromBrokerTask();+constructor!";
 }
 
 LoadStockFromBroker::~LoadStockFromBroker()
 {
-    logDebug << "loadStocksFromBrokerTask;~loadStocksFromBrokerTask();-destructor!";
 }
 
 
@@ -83,11 +81,6 @@ void LoadStockFromBroker::finishTask()
     }
 
     emit finished();
-}
-
-QString LoadStockFromBroker::getName()
-{
-    return "TaskLoadStocksFromBroker";
 }
 
 void LoadStockFromBroker::setData(SharedInterface &inputData)

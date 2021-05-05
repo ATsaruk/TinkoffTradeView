@@ -5,15 +5,10 @@
 namespace Task {
 
 LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount_)
+    : IFunction("LoadStockFromDbFunc")
 {
     stock().key = stockKey;
     minCandlesCount = minCandlesCount_;
-}
-
-QString LoadStockFromDbFunc::getName()
-{
-    //return typeid (*this).name();
-    return "LoadStockFromDbFunc";
 }
 
 /* Загружает данные из заданного диапазона, но не менее minCandlesCount,

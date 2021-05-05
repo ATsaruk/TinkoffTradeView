@@ -192,6 +192,10 @@
 #include "ibasetask.h"
 #include "Tasks/Interfaces/interfase.h"
 
+
+#include <QMetaMethod>
+
+
 namespace Task {
 
 
@@ -200,10 +204,8 @@ class IBaseCommand : public IBaseTask
     Q_OBJECT
 
 public:
-    explicit IBaseCommand(const QString commandName_);
+    explicit IBaseCommand(const QString commandName);
     ~IBaseCommand();
-
-    QString getName() override;
 
     void setData(SharedInterface &inputData) override;
     SharedInterface &getResult() override;
@@ -226,6 +228,7 @@ public:
         assert(newFunc->isFunction() && "Can't exec task! use createTask!");
         newFunc->setData(inputData);
         newFunc->exec();
+        newFunc->deleteLater();
         return newFunc;
     }
 
@@ -245,6 +248,9 @@ public:
         registerFunc(newTask);
         return newTask;
     }
+
+    ///Подключает method к сигналу finished : thisCommand->connect(this, SLOT(slotFinished())), this - это this класса к которому принадлежит слот
+    void connect(QObject *receiver, const char *method);
 
 signals:
     //Сигнал остановки всех задач
@@ -271,7 +277,6 @@ protected:
     QQueue<IFunction*> taskList;  //очередь задач на запуск
 
 private:
-    QString commandName;
     IFunction *lastTask = nullptr;
 };
 

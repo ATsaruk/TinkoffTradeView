@@ -28,16 +28,13 @@ namespace Task {
 
 
 /// Базовый класс функции для паттерна компоновщик
-/// @todo паттерн медиатор для InputInterface и OutputInterface ?
 class IFunction : public QObject
 {
 public:
-    explicit IFunction();
+    explicit IFunction(QString name);
     virtual ~IFunction();
 
-    ///Возвращает имя задачи
-    virtual QString getName() = 0;
-    //virtual QString getName() { return typeid (*this).name(); };
+    QString getName();
 
     //Возвращает true - если это функция, false - если это задача
     bool isFunction();
@@ -55,6 +52,7 @@ protected:
     //Запрос на остановку задачи
     bool isStopRequested = false;
     bool isFunc = true;
+    QString functionName;
 };
 
 }

@@ -1,5 +1,7 @@
 ///@todo проверить загрузку пустой акции и загрузку backward!
 
+#include <QThread>
+
 #include "loadstock.h"
 #include "Core/globals.h"
 #include "Broker/Tinkoff/tinkoff.h"
@@ -15,7 +17,6 @@ LoadStock::LoadStock(const StockKey &stockKey, const uint minCandleCount_)
     stock().key = stockKey;
     loadedCandles().key = stockKey;
     minCandleCount = minCandleCount_;
-    logDebug << "CommandLoadStock;CommandLoadStock();+constructor!";
 }
 
 void LoadStock::setData(SharedInterface &inputData)
@@ -103,7 +104,7 @@ void LoadStock::receiveResult(QObject *sender)
 {
     auto task = dynamic_cast<LoadStockFromBroker*>(sender);
 
-    assert(task != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft = %2")
+    assert(task != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft: %2")
             .arg(getName()).arg(taskList.size()).toStdString().data());
 
     InterfaceWrapper<Stock> brokerCandles = task->getResult();

@@ -8,10 +8,12 @@ namespace Task {
 Manager::Manager(QObject *parent)
     : QObject(parent), maxTaskCount(QThread::idealThreadCount() * 2)
 {
+    logDebug << QString("Task::Manager;Manager();created!");
 }
 
 Manager::~Manager()
 {
+    logDebug << QString("Task::Manager;~Manager();destroyed!");
     emit stopAll();
 }
 
@@ -34,11 +36,12 @@ void Manager::runNextTask()
         connect(task, &IBaseTask::finished,  this, &Manager::taskFinished);
         connect(this, &Manager::stopAll, task, &IBaseTask::stop);
 
-        task->start();
         ++taskCount;
 
         logDebug << QString("TaskManager;runNextTask();started : %1;tasks: %2/%3")
-                    .arg(task->getName()).arg(taskList.size()).arg(taskCount + taskList.size());
+                    .arg(task->getName()).arg(taskCount).arg(taskCount + taskList.size());
+
+        task->start();
     }
 }
 
@@ -62,9 +65,9 @@ void Manager::taskFinished()
     logDebug << QString("TaskManager;taskFinished();finished: %1;tasks: %2/%3")
                     .arg(task->getName()).arg(taskCount).arg(taskCount + taskList.size());
 
-    task->deleteLater();
-
     runNextTask();
+
+    task->deleteLater();
 }
 
 }

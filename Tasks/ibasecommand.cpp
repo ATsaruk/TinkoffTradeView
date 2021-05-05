@@ -23,24 +23,17 @@
 namespace Task {
 
 
-IBaseCommand::IBaseCommand(const QString commandName_)
-    : IBaseTask()
+IBaseCommand::IBaseCommand(const QString commandName)
+    : IBaseTask(commandName)
 {
-    commandName = commandName_;
-    logDebug << QString("%1;%1();+constructor!").arg(commandName);
+
 }
 
 IBaseCommand::~IBaseCommand()
 {
     if (lastTask != nullptr)
-        lastTask->deleteLater();
+        delete lastTask;
     emit stopAll();
-    logDebug << QString("%1;~%1;-destructor!").arg(commandName);
-}
-
-QString IBaseCommand::getName()
-{
-    return commandName;
 }
 
 void IBaseCommand::setData(SharedInterface &inputData)
@@ -57,10 +50,14 @@ SharedInterface &IBaseCommand::getResult()
 
 void IBaseCommand::registerFunc(IFunction *newTask)
 {
-    ///@todo Если не будет работать waitForFinished, пробовать без переноса в тот же поток
     if (!newTask->isFunction())
         dynamic_cast<IBaseTask*>(newTask)->setThread(taskThread);
     taskList.enqueue(newTask);
+}
+
+void IBaseCommand::connect(QObject *receiver, const char *method)
+{
+    QObject::connect(this, SIGNAL(finished()), receiver, method, Qt::BlockingQueuedConnection);
 }
 
 void IBaseCommand::runNextTask(IFunction *previousTask)
@@ -71,12 +68,12 @@ void IBaseCommand::runNextTask(IFunction *previousTask)
         return;
     }
 
-    if (previousTask != nullptr)
-        previousTask->deleteLater();
-
     IFunction *currentTask = taskList.dequeue();
     if (previousTask != nullptr)
         currentTask->setData(previousTask->getResult());
+
+    if (previousTask != nullptr)
+        delete previousTask;
 
     if (currentTask->isFunction()) {
         currentTask->exec();
@@ -87,10 +84,10 @@ void IBaseCommand::runNextTask(IFunction *previousTask)
 
 void IBaseCommand::execTask(IBaseTask *task)
 {
-    connect(task, &IBaseTask::finished,  this, &IBaseCommand::taskFinished);
-    connect(this, &IBaseCommand::stopAll, task, &IBaseTask::stop);
+    QObject::connect(task, &IBaseTask::finished,  this, &IBaseCommand::taskFinished);
+    QObject::connect(this, &IBaseCommand::stopAll, task, &IBaseTask::stop);
 
-    logDebug << QString("%1;runNextTask();started : %2;tasksLeft = %3")
+    logDebug << QString("%1;runNextTask();started : %2;tasksLeft: %3")
                 .arg(getName(), task->getName()).arg(taskList.size());
 
     task->start();
@@ -100,10 +97,10 @@ void IBaseCommand::taskFinished()
 {
     auto finishedTask = dynamic_cast<IBaseTask*>(sender());
 
-    assert(finishedTask != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft = %2")
+    assert(finishedTask != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft: %2")
             .arg(getName()).arg(taskList.size()).toStdString().data());
 
-    logDebug << QString("%1;taskFinished();finished: %2;tasksLeft = %3")
+    logDebug << QString("%1;taskFinished();finished: %2;tasksLeft: %3")
                 .arg(getName(), finishedTask->getName()).arg(taskList.size());
 
     //Запускаем следующую или завершаем выполнение

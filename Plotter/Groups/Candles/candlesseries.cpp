@@ -7,6 +7,9 @@
 #include "DataBase/Query/stocksquery.h"
 
 
+#include <QThread>
+
+
 namespace Plotter {
 
 CandlesSeries::CandlesSeries()
@@ -217,7 +220,7 @@ void CandlesSeries::loadData(const Data::Range &loadRange)
     uint minCandles = hAxis->getRange() / 3.;
     Task::InterfaceWrapper<Data::Range> range = loadRange;
     auto *command = TaskManager->createTask<Task::LoadStock>(*range, curStockKey, minCandles);
-    connect(command, &Task::IBaseTask::finished, this, &CandlesSeries::loadCandlesFinished);
+    command->connect(this, SLOT(loadCandlesFinished()));
 }
 
 //Добавление 1 свечи, поиск нового индекса
@@ -275,6 +278,38 @@ void CandlesSeries::addCandles(Data::Candles &&candles)
 
     isDataRequested = false;
 }
+/*
+void CandlesSeries::addCandles(Data::Candles &&candles)
+{
+    bool isCandlesAdded = false;
+    ///@todo переделать с использование стандартных алгритмов
+    for (auto it = candles.rbegin(); it != candles.rend(); ++it) {
+        bool isExist = false;
+
+        if (!candleItems.empty()) {
+            QDateTime curBeginInterval = candleItems.begin()->second->getData().dateTime;
+            QDateTime curEndInterval = candleItems.rbegin()->second->getData().dateTime;
+            if (curBeginInterval <= it->dateTime && it->dateTime <= curEndInterval)
+                isExist = true;
+        }
+
+        if (!isExist) {
+            addCandle(std::move(*it));
+            isCandlesAdded = true;
+        }
+    }
+
+    if (isCandlesAdded) {
+        isScaled = true;
+
+        //Если beginCandle == candleItems.end() это означает, инициализация интервала для отрисовки
+        if (beginCandle == candleItems.end())
+            beginCandle = candleItems.begin();
+    }
+
+    isDataRequested = false;
+}
+*/
 
 void CandlesSeries::loadCandlesFinished()
 {

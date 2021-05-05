@@ -7,8 +7,8 @@
 namespace Task {
 
 
-IBaseTask::IBaseTask()
-    : IFunction()
+IBaseTask::IBaseTask(QString taskName)
+    : IFunction(taskName)
 {
     isFunc = false;
 }
@@ -36,11 +36,6 @@ void IBaseTask::setThread(QThread *parent)
 bool IBaseTask::isFinished()
 {
     return taskThread->isFinished();
-}
-
-void IBaseTask::waitForFinished()
-{
-    taskThread->wait();  ///@todo ПРОВЕРИТЬ!
 }
 
 void IBaseTask::start()

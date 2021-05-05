@@ -266,7 +266,7 @@ protected:
     //Запуск очередной задачи
     virtual void runNextTask(IFunction *previousTask = nullptr);
 
-    virtual void execTask(IBaseTask *task);
+    virtual void startTask(IBaseTask *task);
 
 protected slots:
     //Обработка завершения потока

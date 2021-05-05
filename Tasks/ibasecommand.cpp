@@ -79,10 +79,10 @@ void IBaseCommand::runNextTask(IFunction *previousTask)
         currentTask->exec();
         runNextTask(currentTask);
     } else
-        execTask( dynamic_cast<IBaseTask*>(currentTask) );
+        startTask( dynamic_cast<IBaseTask*>(currentTask) );
 }
 
-void IBaseCommand::execTask(IBaseTask *task)
+void IBaseCommand::startTask(IBaseTask *task)
 {
     QObject::connect(task, &IBaseTask::finished,  this, &IBaseCommand::taskFinished);
     QObject::connect(this, &IBaseCommand::stopAll, task, &IBaseTask::stop);

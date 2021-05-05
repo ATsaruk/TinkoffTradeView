@@ -33,11 +33,6 @@ void IBaseTask::setThread(QThread *parent)
     this->moveToThread(taskThread);
 }
 
-bool IBaseTask::isFinished()
-{
-    return taskThread->isFinished();
-}
-
 void IBaseTask::start()
 {
     if (isRootTask) {

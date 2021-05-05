@@ -51,7 +51,7 @@
                          <context>Tasks</context>
                          <name>IFunction</name>
                          <pos>x:200;y:275</pos>
-                         <rect>x:-65;y:-95;w:130;h:190</rect>
+                         <rect>x:-65;y:-100;w:130;h:200</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -73,8 +73,8 @@
                          <object>{7cb47ff9-fada-4ecd-be22-1f73aee5c41c}</object>
                          <context>Tasks</context>
                          <name>Manager</name>
-                         <pos>x:695;y:515</pos>
-                         <rect>x:-50;y:-45;w:100;h:90</rect>
+                         <pos>x:435;y:565</pos>
+                         <rect>x:-50;y:-55;w:100;h:110</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -97,7 +97,7 @@
                          <context>Tasks</context>
                          <name>IBaseTask</name>
                          <pos>x:435;y:275</pos>
-                         <rect>x:-65;y:-110;w:130;h:220</rect>
+                         <rect>x:-65;y:-95;w:130;h:190</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -190,7 +190,7 @@
                          <context>Tasks</context>
                          <name>IBaseCommand</name>
                          <pos>x:695;y:275</pos>
-                         <rect>x:-65;y:-95;w:130;h:190</rect>
+                         <rect>x:-65;y:-130;w:130;h:260</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -218,26 +218,38 @@
                      </instance>
                     </item>
                     <item>
-                     <instance type="DInheritance">
-                      <DInheritance>
+                     <instance type="DAssociation">
+                      <DAssociation>
                        <base-DRelation>
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{dba09f6a-aaca-4922-8625-a56946f85406}</uid>
+                           <uid>{66b6637f-e17d-4671-b02d-7d65be5bca7a}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{7ad24d24-9097-4f16-8cc2-fd165b4b3b9a}</object>
+                         <object>{a1ee01e1-ab4f-447a-ac82-81fc7abd438d}</object>
                          <a>{edc7338b-47bb-4e2f-84db-df95363ce88d}</a>
-                         <b>{e406b88e-16c0-45e3-91ca-3a5646cce867}</b>
+                         <b>{13c7b677-d2fb-4b82-9ba0-663bfb68da94}</b>
                         </DRelation>
                        </base-DRelation>
-                      </DInheritance>
+                       <a>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                         <navigable>true</navigable>
+                         <kind>1</kind>
+                        </DAssociationEnd>
+                       </a>
+                       <b>
+                        <DAssociationEnd>
+                         <cradinality>1</cradinality>
+                        </DAssociationEnd>
+                       </b>
+                      </DAssociation>
                      </instance>
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1619965060154</last-modified>
+                  <last-modified>1620220772130</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -358,72 +370,58 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{e7b862a4-eaaf-4022-a4dc-27a8b8a7448c}</uid>
+                                          <uid>{3fbb3260-e987-445a-a250-a8be49bfde63}</uid>
                                           <type>1</type>
                                           <declaration>-isRootTask: bool</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{051a92ad-ea45-4576-a2fd-3ad3ccc6b5b7}</uid>
+                                          <uid>{79cc4771-52f5-43a2-b967-c14a65529bc4}</uid>
                                           <type>1</type>
                                           <declaration>-taskThread: QThread</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{6b6389d8-95a6-4c33-b5f6-53c33dc15d36}</uid>
+                                          <uid>{39b83ac2-a493-477e-9200-dd4e9e26d399}</uid>
                                           <type>1</type>
                                           <declaration>+finished: SIGNAL</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{9330fb60-704b-4cfd-991a-76a9610fb2f2}</uid>
+                                          <uid>{1f0b6b63-1940-468a-82a1-25d24317876c}</uid>
                                           <type>2</type>
                                           <declaration>-exec()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{b77dc1ef-69e6-410e-a83b-61df3dce7fd4}</uid>
+                                          <uid>{416da0c2-e021-4eee-9f4b-04172820a069}</uid>
                                           <type>2</type>
                                           <declaration>+start()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{6f952ae4-f195-4c5e-a12b-a81aa5cf8f04}</uid>
+                                          <uid>{29025710-1321-44d0-bb39-0bab81d39f55}</uid>
                                           <type>2</type>
                                           <declaration>+stop()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{7afe5884-e91f-49dd-8307-2f4d50516100}</uid>
+                                          <uid>{a93193c5-c874-480e-a539-d009f169f987}</uid>
                                           <type>2</type>
                                           <declaration>+getThread()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{fcbad38e-03e5-42e3-a341-143f747c54e9}</uid>
+                                          <uid>{150c42d8-d049-49d5-83be-7a007c9b651f}</uid>
                                           <type>2</type>
                                           <declaration>+setThread(QThread)</declaration>
-                                         </MClassMember>
-                                        </item>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{52d073fc-cf18-4320-955c-61475d537b09}</uid>
-                                          <type>2</type>
-                                          <declaration>+isFinished()</declaration>
-                                         </MClassMember>
-                                        </item>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{9f97a9e0-d715-46e5-8b86-4f75fcd3157d}</uid>
-                                          <type>2</type>
-                                          <declaration>+waitForFinished()</declaration>
                                          </MClassMember>
                                         </item>
                                        </qlist>
@@ -506,22 +504,34 @@
                                            <qlist>
                                             <item>
                                              <handle>
-                                              <uid>{7ad24d24-9097-4f16-8cc2-fd165b4b3b9a}</uid>
+                                              <uid>{a1ee01e1-ab4f-447a-ac82-81fc7abd438d}</uid>
                                               <target>
-                                               <instance type="MInheritance">
-                                                <MInheritance>
+                                               <instance type="MAssociation">
+                                                <MAssociation>
                                                  <base-MRelation>
                                                   <MRelation>
                                                    <base-MElement>
                                                     <MElement>
-                                                     <uid>{7ad24d24-9097-4f16-8cc2-fd165b4b3b9a}</uid>
+                                                     <uid>{a1ee01e1-ab4f-447a-ac82-81fc7abd438d}</uid>
                                                     </MElement>
                                                    </base-MElement>
                                                    <a>{7cb47ff9-fada-4ecd-be22-1f73aee5c41c}</a>
-                                                   <b>{dc0f791a-5fa4-4c39-b5d5-855b5d550f9e}</b>
+                                                   <b>{a71836a8-5e4c-4653-b35b-1b75f94fd7de}</b>
                                                   </MRelation>
                                                  </base-MRelation>
-                                                </MInheritance>
+                                                 <a>
+                                                  <MAssociationEnd>
+                                                   <cardinality>*</cardinality>
+                                                   <navigable>true</navigable>
+                                                   <kind>1</kind>
+                                                  </MAssociationEnd>
+                                                 </a>
+                                                 <b>
+                                                  <MAssociationEnd>
+                                                   <cardinality>1</cardinality>
+                                                  </MAssociationEnd>
+                                                 </b>
+                                                </MAssociation>
                                                </instance>
                                               </target>
                                              </handle>
@@ -537,9 +547,16 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{c2d2f1aa-a8c9-4289-9468-6c5d587e429d}</uid>
+                                          <uid>{e960d58b-3312-4386-9c55-d294955af014}</uid>
                                           <type>2</type>
                                           <declaration>+registerTask()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{6bec25ce-f5f2-4f11-aec6-433b09ed8bba}</uid>
+                                          <type>2</type>
+                                          <declaration>+createTask()</declaration>
                                          </MClassMember>
                                         </item>
                                        </qlist>
@@ -612,56 +629,63 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{82daa479-8e19-4bb6-8e4d-f15d7e25d4ba}</uid>
-                                          <type>1</type>
-                                          <declaration>-isStopAsked: bool</declaration>
-                                         </MClassMember>
-                                        </item>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{6a3dcad2-f492-4fbe-8425-35ef6fc91b0d}</uid>
+                                          <uid>{9c26a95d-d56b-426f-a19f-fa1b60cc180b}</uid>
                                           <type>1</type>
                                           <declaration>-isFunction: bool</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{214f961f-cd04-43b9-aff9-2c97fbb8aba4}</uid>
+                                          <uid>{c75efcb3-bbd3-452c-8d7f-28bea75cbd49}</uid>
+                                          <type>1</type>
+                                          <declaration>-isStopAsked: bool</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{9cf09fbb-0bf8-4b4b-9159-2dc379269392}</uid>
                                           <type>1</type>
                                           <declaration>-input: Interface*</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{fb18a736-2211-4a8c-a389-da0ed056871c}</uid>
+                                          <uid>{b57f31bc-4b1e-4382-853f-c75f70e01c6d}</uid>
                                           <type>1</type>
                                           <declaration>-output: Interface*</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{843495e4-bdad-4e71-9848-cc23b6beb31c}</uid>
+                                          <uid>{c272d7e5-9cfa-4735-bb15-702a38c16b53}</uid>
                                           <type>2</type>
                                           <declaration>+getName()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{a079f771-0167-4f74-8388-7c2a14d590a1}</uid>
+                                          <uid>{5257792f-cfc8-4a59-bccc-7b55914a853f}</uid>
+                                          <type>2</type>
+                                          <declaration>+isFunction()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{3d403d93-b1fb-4ef3-8850-aa4b2043f136}</uid>
                                           <type>2</type>
                                           <declaration>+setData(Interface*)</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{a871653a-4b8f-487a-b4c1-5e1f5a9ec123}</uid>
+                                          <uid>{df15ec5f-cf66-46d1-b619-616e7e26b2d9}</uid>
                                           <type>2</type>
                                           <declaration>+exec()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{e85790fe-8a6d-49ae-8024-2d5b476c8f82}</uid>
+                                          <uid>{a6bd8be2-2c49-414b-aaa6-23f91a50cbce}</uid>
                                           <type>2</type>
                                           <declaration>+getResult()</declaration>
                                          </MClassMember>
@@ -725,58 +749,93 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{faae2bec-0d7c-435c-b86c-86a5cae9ddb3}</uid>
+                                          <uid>{ee610b3d-ab24-4501-8aba-b1fd8e78193f}</uid>
+                                          <type>2</type>
+                                          <declaration>+registerFunc()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{a8aeed07-4aad-4bf8-8f05-ca9431a5b087}</uid>
                                           <type>1</type>
                                           <declaration>-taskList&lt;IBaseTask*&gt;</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{c272b614-3bc1-4260-8114-30853b73a802}</uid>
+                                          <uid>{a5684cb5-805d-47bf-a48b-ad18310022ad}</uid>
+                                          <type>1</type>
+                                          <declaration>-lastTask : IBaseTasl*</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{d674f2e5-bc0d-49a2-aacd-eb3865940580}</uid>
                                           <type>1</type>
                                           <declaration>+stopAll: SIGNAL</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{49297059-4316-4808-a1c0-89c779fc1305}</uid>
+                                          <uid>{c1c7093a-74ba-40a2-a8ea-0aa7c725c547}</uid>
                                           <type>2</type>
-                                          <declaration>+addTask()</declaration>
+                                          <declaration>+setData(Interface*)</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{bd239401-8080-444d-bdd3-2a9ca50a9fdb}</uid>
+                                          <uid>{6094a482-17f1-48c8-80a7-a7c6fabee84c}</uid>
+                                          <type>2</type>
+                                          <declaration>+getResult()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{9846e037-1927-4736-9f96-e3520b5e6ab9}</uid>
+                                          <type>2</type>
+                                          <declaration>+execFunc()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{0e6d81ac-d4d7-4385-a25a-f6cfccd47d6e}</uid>
+                                          <type>2</type>
+                                          <declaration>+createTask()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{959b51ca-1c3f-4112-b82d-de551f46fe1c}</uid>
                                           <type>2</type>
                                           <declaration>-exec()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{3fcbf542-b389-48aa-8d08-ea52e52c9b8b}</uid>
+                                          <uid>{a0682223-bde4-4bdb-be76-073590bbb9eb}</uid>
                                           <type>2</type>
                                           <declaration>-stop()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{ebfbb175-8068-4c55-b442-42082a866940}</uid>
-                                          <type>2</type>
-                                          <declaration>-registerTask()</declaration>
-                                         </MClassMember>
-                                        </item>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{87129945-cd3d-45d1-b761-28304bb53684}</uid>
+                                          <uid>{380c0624-257c-42c8-a191-74e721eafc88}</uid>
                                           <type>2</type>
                                           <declaration>-runNextTask()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{cda805e6-54f9-4e99-938b-840389c209f2}</uid>
+                                          <uid>{d6109eba-e979-4be6-98b2-92be723289b4}</uid>
                                           <type>2</type>
-                                          <declaration>-onTaskFinished()</declaration>
+                                          <declaration>-startTask()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{82b17a32-c4df-4f4d-8fa8-4a4b4bf9752a}</uid>
+                                          <type>2</type>
+                                          <declaration>-taskFinished()</declaration>
                                          </MClassMember>
                                         </item>
                                        </qlist>

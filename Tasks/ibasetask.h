@@ -109,9 +109,6 @@ public:
     ///Устанавливает поток, в котором будет выполняться задача
     void setThread(QThread *parent);
 
-    ///Возвращает статус потока
-    bool isFinished();
-
 public slots:
     ///Запускает выполнение задачи
     virtual void start();

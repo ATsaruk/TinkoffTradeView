@@ -19,7 +19,7 @@ ChartPlotter::ChartPlotter(QWidget *parent) : QGraphicsView(parent)
     setScene(graphicScene);
 
     ///temp
-    dateAxis = new HorizontalDateAxis;
+    dateAxis = new DateAxis;
     dateAxis->setDataRange(100);
     dateAxis->setDataOffset(-75);
     graphicScene->addItem(dateAxis);
@@ -47,20 +47,19 @@ void ChartPlotter::setDrawStockKey(const Data::StockKey &_stockKey)
     stockKey = _stockKey;
 
     bool isExist = false;
-    for (auto &it : graphicScene->items()) {
+    /*for (auto &it : graphicScene->items()) {
         if (ChartSeries *series = dynamic_cast<ChartSeries*>(it)) {
             bool isVisible = series->getStockKey() == stockKey;
             series->setVisible(isVisible);
             if (isVisible)
                 isExist = true;
         }
-    }
+    }*/
 
     if (!isExist) {
-        auto series = new CandlesSeries;
+        auto series = new CandlesSeries(stockKey);
         series->attachAxis(dateAxis);
         series->attachAxis(priceAxis);
-        series->setStockKey(stockKey);
         graphicScene->addItem(series);
     }
 }

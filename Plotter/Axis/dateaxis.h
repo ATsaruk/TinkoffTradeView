@@ -1,15 +1,15 @@
-#ifndef HORIZONTALDATEAXIS_H
-#define HORIZONTALDATEAXIS_H
+#ifndef DATEAXIS_H
+#define DATEAXIS_H
 
 #include "axis.h"
 
 namespace Plotter {
 
 
-class HorizontalDateAxis : public Axis
+class DateAxis : public Axis
 {
 public:
-    explicit HorizontalDateAxis();
+    explicit DateAxis();
 
     //Определяем виртуальный метод, который возвращает область, в которой находится треугольник
     virtual QRectF boundingRect() const override;
@@ -22,4 +22,4 @@ protected:
 
 }
 
-#endif // HORIZONTALDATEAXIS_H
+#endif // DATEAXIS_H

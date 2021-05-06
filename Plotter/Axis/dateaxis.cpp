@@ -1,24 +1,24 @@
 #include <QPainter>
 
 #include "axis.h"
-#include "horizontaldateaxis.h"
+#include "dateaxis.h"
 #include "Core/globals.h"
 
 namespace Plotter {
 
-HorizontalDateAxis::HorizontalDateAxis()
+DateAxis::DateAxis()
     : Axis(AXIS_TYPE::HORIZONTAL)
 {
     axisHeight = Glo.conf->getValue("ChartPlotter/Axis/height", 20);
 }
 
-QRectF HorizontalDateAxis::boundingRect() const
+QRectF DateAxis::boundingRect() const
 {
     QRect rect(0, -axisHeight, sceneRect.width(), -axisHeight);
     return rect;
 }
 
-void HorizontalDateAxis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void DateAxis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->drawLine(0, -axisHeight, sceneRect.width(), -axisHeight);
 

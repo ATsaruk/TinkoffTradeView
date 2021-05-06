@@ -44,16 +44,18 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{b9f1fd63-9250-461c-ac1c-f5252322ec8d}</uid>
+                           <uid>{d8efeb7d-08b8-4dd3-a2e8-477a7a690b7d}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{23cfceb9-7166-440b-9459-1aab4aee117a}</object>
+                         <object>{91c87055-644b-4c14-9a98-6c9fe6164dc8}</object>
+                         <context>Plotter</context>
                          <name>ChartPlotter</name>
-                         <pos>x:185;y:355</pos>
-                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <pos>x:385;y:70</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
+                       <namespace>Plotter</namespace>
                       </DClass>
                      </instance>
                     </item>
@@ -64,16 +66,18 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{b44ecbc6-5ab1-4ead-b977-d2812841e424}</uid>
+                           <uid>{b0b5309e-2a4a-4675-bb51-c51e3f467c11}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{0821de7b-a77d-49d4-98ad-69546733d5cd}</object>
-                         <name>Axis</name>
-                         <pos>x:890;y:335</pos>
-                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <object>{bb974337-4612-4168-9401-2ed737d074ae}</object>
+                         <context>Plotter</context>
+                         <name>ChartScene</name>
+                         <pos>x:385;y:215</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
+                       <namespace>Plotter</namespace>
                       </DClass>
                      </instance>
                     </item>
@@ -84,16 +88,18 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{4fefe4bc-0082-4ff3-9c76-239c6dc6faec}</uid>
+                           <uid>{22bd8cb1-e9d6-4387-b188-ac1dc3dae6de}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{eb7f71b3-e8f6-4e77-a209-ef030849512b}</object>
-                         <name>HorizontalDateAxis</name>
-                         <pos>x:705;y:265</pos>
-                         <rect>x:-55;y:-30;w:110;h:60</rect>
+                         <object>{813661e8-5a24-4d00-aba0-14ad39cab549}</object>
+                         <context>Groups</context>
+                         <name>ChartSeries</name>
+                         <pos>x:615;y:355</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
+                       <namespace>Plotter</namespace>
                       </DClass>
                      </instance>
                     </item>
@@ -104,53 +110,19 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{79e4ffe1-966f-4776-9f53-36ea7d6e0cf9}</uid>
+                           <uid>{adff3beb-ac7b-43a2-91a5-6e1856c64bd3}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{8fe550bc-1d59-4702-9123-e599918eaea5}</object>
-                         <name>VerticalAxis</name>
-                         <pos>x:690;y:375</pos>
-                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <object>{1482ca43-76cb-4d93-a905-a71cb2688865}</object>
+                         <context>Candles</context>
+                         <name>CandlesSeries</name>
+                         <pos>x:465;y:505</pos>
+                         <rect>x:-45;y:-35;w:90;h:70</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
+                       <namespace>Plotter</namespace>
                       </DClass>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DInheritance">
-                      <DInheritance>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{79b2ced2-6324-446e-bb3b-e16c69a2bda5}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{aa6b7eb4-4a5d-4d49-9cab-e11b37713b55}</object>
-                         <a>{4fefe4bc-0082-4ff3-9c76-239c6dc6faec}</a>
-                         <b>{b44ecbc6-5ab1-4ead-b977-d2812841e424}</b>
-                        </DRelation>
-                       </base-DRelation>
-                      </DInheritance>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DInheritance">
-                      <DInheritance>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{f6070fac-2a01-4bee-9c73-448896d25a2e}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{ec5c354c-537b-4081-805d-68bc2eec48b6}</object>
-                         <a>{79e4ffe1-966f-4776-9f53-36ea7d6e0cf9}</a>
-                         <b>{b44ecbc6-5ab1-4ead-b977-d2812841e424}</b>
-                        </DRelation>
-                       </base-DRelation>
-                      </DInheritance>
                      </instance>
                     </item>
                     <item>
@@ -160,36 +132,18 @@
                         <DObject>
                          <base-DElement>
                           <DElement>
-                           <uid>{4db540d0-f3fb-4252-9dbc-728c96f03f67}</uid>
+                           <uid>{6f2cb4d2-5007-4aad-8329-b15b485500da}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{84041be0-ab26-446a-84af-85c85fc9248e}</object>
+                         <object>{e5ed5626-4993-4986-88fe-dda39455a4e1}</object>
+                         <context>Candles</context>
                          <name>CandleItem</name>
-                         <pos>x:690;y:515</pos>
-                         <rect>x:-40;y:-30;w:80;h:60</rect>
+                         <pos>x:465;y:650</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
-                      </DClass>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DClass">
-                      <DClass>
-                       <base-DObject>
-                        <DObject>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{4ec057f7-6557-42d1-aa3e-96910b4ce650}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</object>
-                         <name>StockItem</name>
-                         <pos>x:495;y:515</pos>
-                         <rect>x:-40;y:-30;w:80;h:60</rect>
-                         <visual-role>0</visual-role>
-                        </DObject>
-                       </base-DObject>
+                       <namespace>Plotter</namespace>
                       </DClass>
                      </instance>
                     </item>
@@ -200,32 +154,308 @@
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{7adf0623-9aaa-496d-af8f-b702395562dd}</uid>
+                           <uid>{eeadc1cf-bd09-4a5e-8882-054c17043d93}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{c52a3b8c-663f-49fe-949c-746bedb893e3}</object>
-                         <a>{4ec057f7-6557-42d1-aa3e-96910b4ce650}</a>
-                         <b>{4db540d0-f3fb-4252-9dbc-728c96f03f67}</b>
+                         <object>{ab8b3e82-1797-4854-9b2d-7c304672b8c2}</object>
+                         <a>{d8efeb7d-08b8-4dd3-a2e8-477a7a690b7d}</a>
+                         <b>{b0b5309e-2a4a-4675-bb51-c51e3f467c11}</b>
                         </DRelation>
                        </base-DRelation>
                        <a>
                         <DAssociationEnd>
-                         <cradinality>1</cradinality>
+                         <cradinality>*</cradinality>
                          <navigable>true</navigable>
                          <kind>2</kind>
                         </DAssociationEnd>
                        </a>
                        <b>
                         <DAssociationEnd>
-                         <cradinality>*</cradinality>
+                         <cradinality>1</cradinality>
                         </DAssociationEnd>
                        </b>
                       </DAssociation>
                      </instance>
                     </item>
+                    <item>
+                     <instance type="DInheritance">
+                      <DInheritance>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{c3863d96-4efc-4a66-b957-cd46e234bd16}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{82aa55c5-934d-46d2-8042-aa9423d8686d}</object>
+                         <a>{adff3beb-ac7b-43a2-91a5-6e1856c64bd3}</a>
+                         <b>{22bd8cb1-e9d6-4387-b188-ac1dc3dae6de}</b>
+                        </DRelation>
+                       </base-DRelation>
+                      </DInheritance>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DAssociation">
+                      <DAssociation>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{a5dfc430-55ed-4c60-bf69-d7ff45adff96}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{d3083ae6-0225-41d2-ac6d-e9989c31886e}</object>
+                         <a>{adff3beb-ac7b-43a2-91a5-6e1856c64bd3}</a>
+                         <b>{6f2cb4d2-5007-4aad-8329-b15b485500da}</b>
+                        </DRelation>
+                       </base-DRelation>
+                       <a>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                         <navigable>true</navigable>
+                         <kind>2</kind>
+                        </DAssociationEnd>
+                       </a>
+                       <b>
+                        <DAssociationEnd>
+                         <cradinality>1</cradinality>
+                        </DAssociationEnd>
+                       </b>
+                      </DAssociation>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{5c2dd36c-f979-4593-904d-71f4881ff29a}</object>
+                         <context>Axis</context>
+                         <name>Axis</name>
+                         <pos>x:190;y:355</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                       <namespace>Plotter</namespace>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DAssociation">
+                      <DAssociation>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{b0d564e7-eca5-452c-b9c8-1287480d8cbd}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{258caacb-cc2d-48ab-adc4-3050bb13e39e}</object>
+                         <a>{b0b5309e-2a4a-4675-bb51-c51e3f467c11}</a>
+                         <b>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</b>
+                        </DRelation>
+                       </base-DRelation>
+                       <a>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                         <navigable>true</navigable>
+                         <kind>2</kind>
+                        </DAssociationEnd>
+                       </a>
+                       <b>
+                        <DAssociationEnd>
+                         <cradinality>1</cradinality>
+                        </DAssociationEnd>
+                       </b>
+                      </DAssociation>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DAssociation">
+                      <DAssociation>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{7f8f32d2-badb-4276-b3c9-43a6b89f5d7b}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{7463da62-6193-441d-96a0-1b53e8d18598}</object>
+                         <a>{b0b5309e-2a4a-4675-bb51-c51e3f467c11}</a>
+                         <b>{22bd8cb1-e9d6-4387-b188-ac1dc3dae6de}</b>
+                        </DRelation>
+                       </base-DRelation>
+                       <a>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                         <navigable>true</navigable>
+                         <kind>2</kind>
+                        </DAssociationEnd>
+                       </a>
+                       <b>
+                        <DAssociationEnd>
+                         <cradinality>1</cradinality>
+                        </DAssociationEnd>
+                       </b>
+                      </DAssociation>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{6cc2950a-69eb-4429-b70e-341058cb39d2}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{4018b507-c9d5-4c25-a352-47f5df3f6d71}</object>
+                         <context>Axis</context>
+                         <name>DateAxis</name>
+                         <pos>x:265;y:505</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                       <namespace>Plotter</namespace>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DInheritance">
+                      <DInheritance>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{a2cdb6ef-102e-4e9e-a9a8-cb591c67ac10}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{96c38f55-f009-42fc-ad40-cb5333d0fbfe}</object>
+                         <a>{6cc2950a-69eb-4429-b70e-341058cb39d2}</a>
+                         <b>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</b>
+                        </DRelation>
+                       </base-DRelation>
+                      </DInheritance>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{f82bfb36-46e8-420e-9c66-ba0086036cd9}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{d3ad3653-7b37-48fd-87d1-8c31823c6b40}</object>
+                         <context>Axis</context>
+                         <name>NumericAxis</name>
+                         <pos>x:115;y:505</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                       <namespace>Plotter</namespace>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DInheritance">
+                      <DInheritance>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{ccfb9c1d-a6fd-4fe0-bc55-3d2ad5d73131}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{2013713e-e0fe-4f4f-a1a9-a37b1a4ebb1e}</object>
+                         <a>{f82bfb36-46e8-420e-9c66-ba0086036cd9}</a>
+                         <b>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</b>
+                        </DRelation>
+                       </base-DRelation>
+                      </DInheritance>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DClass">
+                      <DClass>
+                       <base-DObject>
+                        <DObject>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{a6fc073a-7fc3-4caf-9b6a-abfb3c812e02}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{95f46c18-3885-46d8-a60b-8185fd922499}</object>
+                         <context>Axis</context>
+                         <name>PriceAxis</name>
+                         <pos>x:115;y:655</pos>
+                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <visual-role>0</visual-role>
+                        </DObject>
+                       </base-DObject>
+                       <namespace>Plotter</namespace>
+                      </DClass>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DInheritance">
+                      <DInheritance>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{0fea8514-8f40-410e-b707-29d83759e1d5}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{e843dfc4-21b2-4c50-aec5-399180a3b79c}</object>
+                         <a>{a6fc073a-7fc3-4caf-9b6a-abfb3c812e02}</a>
+                         <b>{f82bfb36-46e8-420e-9c66-ba0086036cd9}</b>
+                        </DRelation>
+                       </base-DRelation>
+                      </DInheritance>
+                     </instance>
+                    </item>
+                    <item>
+                     <instance type="DAssociation">
+                      <DAssociation>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{ecdf0852-d96b-4d15-8fb9-fc8699cf0bc3}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{74d2479a-bc87-4efe-b6c8-1860070f6fba}</object>
+                         <a>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</a>
+                         <b>{22bd8cb1-e9d6-4387-b188-ac1dc3dae6de}</b>
+                         <name>seriesList : QList&lt;ChartSeries*&gt;</name>
+                        </DRelation>
+                       </base-DRelation>
+                       <a>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                         <navigable>true</navigable>
+                         <kind>1</kind>
+                        </DAssociationEnd>
+                       </a>
+                      </DAssociation>
+                     </instance>
+                    </item>
                    </qlist>
                   </elements>
-                  <last-modified>1617906040566</last-modified>
+                  <last-modified>1620298704879</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -236,82 +466,656 @@
            </item>
            <item>
             <handle>
-             <uid>{23cfceb9-7166-440b-9459-1aab4aee117a}</uid>
+             <uid>{52f9036a-64d0-43ba-abdb-2d626d62067d}</uid>
              <target>
-              <instance type="MClass">
-               <MClass>
+              <instance type="MPackage">
+               <MPackage>
                 <base-MObject>
                  <MObject>
                   <base-MElement>
                    <MElement>
-                    <uid>{23cfceb9-7166-440b-9459-1aab4aee117a}</uid>
+                    <uid>{52f9036a-64d0-43ba-abdb-2d626d62067d}</uid>
+                    <flags>1</flags>
                    </MElement>
                   </base-MElement>
-                  <name>ChartPlotter</name>
-                 </MObject>
-                </base-MObject>
-               </MClass>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{0821de7b-a77d-49d4-98ad-69546733d5cd}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{0821de7b-a77d-49d4-98ad-69546733d5cd}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>Axis</name>
-                 </MObject>
-                </base-MObject>
-               </MClass>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{eb7f71b3-e8f6-4e77-a209-ef030849512b}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{eb7f71b3-e8f6-4e77-a209-ef030849512b}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>HorizontalDateAxis</name>
-                  <relations>
+                  <name>TinkoffTradeView</name>
+                  <children>
                    <handles>
                     <handles>
                      <qlist>
                       <item>
                        <handle>
-                        <uid>{aa6b7eb4-4a5d-4d49-9cab-e11b37713b55}</uid>
+                        <uid>{e0d6e2f7-52fd-41af-a2cd-a26128e11861}</uid>
                         <target>
-                         <instance type="MInheritance">
-                          <MInheritance>
-                           <base-MRelation>
-                            <MRelation>
+                         <instance type="MPackage">
+                          <MPackage>
+                           <base-MObject>
+                            <MObject>
                              <base-MElement>
                               <MElement>
-                               <uid>{aa6b7eb4-4a5d-4d49-9cab-e11b37713b55}</uid>
+                               <uid>{e0d6e2f7-52fd-41af-a2cd-a26128e11861}</uid>
+                               <flags>1</flags>
                               </MElement>
                              </base-MElement>
-                             <a>{eb7f71b3-e8f6-4e77-a209-ef030849512b}</a>
-                             <b>{0821de7b-a77d-49d4-98ad-69546733d5cd}</b>
-                            </MRelation>
-                           </base-MRelation>
-                          </MInheritance>
+                             <name>Plotter</name>
+                             <children>
+                              <handles>
+                               <handles>
+                                <qlist>
+                                 <item>
+                                  <handle>
+                                   <uid>{91c87055-644b-4c14-9a98-6c9fe6164dc8}</uid>
+                                   <target>
+                                    <instance type="MClass">
+                                     <MClass>
+                                      <base-MObject>
+                                       <MObject>
+                                        <base-MElement>
+                                         <MElement>
+                                          <uid>{91c87055-644b-4c14-9a98-6c9fe6164dc8}</uid>
+                                          <flags>1</flags>
+                                         </MElement>
+                                        </base-MElement>
+                                        <name>ChartPlotter</name>
+                                        <relations>
+                                         <handles>
+                                          <handles>
+                                           <qlist>
+                                            <item>
+                                             <handle>
+                                              <uid>{ab8b3e82-1797-4854-9b2d-7c304672b8c2}</uid>
+                                              <target>
+                                               <instance type="MAssociation">
+                                                <MAssociation>
+                                                 <base-MRelation>
+                                                  <MRelation>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{ab8b3e82-1797-4854-9b2d-7c304672b8c2}</uid>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <a>{91c87055-644b-4c14-9a98-6c9fe6164dc8}</a>
+                                                   <b>{bb974337-4612-4168-9401-2ed737d074ae}</b>
+                                                  </MRelation>
+                                                 </base-MRelation>
+                                                 <a>
+                                                  <MAssociationEnd>
+                                                   <cardinality>*</cardinality>
+                                                   <navigable>true</navigable>
+                                                   <kind>2</kind>
+                                                  </MAssociationEnd>
+                                                 </a>
+                                                 <b>
+                                                  <MAssociationEnd>
+                                                   <cardinality>1</cardinality>
+                                                  </MAssociationEnd>
+                                                 </b>
+                                                </MAssociation>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                           </qlist>
+                                          </handles>
+                                         </handles>
+                                        </relations>
+                                       </MObject>
+                                      </base-MObject>
+                                      <namespace>Plotter</namespace>
+                                     </MClass>
+                                    </instance>
+                                   </target>
+                                  </handle>
+                                 </item>
+                                 <item>
+                                  <handle>
+                                   <uid>{bb974337-4612-4168-9401-2ed737d074ae}</uid>
+                                   <target>
+                                    <instance type="MClass">
+                                     <MClass>
+                                      <base-MObject>
+                                       <MObject>
+                                        <base-MElement>
+                                         <MElement>
+                                          <uid>{bb974337-4612-4168-9401-2ed737d074ae}</uid>
+                                          <flags>1</flags>
+                                         </MElement>
+                                        </base-MElement>
+                                        <name>ChartScene</name>
+                                        <relations>
+                                         <handles>
+                                          <handles>
+                                           <qlist>
+                                            <item>
+                                             <handle>
+                                              <uid>{258caacb-cc2d-48ab-adc4-3050bb13e39e}</uid>
+                                              <target>
+                                               <instance type="MAssociation">
+                                                <MAssociation>
+                                                 <base-MRelation>
+                                                  <MRelation>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{258caacb-cc2d-48ab-adc4-3050bb13e39e}</uid>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <a>{bb974337-4612-4168-9401-2ed737d074ae}</a>
+                                                   <b>{5c2dd36c-f979-4593-904d-71f4881ff29a}</b>
+                                                  </MRelation>
+                                                 </base-MRelation>
+                                                 <a>
+                                                  <MAssociationEnd>
+                                                   <cardinality>*</cardinality>
+                                                   <navigable>true</navigable>
+                                                   <kind>2</kind>
+                                                  </MAssociationEnd>
+                                                 </a>
+                                                 <b>
+                                                  <MAssociationEnd>
+                                                   <cardinality>1</cardinality>
+                                                  </MAssociationEnd>
+                                                 </b>
+                                                </MAssociation>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                            <item>
+                                             <handle>
+                                              <uid>{7463da62-6193-441d-96a0-1b53e8d18598}</uid>
+                                              <target>
+                                               <instance type="MAssociation">
+                                                <MAssociation>
+                                                 <base-MRelation>
+                                                  <MRelation>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{7463da62-6193-441d-96a0-1b53e8d18598}</uid>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <a>{bb974337-4612-4168-9401-2ed737d074ae}</a>
+                                                   <b>{813661e8-5a24-4d00-aba0-14ad39cab549}</b>
+                                                  </MRelation>
+                                                 </base-MRelation>
+                                                 <a>
+                                                  <MAssociationEnd>
+                                                   <cardinality>*</cardinality>
+                                                   <navigable>true</navigable>
+                                                   <kind>2</kind>
+                                                  </MAssociationEnd>
+                                                 </a>
+                                                 <b>
+                                                  <MAssociationEnd>
+                                                   <cardinality>1</cardinality>
+                                                  </MAssociationEnd>
+                                                 </b>
+                                                </MAssociation>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                           </qlist>
+                                          </handles>
+                                         </handles>
+                                        </relations>
+                                       </MObject>
+                                      </base-MObject>
+                                      <namespace>Plotter</namespace>
+                                     </MClass>
+                                    </instance>
+                                   </target>
+                                  </handle>
+                                 </item>
+                                 <item>
+                                  <handle>
+                                   <uid>{02f3dd3d-4c9c-441d-b70f-6e514915a62f}</uid>
+                                   <target>
+                                    <instance type="MPackage">
+                                     <MPackage>
+                                      <base-MObject>
+                                       <MObject>
+                                        <base-MElement>
+                                         <MElement>
+                                          <uid>{02f3dd3d-4c9c-441d-b70f-6e514915a62f}</uid>
+                                          <flags>1</flags>
+                                         </MElement>
+                                        </base-MElement>
+                                        <name>Groups</name>
+                                        <children>
+                                         <handles>
+                                          <handles>
+                                           <qlist>
+                                            <item>
+                                             <handle>
+                                              <uid>{813661e8-5a24-4d00-aba0-14ad39cab549}</uid>
+                                              <target>
+                                               <instance type="MClass">
+                                                <MClass>
+                                                 <base-MObject>
+                                                  <MObject>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{813661e8-5a24-4d00-aba0-14ad39cab549}</uid>
+                                                     <flags>1</flags>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <name>ChartSeries</name>
+                                                  </MObject>
+                                                 </base-MObject>
+                                                 <namespace>Plotter</namespace>
+                                                </MClass>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                            <item>
+                                             <handle>
+                                              <uid>{73e8f0e2-6b4d-4fc3-bd8b-ec3b67cd74f9}</uid>
+                                              <target>
+                                               <instance type="MPackage">
+                                                <MPackage>
+                                                 <base-MObject>
+                                                  <MObject>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{73e8f0e2-6b4d-4fc3-bd8b-ec3b67cd74f9}</uid>
+                                                     <flags>1</flags>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <name>Candles</name>
+                                                   <children>
+                                                    <handles>
+                                                     <handles>
+                                                      <qlist>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{1482ca43-76cb-4d93-a905-a71cb2688865}</uid>
+                                                         <target>
+                                                          <instance type="MClass">
+                                                           <MClass>
+                                                            <base-MObject>
+                                                             <MObject>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{1482ca43-76cb-4d93-a905-a71cb2688865}</uid>
+                                                                <flags>1</flags>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <name>CandlesSeries</name>
+                                                              <relations>
+                                                               <handles>
+                                                                <handles>
+                                                                 <qlist>
+                                                                  <item>
+                                                                   <handle>
+                                                                    <uid>{82aa55c5-934d-46d2-8042-aa9423d8686d}</uid>
+                                                                    <target>
+                                                                     <instance type="MInheritance">
+                                                                      <MInheritance>
+                                                                       <base-MRelation>
+                                                                        <MRelation>
+                                                                         <base-MElement>
+                                                                          <MElement>
+                                                                           <uid>{82aa55c5-934d-46d2-8042-aa9423d8686d}</uid>
+                                                                          </MElement>
+                                                                         </base-MElement>
+                                                                         <a>{1482ca43-76cb-4d93-a905-a71cb2688865}</a>
+                                                                         <b>{813661e8-5a24-4d00-aba0-14ad39cab549}</b>
+                                                                        </MRelation>
+                                                                       </base-MRelation>
+                                                                      </MInheritance>
+                                                                     </instance>
+                                                                    </target>
+                                                                   </handle>
+                                                                  </item>
+                                                                  <item>
+                                                                   <handle>
+                                                                    <uid>{d3083ae6-0225-41d2-ac6d-e9989c31886e}</uid>
+                                                                    <target>
+                                                                     <instance type="MAssociation">
+                                                                      <MAssociation>
+                                                                       <base-MRelation>
+                                                                        <MRelation>
+                                                                         <base-MElement>
+                                                                          <MElement>
+                                                                           <uid>{d3083ae6-0225-41d2-ac6d-e9989c31886e}</uid>
+                                                                          </MElement>
+                                                                         </base-MElement>
+                                                                         <a>{1482ca43-76cb-4d93-a905-a71cb2688865}</a>
+                                                                         <b>{e5ed5626-4993-4986-88fe-dda39455a4e1}</b>
+                                                                        </MRelation>
+                                                                       </base-MRelation>
+                                                                       <a>
+                                                                        <MAssociationEnd>
+                                                                         <cardinality>*</cardinality>
+                                                                         <navigable>true</navigable>
+                                                                         <kind>2</kind>
+                                                                        </MAssociationEnd>
+                                                                       </a>
+                                                                       <b>
+                                                                        <MAssociationEnd>
+                                                                         <cardinality>1</cardinality>
+                                                                        </MAssociationEnd>
+                                                                       </b>
+                                                                      </MAssociation>
+                                                                     </instance>
+                                                                    </target>
+                                                                   </handle>
+                                                                  </item>
+                                                                 </qlist>
+                                                                </handles>
+                                                               </handles>
+                                                              </relations>
+                                                             </MObject>
+                                                            </base-MObject>
+                                                            <namespace>Plotter</namespace>
+                                                           </MClass>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{e5ed5626-4993-4986-88fe-dda39455a4e1}</uid>
+                                                         <target>
+                                                          <instance type="MClass">
+                                                           <MClass>
+                                                            <base-MObject>
+                                                             <MObject>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{e5ed5626-4993-4986-88fe-dda39455a4e1}</uid>
+                                                                <flags>1</flags>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <name>CandleItem</name>
+                                                             </MObject>
+                                                            </base-MObject>
+                                                            <namespace>Plotter</namespace>
+                                                           </MClass>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                      </qlist>
+                                                     </handles>
+                                                    </handles>
+                                                   </children>
+                                                  </MObject>
+                                                 </base-MObject>
+                                                </MPackage>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                           </qlist>
+                                          </handles>
+                                         </handles>
+                                        </children>
+                                       </MObject>
+                                      </base-MObject>
+                                     </MPackage>
+                                    </instance>
+                                   </target>
+                                  </handle>
+                                 </item>
+                                 <item>
+                                  <handle>
+                                   <uid>{e7722b4e-109a-41cc-9fc6-3eddc9e07e49}</uid>
+                                   <target>
+                                    <instance type="MPackage">
+                                     <MPackage>
+                                      <base-MObject>
+                                       <MObject>
+                                        <base-MElement>
+                                         <MElement>
+                                          <uid>{e7722b4e-109a-41cc-9fc6-3eddc9e07e49}</uid>
+                                          <flags>1</flags>
+                                         </MElement>
+                                        </base-MElement>
+                                        <name>Axis</name>
+                                        <children>
+                                         <handles>
+                                          <handles>
+                                           <qlist>
+                                            <item>
+                                             <handle>
+                                              <uid>{5c2dd36c-f979-4593-904d-71f4881ff29a}</uid>
+                                              <target>
+                                               <instance type="MClass">
+                                                <MClass>
+                                                 <base-MObject>
+                                                  <MObject>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{5c2dd36c-f979-4593-904d-71f4881ff29a}</uid>
+                                                     <flags>1</flags>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <name>Axis</name>
+                                                   <relations>
+                                                    <handles>
+                                                     <handles>
+                                                      <qlist>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{74d2479a-bc87-4efe-b6c8-1860070f6fba}</uid>
+                                                         <target>
+                                                          <instance type="MAssociation">
+                                                           <MAssociation>
+                                                            <base-MRelation>
+                                                             <MRelation>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{74d2479a-bc87-4efe-b6c8-1860070f6fba}</uid>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <name>seriesList : QList&lt;ChartSeries*&gt;</name>
+                                                              <a>{5c2dd36c-f979-4593-904d-71f4881ff29a}</a>
+                                                              <b>{813661e8-5a24-4d00-aba0-14ad39cab549}</b>
+                                                             </MRelation>
+                                                            </base-MRelation>
+                                                            <a>
+                                                             <MAssociationEnd>
+                                                              <cardinality>*</cardinality>
+                                                              <navigable>true</navigable>
+                                                              <kind>1</kind>
+                                                             </MAssociationEnd>
+                                                            </a>
+                                                           </MAssociation>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                      </qlist>
+                                                     </handles>
+                                                    </handles>
+                                                   </relations>
+                                                  </MObject>
+                                                 </base-MObject>
+                                                 <namespace>Plotter</namespace>
+                                                </MClass>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                            <item>
+                                             <handle>
+                                              <uid>{4018b507-c9d5-4c25-a352-47f5df3f6d71}</uid>
+                                              <target>
+                                               <instance type="MClass">
+                                                <MClass>
+                                                 <base-MObject>
+                                                  <MObject>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{4018b507-c9d5-4c25-a352-47f5df3f6d71}</uid>
+                                                     <flags>1</flags>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <name>DateAxis</name>
+                                                   <relations>
+                                                    <handles>
+                                                     <handles>
+                                                      <qlist>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{96c38f55-f009-42fc-ad40-cb5333d0fbfe}</uid>
+                                                         <target>
+                                                          <instance type="MInheritance">
+                                                           <MInheritance>
+                                                            <base-MRelation>
+                                                             <MRelation>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{96c38f55-f009-42fc-ad40-cb5333d0fbfe}</uid>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <a>{4018b507-c9d5-4c25-a352-47f5df3f6d71}</a>
+                                                              <b>{5c2dd36c-f979-4593-904d-71f4881ff29a}</b>
+                                                             </MRelation>
+                                                            </base-MRelation>
+                                                           </MInheritance>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                      </qlist>
+                                                     </handles>
+                                                    </handles>
+                                                   </relations>
+                                                  </MObject>
+                                                 </base-MObject>
+                                                 <namespace>Plotter</namespace>
+                                                </MClass>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                            <item>
+                                             <handle>
+                                              <uid>{d3ad3653-7b37-48fd-87d1-8c31823c6b40}</uid>
+                                              <target>
+                                               <instance type="MClass">
+                                                <MClass>
+                                                 <base-MObject>
+                                                  <MObject>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{d3ad3653-7b37-48fd-87d1-8c31823c6b40}</uid>
+                                                     <flags>1</flags>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <name>NumericAxis</name>
+                                                   <relations>
+                                                    <handles>
+                                                     <handles>
+                                                      <qlist>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{2013713e-e0fe-4f4f-a1a9-a37b1a4ebb1e}</uid>
+                                                         <target>
+                                                          <instance type="MInheritance">
+                                                           <MInheritance>
+                                                            <base-MRelation>
+                                                             <MRelation>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{2013713e-e0fe-4f4f-a1a9-a37b1a4ebb1e}</uid>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <a>{d3ad3653-7b37-48fd-87d1-8c31823c6b40}</a>
+                                                              <b>{5c2dd36c-f979-4593-904d-71f4881ff29a}</b>
+                                                             </MRelation>
+                                                            </base-MRelation>
+                                                           </MInheritance>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                      </qlist>
+                                                     </handles>
+                                                    </handles>
+                                                   </relations>
+                                                  </MObject>
+                                                 </base-MObject>
+                                                 <namespace>Plotter</namespace>
+                                                </MClass>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                            <item>
+                                             <handle>
+                                              <uid>{95f46c18-3885-46d8-a60b-8185fd922499}</uid>
+                                              <target>
+                                               <instance type="MClass">
+                                                <MClass>
+                                                 <base-MObject>
+                                                  <MObject>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{95f46c18-3885-46d8-a60b-8185fd922499}</uid>
+                                                     <flags>1</flags>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <name>PriceAxis</name>
+                                                   <relations>
+                                                    <handles>
+                                                     <handles>
+                                                      <qlist>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{e843dfc4-21b2-4c50-aec5-399180a3b79c}</uid>
+                                                         <target>
+                                                          <instance type="MInheritance">
+                                                           <MInheritance>
+                                                            <base-MRelation>
+                                                             <MRelation>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{e843dfc4-21b2-4c50-aec5-399180a3b79c}</uid>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <a>{95f46c18-3885-46d8-a60b-8185fd922499}</a>
+                                                              <b>{d3ad3653-7b37-48fd-87d1-8c31823c6b40}</b>
+                                                             </MRelation>
+                                                            </base-MRelation>
+                                                           </MInheritance>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                      </qlist>
+                                                     </handles>
+                                                    </handles>
+                                                   </relations>
+                                                  </MObject>
+                                                 </base-MObject>
+                                                 <namespace>Plotter</namespace>
+                                                </MClass>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                           </qlist>
+                                          </handles>
+                                         </handles>
+                                        </children>
+                                       </MObject>
+                                      </base-MObject>
+                                     </MPackage>
+                                    </instance>
+                                   </target>
+                                  </handle>
+                                 </item>
+                                </qlist>
+                               </handles>
+                              </handles>
+                             </children>
+                            </MObject>
+                           </base-MObject>
+                          </MPackage>
                          </instance>
                         </target>
                        </handle>
@@ -319,189 +1123,10 @@
                      </qlist>
                     </handles>
                    </handles>
-                  </relations>
+                  </children>
                  </MObject>
                 </base-MObject>
-               </MClass>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{8fe550bc-1d59-4702-9123-e599918eaea5}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{8fe550bc-1d59-4702-9123-e599918eaea5}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>VerticalAxis</name>
-                  <relations>
-                   <handles>
-                    <handles>
-                     <qlist>
-                      <item>
-                       <handle>
-                        <uid>{ec5c354c-537b-4081-805d-68bc2eec48b6}</uid>
-                        <target>
-                         <instance type="MInheritance">
-                          <MInheritance>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{ec5c354c-537b-4081-805d-68bc2eec48b6}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{8fe550bc-1d59-4702-9123-e599918eaea5}</a>
-                             <b>{0821de7b-a77d-49d4-98ad-69546733d5cd}</b>
-                            </MRelation>
-                           </base-MRelation>
-                          </MInheritance>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                     </qlist>
-                    </handles>
-                   </handles>
-                  </relations>
-                 </MObject>
-                </base-MObject>
-               </MClass>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{84041be0-ab26-446a-84af-85c85fc9248e}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{84041be0-ab26-446a-84af-85c85fc9248e}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>CandleItem</name>
-                 </MObject>
-                </base-MObject>
-               </MClass>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</uid>
-             <target>
-              <instance type="MClass">
-               <MClass>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>StockItem</name>
-                  <relations>
-                   <handles>
-                    <handles>
-                     <qlist>
-                      <item>
-                       <handle>
-                        <uid>{c52a3b8c-663f-49fe-949c-746bedb893e3}</uid>
-                        <target>
-                         <instance type="MAssociation">
-                          <MAssociation>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{c52a3b8c-663f-49fe-949c-746bedb893e3}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</a>
-                             <b>{84041be0-ab26-446a-84af-85c85fc9248e}</b>
-                            </MRelation>
-                           </base-MRelation>
-                           <a>
-                            <MAssociationEnd>
-                             <cardinality>1</cardinality>
-                             <navigable>true</navigable>
-                             <kind>2</kind>
-                            </MAssociationEnd>
-                           </a>
-                           <b>
-                            <MAssociationEnd>
-                             <cardinality>*</cardinality>
-                            </MAssociationEnd>
-                           </b>
-                          </MAssociation>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                      <item>
-                       <handle>
-                        <uid>{8fd75963-f4b0-4957-8d49-67824dbd1422}</uid>
-                        <target>
-                         <instance type="MDependency">
-                          <MDependency>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{8fd75963-f4b0-4957-8d49-67824dbd1422}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</a>
-                             <b>{eb7f71b3-e8f6-4e77-a209-ef030849512b}</b>
-                            </MRelation>
-                           </base-MRelation>
-                          </MDependency>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                      <item>
-                       <handle>
-                        <uid>{a921c3b4-e73d-403b-a5b4-87d3c7e73fd5}</uid>
-                        <target>
-                         <instance type="MDependency">
-                          <MDependency>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{a921c3b4-e73d-403b-a5b4-87d3c7e73fd5}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{085b45d0-7f91-4b6c-8456-3671f5b281b6}</a>
-                             <b>{8fe550bc-1d59-4702-9123-e599918eaea5}</b>
-                            </MRelation>
-                           </base-MRelation>
-                          </MDependency>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                     </qlist>
-                    </handles>
-                   </handles>
-                  </relations>
-                 </MObject>
-                </base-MObject>
-               </MClass>
+               </MPackage>
               </instance>
              </target>
             </handle>

@@ -12,14 +12,15 @@
 
 namespace Plotter {
 
-CandlesSeries::CandlesSeries()
+CandlesSeries::CandlesSeries(const Data::StockKey &stockKey)
 {
+    curStockKey = stockKey;
+
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
 
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
     drawWait = plotInterval * 3 / 4;
-    //connect(Glo.stocks, &DataStocks::dataChanged, this, &ChartCandlesGroup::dataChanged);
 }
 
 CandlesSeries::~CandlesSeries()
@@ -30,16 +31,32 @@ CandlesSeries::~CandlesSeries()
 
 void CandlesSeries::repaint()
 {
-    if (drawMutex.tryLock(drawWait)) {
-        ///@todo подумать над методом обновления данных
-        //if (isDataChanged) {
-            //addCandles();
-            //isDataChanged = false;
-        //}
-        if (isScaled)
-            updateScale();
-    }
+    if (!isChanged)
+        return;
+
+    if (!drawMutex.tryLock(drawWait))
+        return;
+
+    assert(!candleItems.empty() && "CandlesSeries::updateScale() candleItems can't be empty with isChanged == true!");
+
+    updateData();
+
+    scaleByXAxis();
+
+    if (autoPriceRange)
+        updatePriceRange();
+
+    scaleByYAxis();
+
+    emit changed();
+    isChanged = false;
+
     drawMutex.unlock();
+}
+
+const Data::StockKey &CandlesSeries::getStockKey()
+{
+    return curStockKey;
 }
 
 void CandlesSeries::updateData()
@@ -57,18 +74,17 @@ void CandlesSeries::updateData()
     } else {
         long offset = hAxis->getOffset();
         if (offset < candleItems.begin()->first) {
-            ///@todo проверить может быть в Glo.stocks->getRange() уже есть нужный диапазон?
             range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
             loadData(range);
         }
     }
 }
 
-bool CandlesSeries::clear()
+void CandlesSeries::clear()
 {
     //Если в текущий момент запрошены свечные данные, то пока мы их не обработаем, мы не может произвести очистку
-    if (isDataRequested)
-        return false;
+    while (isDataRequested)
+        QThread::msleep(1);  ///@todo проверить не приведет ли к зависанию!
 
     //Удаляем свечи
     for (auto &it : candleItems) {
@@ -83,27 +99,6 @@ bool CandlesSeries::clear()
     //Сбрасываем отображаемый интервал
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
-
-    return true;
-}
-
-void CandlesSeries::updateScale()
-{
-    isScaled = false;
-
-    if (candleItems.empty())
-        return;
-
-    updateData();
-
-    scaleByXAxis();
-
-    if (autoPriceRange)
-        updatePriceRange();
-
-    scaleByYAxis();
-
-    emit changed();
 }
 
 /* Функция мастабирования оси Х
@@ -269,7 +264,7 @@ void CandlesSeries::addCandles(Data::Candles &&candles)
     }
 
     if (isCandlesAdded) {
-        isScaled = true;
+        isChanged = true;
 
         //Если beginCandle == candleItems.end() это означает, инициализация интервала для отрисовки
         if (beginCandle == candleItems.end())
@@ -317,11 +312,6 @@ void CandlesSeries::loadCandlesFinished()
     Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
     addCandles(std::move(stock().candles));
     //isDataChanged = true;
-}
-
-void CandlesSeries::loadTaskFinished()
-{
-    isDataRequested = false;
 }
 
 }

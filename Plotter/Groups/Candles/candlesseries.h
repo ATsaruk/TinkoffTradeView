@@ -26,17 +26,18 @@ class CandlesSeries : public ChartSeries
     Q_OBJECT
 
 public:
-    explicit CandlesSeries();
+    explicit CandlesSeries(const Data::StockKey &stockKey);
     ~CandlesSeries();
 
 public slots:
     void repaint() override;
 
+    const Data::StockKey& getStockKey();
+
 protected:
     void updateData() override;
-    bool clear() override;
+    void clear() override;
 
-    void updateScale();
     void scaleByXAxis();
     void scaleByYAxis();
     void setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator);
@@ -49,7 +50,6 @@ protected:
 
 protected slots:
     void loadCandlesFinished();
-    void loadTaskFinished();
 
 private:
     uint drawWait;
@@ -57,7 +57,8 @@ private:
 
     bool autoPriceRange = true;    //Перенести в ChartVerticalAxis!
     bool isDataRequested = false;
-    bool isDataChanged = false;
+
+    Data::StockKey curStockKey;
 
     //Данные для рисования
     std::map<long, CandleItem*>::iterator beginCandle;

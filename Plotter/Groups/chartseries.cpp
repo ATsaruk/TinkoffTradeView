@@ -24,24 +24,9 @@ void ChartSeries::attachAxis(Axis *_axis)
     connect(_axis, &Axis::scaled, this, &ChartSeries::setScalse);
 }
 
-void ChartSeries::setStockKey(const Data::StockKey &stockKey)
-{
-    while (!clear())
-        QThread::msleep(1);
-
-    curStockKey = stockKey;
-
-    updateData();
-}
-
-const Data::StockKey &ChartSeries::getStockKey()
-{
-    return curStockKey;
-}
-
 void ChartSeries::setScalse()
 {
-    isScaled = true;
+    isChanged = true;
 }
 
 }

@@ -4,7 +4,7 @@
 #include <QGraphicsView>
 
 #include "Axis/axis.h"
-#include "Axis/horizontaldateaxis.h"
+#include "Axis/dateaxis.h"
 #include "Groups/chartseries.h"
 
 class QTimer;
@@ -44,7 +44,7 @@ private:
     Qt::MouseButtons pressedButton;     //Идентефикаторы нажатых кнопок
 
     //temp
-    HorizontalDateAxis *dateAxis;
+    DateAxis *dateAxis;
     Axis *priceAxis;
     //temp
 

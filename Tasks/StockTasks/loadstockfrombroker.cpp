@@ -13,7 +13,7 @@ namespace Task {
 LoadStockFromBroker::LoadStockFromBroker(const StockKey &stockKey)
     : IBaseTask("LoadStockFromBroker")
 {
-    stock().key = stockKey;
+    stock->key = stockKey;
 }
 
 LoadStockFromBroker::~LoadStockFromBroker()
@@ -25,10 +25,10 @@ void LoadStockFromBroker::exec()
 {
     Glo.broker->mutex.lock();
 
-    assert(range().isValid() && "LoadStockFromBroker::setData: invalid loadRange!");
+    assert(range->isValid() && "LoadStockFromBroker::setData: invalid loadRange!");
 
-    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock().key.interval());
-    curRange.setRange(range().getEnd(), -maxLoadRange);
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
+    curRange.setRange(range->getEnd(), -maxLoadRange);
     curRange.constrain(range());
 
     connect(Glo.broker.data(), &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
@@ -42,7 +42,7 @@ bool LoadStockFromBroker::sendRequest()
     if (isStopRequested)
         return false;
 
-    if (!Glo.broker->loadCandles(stock().key, curRange))
+    if (!Glo.broker->loadCandles(stock->key, curRange))
         return false;
 
     return true;
@@ -61,11 +61,11 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    auto candleInterval = stock().key.time();
-    if ( curRange.getBegin() < range().getBegin().addSecs(candleInterval) )
+    auto candleInterval = stock->key.time();
+    if ( curRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;
 
-    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock().key.interval()) + candleInterval;
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval()) + candleInterval;
     curRange.addSecs(-maxLoadRange);
     curRange.constrain(range());
     return true;
@@ -75,8 +75,8 @@ void LoadStockFromBroker::finishTask()
 {
     Glo.broker->mutex.unlock();
 
-    if (!stock().candles.empty()) {
-        std::sort(stock().candles.begin(), stock().candles.end());
+    if (!stock->candles.empty()) {
+        std::sort(stock->candles.begin(), stock->candles.end());
         removeIncompleteCandle();
     }
 
@@ -114,9 +114,9 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
     QJsonArray candlesArray = payload.value("candles").toArray();
 
-    stock().candles.reserve(stock().candles.size() + candlesArray.size());
+    stock->candles.reserve(stock->candles.size() + candlesArray.size());
     for (const auto &it: candlesArray)
-        stock().candles.emplace_back( Candle::fromJson(it.toObject()) );
+        stock->candles.emplace_back( Candle::fromJson(it.toObject()) );
 
     return true;
 }
@@ -126,9 +126,9 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
     try {  //StockKey::fromJson кидается исключениями
         StockKey recievedKey;
         recievedKey.fromJson(payload);   //payload содержит ключ акции
-        if(recievedKey != stock().key) {
+        if(recievedKey != stock->key) {
             QString errorCode = QString("LoadStockFromBroker;checkStockKey();recievedKey!=stockKey:;%1;%2")
-                    .arg(recievedKey.keyToString(), stock().key.keyToString());
+                    .arg(recievedKey.keyToString(), stock->key.keyToString());
             throw std::logic_error(errorCode.toUtf8().data());
         }
     }  catch (std::exception &error) {
@@ -148,13 +148,13 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
  */
 void LoadStockFromBroker::removeIncompleteCandle()
 {
-    Candle &lastCandle = stock().candles.back();
+    Candle &lastCandle = stock->candles.back();
 
-    uint64_t candleDuration = stock().key.time();
+    uint64_t candleDuration = stock->key.time();
     QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
 
-    if (timeCandleComplite > range().getEnd())
-        stock().candles.pop_back();
+    if (timeCandleComplite > range->getEnd())
+        stock->candles.pop_back();
 }
 
 }

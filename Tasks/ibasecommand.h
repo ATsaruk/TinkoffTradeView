@@ -277,7 +277,7 @@ protected:
     QQueue<IFunction*> taskList;  //очередь задач на запуск
 
 private:
-    IFunction *lastTask = nullptr;
+    QScopedPointer<IFunction> lastCompleteTask;
 };
 
 }

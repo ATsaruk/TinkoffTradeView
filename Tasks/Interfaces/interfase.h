@@ -75,11 +75,22 @@ public:
         sharePtr = inputData;
     }
 
+    //Каст к костантной ссылке
+    operator const T& () {
+        deferredInit();
+        return sharePtr.data()->get<T>();
+    }
 
     //Оператор () возвращает ссылку на данные
     T& operator() () {
         deferredInit();
         return sharePtr.data()->get<T>();
+    }
+
+    //Обращение к элементам хранимого объекта
+    T* operator->() {
+        deferredInit();
+        return &(sharePtr.data()->get<T>());
     }
 
     //Оператор * возвращает ссылку на sharedPoint

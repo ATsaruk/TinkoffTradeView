@@ -31,7 +31,7 @@ void LoadStockFromBroker::exec()
     curRange.setRange(range().getEnd(), -maxLoadRange);
     curRange.constrain(range());
 
-    connect(Glo.broker, &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
+    connect(Glo.broker.data(), &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
     if (!sendRequest())
         finishTask();

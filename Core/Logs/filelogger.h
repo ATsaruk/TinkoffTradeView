@@ -1,6 +1,8 @@
 #ifndef FILELOGGER_H
 #define FILELOGGER_H
 
+#include <QPointer>
+
 class QFile;
 
 #include "imultilogger.h"
@@ -16,7 +18,6 @@ class FileLogger : public IMultiLogger
 {
 public:
     explicit FileLogger(const QString &tag);
-    ~FileLogger();
 
     /// Имя класса логгера
     QString getClassName() const override;
@@ -25,7 +26,7 @@ public:
     void message(const QString &text) override;
 
 private:
-    QFile *logFile;
+    QPointer<QFile> logFile;
 };
 
 }

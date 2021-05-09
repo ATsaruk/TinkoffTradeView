@@ -31,8 +31,6 @@ IBaseCommand::IBaseCommand(const QString commandName)
 
 IBaseCommand::~IBaseCommand()
 {
-    if (lastTask != nullptr)
-        delete lastTask;
     emit stopAll();
 }
 
@@ -44,8 +42,8 @@ void IBaseCommand::setData(SharedInterface &inputData)
 
 SharedInterface &IBaseCommand::getResult()
 {
-    assert(lastTask != nullptr && "IBaseCommand::getResult(): logical error");
-    return lastTask->getResult();
+    assert(lastCompleteTask && "IBaseCommand::getResult(): logical error");
+    return lastCompleteTask->getResult();
 }
 
 void IBaseCommand::registerFunc(IFunction *newTask)
@@ -62,18 +60,17 @@ void IBaseCommand::connect(QObject *receiver, const char *method)
 
 void IBaseCommand::runNextTask(IFunction *previousTask)
 {
+    lastCompleteTask.reset(previousTask);
+
     if (taskList.isEmpty() || isStopRequested) {
-        lastTask = previousTask;
         emit finished();
         return;
     }
 
     IFunction *currentTask = taskList.dequeue();
-    if (previousTask != nullptr)
-        currentTask->setData(previousTask->getResult());
 
-    if (previousTask != nullptr)
-        delete previousTask;
+    if (lastCompleteTask)
+        currentTask->setData(previousTask->getResult());
 
     if (currentTask->isFunction()) {
         currentTask->exec();

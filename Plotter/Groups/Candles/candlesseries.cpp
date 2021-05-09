@@ -64,15 +64,15 @@ void CandlesSeries::updateData()
     if (isDataRequested)
         return;
 
-    long displayedCandlesCount = hAxis->getRange();
-    long intervalSec = curStockKey.time();
+    int32_t displayedCandlesCount = hAxis->getRange();
+    int32_t intervalSec = curStockKey.time();
 
     Data::Range range;;
     if (candleItems.empty()) {
         range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
         loadData(range);
     } else {
-        long offset = hAxis->getOffset();
+        int32_t offset = hAxis->getOffset();
         if (offset < candleItems.begin()->first) {
             range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
             loadData(range);
@@ -109,7 +109,7 @@ void CandlesSeries::clear()
 void CandlesSeries::scaleByXAxis()
 {
     ///Определяем новый индекс начали интервала отображения свечей
-    long firstDisplayedIntex = hAxis->getOffset();
+    int32_t firstDisplayedIntex = hAxis->getOffset();
     auto newBeginCandle = candleItems.find(firstDisplayedIntex);
     //Если элемент с индексом firstDisplayedIntex не найден, то будем отображать с первого элемента
     if (newBeginCandle == candleItems.end())
@@ -117,7 +117,7 @@ void CandlesSeries::scaleByXAxis()
 
     ///Определяем новый индекс конца интервала отображения свечей
     // +1 т.к. чтобы отображать часть свечи, которая невлезла целиком на экран
-    long lastDisplayedIndex = firstDisplayedIntex + hAxis->getRange() + 1;
+    int32_t lastDisplayedIndex = firstDisplayedIntex + hAxis->getRange() + 1;
     auto newEndCandle = candleItems.find(lastDisplayedIndex);
 
     setCandleVisible(newBeginCandle, beginCandle);
@@ -153,7 +153,7 @@ void CandlesSeries::scaleByYAxis()
  * Если первичный ключ first_iterator'а БОЛЬШЕ чем первичный ключ second_iterator'а, это означает,
  * что мы будем скрывать свечи из интервала [second_iterator..first_iterator] (т.к. у нас не reverse_iterator)
  */
-void CandlesSeries::setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator)
+void CandlesSeries::setCandleVisible(const std::map<int32_t, CandleItem*>::iterator &first_iterator, const std::map<int32_t, CandleItem*>::iterator &second_iterator)
 {
     //Принцип определения параметра visible описан выше
     bool visible  = first_iterator->first < second_iterator->first;
@@ -201,7 +201,7 @@ void CandlesSeries::updatePriceRange()
     //autoPriceRange = false;   //while settings autoPriceRange off is absent
 }
 
-const QDateTime CandlesSeries::getDateByIndex(const long index)
+const QDateTime CandlesSeries::getDateByIndex(const int32_t index)
 {
     if (candleItems.find(index) != candleItems.end())
         return candleItems[index]->getData().dateTime;
@@ -221,7 +221,7 @@ void CandlesSeries::loadData(const Data::Range &loadRange)
 //Добавление 1 свечи, поиск нового индекса
 void CandlesSeries::addCandle(Data::Candle &&candleData)
 {
-    long index = 0.;
+    int32_t index = 0.;
     if (!candleItems.empty()) {
         if (candleItems.begin()->second->getData().dateTime > candleData.dateTime)
             index = candleItems.begin()->first - 1;

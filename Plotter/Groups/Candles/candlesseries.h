@@ -40,9 +40,9 @@ protected:
 
     void scaleByXAxis();
     void scaleByYAxis();
-    void setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator);
+    void setCandleVisible(const std::map<int32_t, CandleItem*>::iterator &first_iterator, const std::map<int32_t, CandleItem*>::iterator &second_iterator);
     void updatePriceRange();
-    const QDateTime getDateByIndex(const long index);
+    const QDateTime getDateByIndex(const int32_t index);
 
     void loadData(const Data::Range &loadRange);
     void addCandle(Data::Candle &&candleData);
@@ -60,10 +60,11 @@ private:
 
     Data::StockKey curStockKey;
 
+    ///@todo разобратся с типом контейнера!
     //Данные для рисования
-    std::map<long, CandleItem*>::iterator beginCandle;
-    std::map<long, CandleItem*>::iterator endCandle;
-    std::map<long, CandleItem*> candleItems;
+    std::map<int32_t, CandleItem*>::iterator beginCandle;
+    std::map<int32_t, CandleItem*>::iterator endCandle;
+    std::map<int32_t, CandleItem*> candleItems;
 };
 
 }

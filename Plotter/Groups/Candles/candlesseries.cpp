@@ -310,7 +310,7 @@ void CandlesSeries::loadCandlesFinished()
 {
     Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(sender());
     Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
-    addCandles(std::move(stock().candles));
+    addCandles(std::move(stock->candles));
     //isDataChanged = true;
 }
 

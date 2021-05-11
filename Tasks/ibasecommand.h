@@ -211,7 +211,7 @@ public:
     SharedInterface &getResult() override;
 
     //Реристрирует задачу
-    virtual void registerFunc(IFunction *newTask);
+    virtual void registerTask(IFunction *newTask);
 
     /* Создаёт и запускает функцию
     *  T - класс добавляемой задачи, наследник IFunction
@@ -245,7 +245,7 @@ public:
     {
         T *newTask = new T(args ...);
         newTask->setThread(taskThread);
-        registerFunc(newTask);
+        registerTask(newTask);
         return newTask;
     }
 
@@ -277,7 +277,7 @@ protected:
     QQueue<IFunction*> taskList;  //очередь задач на запуск
 
 private:
-    IFunction *lastTask = nullptr;
+    QScopedPointer<IFunction> lastCompleteTask;
 };
 
 }

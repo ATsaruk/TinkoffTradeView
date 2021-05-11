@@ -18,33 +18,22 @@ Globals::Globals()
     logTags << "debug" << "info" << "warning" << "critical";
 }
 
-Globals::~Globals()
-{
-    delete taskManager;
-    delete broker;
-    delete dataBase;
-    delete stocks;
-    delete logger;
-    delete conf;
-}
-
 void Globals::init()
 {
-    conf = new Config("config.cfg");
+    conf.reset( new Config("config.cfg") );
 
-    logger = new LoggerList;
+    logger.reset( new LoggerList );
     for (const auto &it : logTags)
         logger->add(it);
 
-    taskManager = new Task::Manager;
+    taskManager.reset( new Task::Manager );
 
-    stocks = new Data::Stocks;
-    dataBase = new DB::PostgreSql;
-    broker = new Broker::TinkoffApi;
+    stocks.reset( new Data::Stocks );
+    dataBase.reset( new DB::PostgreSql );
+    broker.reset( new Broker::TinkoffApi );
 
-    // Что бы не пропустить ни одного предупреждения или ошибки выводим их дополнительно на экран! Можно удалить
+    // Что бы не пропустить предупреждение выводим его дополнительно на экран! Можно удалить
     logger->add<MsgBoxLogger>(logTags[2]);
-    logger->add<MsgBoxLogger>(logTags[3]);
 }
 
 }

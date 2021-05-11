@@ -50,8 +50,8 @@ public:
     explicit InterfaceWrapper() = default;
 
     //Копирует sharedPtr из другого DataWrapper
-    InterfaceWrapper(InterfaceWrapper &other) : sharePtr(other.share()) { }
-    void operator= (InterfaceWrapper &other) { sharePtr = other.share(); }
+    InterfaceWrapper(InterfaceWrapper &other) : sharePtr(*other) { }
+    void operator= (InterfaceWrapper &other) { sharePtr = *other; }
 
     //Конструирует sharedPtr из forwarding reference
     InterfaceWrapper(T &&data) : sharePtr( new InterfaceData<T>(std::forward<T>(data)) ) { }
@@ -75,21 +75,26 @@ public:
         sharePtr = inputData;
     }
 
+    //Каст к костантной ссылке
+    operator const T& () {
+        deferredInit();
+        return sharePtr.data()->get<T>();
+    }
 
-    //Оператор () возвращает ссылку на данные
+    //Оператор () возвращает ссылку на данные (для изменения данных)
     T& operator() () {
         deferredInit();
         return sharePtr.data()->get<T>();
     }
 
-    //Оператор * возвращает ссылку на sharedPoint
-    QSharedPointer<Interface>& operator*() {
+    //Обращение к элементам хранимого объекта
+    T* operator->() {
         deferredInit();
-        return sharePtr;
+        return &(sharePtr.data()->get<T>());
     }
 
-    //Возвращает ссылку на sharedPoint
-    QSharedPointer<Interface>& share() {
+    //Оператор * возвращает ссылку на sharedPoint
+    QSharedPointer<Interface>& operator*() {
         deferredInit();
         return sharePtr;
     }

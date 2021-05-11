@@ -23,7 +23,6 @@ class TinkoffApi : public Api
 {
 public:
     explicit TinkoffApi();
-    ~TinkoffApi();
 
     /** @brief Отправляет запрос на получение списка всех акций
       * @details Подробнее о формате запроса и ответа тут: https://tinkoffcreditsystems.github.io/invest-openapi/swagger-ui/#/market/get_market_stocks
@@ -44,7 +43,7 @@ public:
 
 protected:
     /// Интерфейс для отправки POST/GET запросов
-    Request *html;
+    QScopedPointer<Request> html;
 
 private:
     Q_OBJECT

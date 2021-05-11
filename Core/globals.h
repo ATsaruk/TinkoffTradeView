@@ -40,18 +40,17 @@ class Globals
 {
 public:
     //Основные инструменты
-    Config *conf;
-    LoggerList *logger;
-    Task::Manager *taskManager;
+    QScopedPointer<Config> conf;
+    QScopedPointer<LoggerList> logger;
+    QScopedPointer<Task::Manager> taskManager;
 
     //Вспомогательные
-    Data::Stocks *stocks;
-    DB::IDataBase *dataBase;
-    Broker::Api *broker;
+    QScopedPointer<Data::Stocks> stocks;
+    QScopedPointer<DB::IDataBase> dataBase;
+    QScopedPointer<Broker::Api> broker;
 
     //Singleton
     static Globals &get();
-    ~Globals();
 
     void init();
 

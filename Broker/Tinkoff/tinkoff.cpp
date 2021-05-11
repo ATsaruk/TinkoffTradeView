@@ -9,14 +9,9 @@ constexpr quint64 SECS_IN_ONE_WEEK  = 7 * SECS_IN_ONE_DAY;
 constexpr quint64 SECS_IN_ONE_MONTH = 30 * SECS_IN_ONE_DAY;
 
 TinkoffApi::TinkoffApi()
+    : html(new Request)
 {
-    html = new Request;
-    connect(html, &Request::getResopnse, this, &Api::getResopnse);
-}
-
-TinkoffApi::~TinkoffApi()
-{
-    delete html;
+    connect(html.data(), &Request::getResopnse, this, &Api::getResopnse);
 }
 
 bool TinkoffApi::loadStocks()

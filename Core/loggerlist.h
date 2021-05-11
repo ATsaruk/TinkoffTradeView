@@ -63,7 +63,7 @@ public:
     typename std::enable_if_t<std::is_base_of_v<IMultiLogger, T>>
     add(const QString &tag)
     {
-        if (logs.find(tag) == logs.end())
+        if (logs.count(tag) == 0)
             logs[tag] = new T(tag);
         else
             logs[tag]->appendLogger<T>();
@@ -83,12 +83,11 @@ private:
     typename std::enable_if_t<std::is_base_of_v<IMultiLogger, T>, ILogger*>
     get(const QString &tag)
     {
-        if (logs.find(tag) == logs.end())
+        if (logs.count(tag) == 0)
             add<T>(tag);
 
         return dynamic_cast <ILogger*> (logs.find(tag)->second);
     }
-
 };
 
 }

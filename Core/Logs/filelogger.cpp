@@ -8,7 +8,7 @@
 namespace Core {
 
 FileLogger::FileLogger(const QString &tag)
-    : IMultiLogger(tag)
+    : IMultiLogger(tag), logFile(new QFile)
 {
     isWriteLog = Glo.conf->getValue(QString("Log/%1").arg(tag), true);
 
@@ -22,14 +22,7 @@ FileLogger::FileLogger(const QString &tag)
             + QTime::currentTime().toString("/hh_mm_ss")
             + QString("_%1.csv").arg(tag);
 
-    logFile = new QFile(fileName);
-}
-
-FileLogger::~FileLogger()
-{
-    if(logFile->isOpen())
-        logFile->close();
-    delete logFile;
+    logFile->setFileName(fileName);
 }
 
 QString FileLogger::getClassName() const

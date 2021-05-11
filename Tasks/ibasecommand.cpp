@@ -46,7 +46,7 @@ SharedInterface &IBaseCommand::getResult()
     return lastCompleteTask->getResult();
 }
 
-void IBaseCommand::registerFunc(IFunction *newTask)
+void IBaseCommand::registerTask(IFunction *newTask)
 {
     if (!newTask->isFunction())
         dynamic_cast<IBaseTask*>(newTask)->setThread(taskThread);

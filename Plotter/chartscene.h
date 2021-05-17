@@ -6,6 +6,7 @@
 
 #include "Axis/dateaxis.h"
 #include "Data/Stock/stockkey.h"
+#include "Groups/Candles/candlesseries.h"
 
 namespace Plotter {
 
@@ -13,23 +14,33 @@ namespace Plotter {
 class ChartScene : public QGraphicsScene
 {
 public:
-    explicit ChartScene(const Data::StockKey &stockKey_);
+    explicit ChartScene();
     ~ChartScene();
 
-    void setEnable(const bool enable);
+    void showStock(const Data::StockKey &stockKey);
+    const Data::StockKey &getStockKey();
+
+    void setScale(qreal dx, qreal xAnchor, qreal dy, qreal yAnchor);
+    void setMove(qreal dx, qreal dy);
 
 public slots:
     void drawScene();
+    void setRect(const QRectF &rect);
+
+protected:
+    void createSeries();
+    std::optional<CandlesSeries *> getCurCandleSeries();
+
+protected slots:
+    void loadData(const Data::Range &loadRange);
 
 private:
-    uint plotInterval;
     Data::StockKey stockKey;
+    std::vector<CandlesSeries *> series;
 
-    std::list<DateAxis*> dateAxis;
-    std::list<Axis*> priceAxis;
-
-    //Таймер для перерисовки сцены
-    QTimer *plotTimer;
+    DateAxis *dateAxis;
+    Axis *curYAxis;
+    std::list<Axis*> yAxis;
 };
 
 }

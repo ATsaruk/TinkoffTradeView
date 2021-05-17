@@ -34,16 +34,17 @@ const StockKey::INTERVAL &StockKey::interval() const
     return _interval;
 }
 
-long StockKey::time() const
+std::optional<long> StockKey::time() const
 {
     switch (_interval) {
-      case INTERVAL::MIN1  : return 60;         break;
-      case INTERVAL::MIN5  : return 5*60;       break;
-      case INTERVAL::MIN15 : return 15*60;      break;
-      case INTERVAL::MIN30 : return 30*60;      break;
-      case INTERVAL::HOUR  : return 60*60;      break;
-      case INTERVAL::DAY   : return 24*60*60;   break;
-      case INTERVAL::WEEK  : return 7*24*60*60; break;
+      case INTERVAL::ANY   : return std::nullopt; break;  ///@todo разобраться с длительностью any
+      case INTERVAL::MIN1  : return 60;           break;
+      case INTERVAL::MIN5  : return 5*60;         break;
+      case INTERVAL::MIN15 : return 15*60;        break;
+      case INTERVAL::MIN30 : return 30*60;        break;
+      case INTERVAL::HOUR  : return 60*60;        break;
+      case INTERVAL::DAY   : return 24*60*60;     break;
+      case INTERVAL::WEEK  : return 7*24*60*60;   break;
     }
     logCritical << "StockKey::intervalToSec;unknow interval";
     throw std::bad_exception();
@@ -52,6 +53,7 @@ long StockKey::time() const
 QString StockKey::intervalToString() const
 {
     switch (_interval) {
+      case INTERVAL::ANY   : return QString("any");
       case INTERVAL::MIN5  : return QString("5min");
       case INTERVAL::MIN15 : return QString("15min");
       case INTERVAL::MIN30 : return QString("30min");
@@ -72,7 +74,8 @@ const QString StockKey::keyToString() const
 StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval)
 {
     stringInterval = stringInterval.toLower();
-    if      (stringInterval == QString("1min"))  return INTERVAL::MIN1;
+    if      (stringInterval == QString("any"))   return INTERVAL::ANY;
+    else if (stringInterval == QString("1min"))  return INTERVAL::MIN1;
     else if (stringInterval == QString("5min"))  return INTERVAL::MIN5;
     else if (stringInterval == QString("15min")) return INTERVAL::MIN15;
     else if (stringInterval == QString("30min")) return INTERVAL::MIN30;

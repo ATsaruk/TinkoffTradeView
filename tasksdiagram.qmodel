@@ -629,63 +629,63 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{184f22cd-1378-4810-950a-394ac91e14ad}</uid>
+                                          <uid>{dbffff57-d9f2-4df9-b8b3-18849439e28b}</uid>
                                           <type>1</type>
                                           <declaration>-isFunction: bool</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{09c57a73-d86e-4413-97ea-cdeb234e6dd7}</uid>
+                                          <uid>{4efc85eb-e63b-4659-bd41-8733fe2efc3f}</uid>
                                           <type>1</type>
                                           <declaration>-isStopAsked: bool</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{64fe5bcd-157c-4aba-b270-afcbc8d2dfee}</uid>
+                                          <uid>{4c70059a-b31d-40d9-b83d-0e797c46abc9}</uid>
                                           <type>1</type>
                                           <declaration>*input*: Interface*</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{b3f24e7a-57d2-40ac-a2a1-0b7fdc4e0a5c}</uid>
+                                          <uid>{ad19b6a2-79db-4d54-b333-25dc350336ba}</uid>
                                           <type>1</type>
                                           <declaration>*output*: Interface*</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{f159b204-2d8f-4e46-aba4-8c9c4313fc84}</uid>
+                                          <uid>{b9574f16-f829-4fb0-b576-64735a11d6f2}</uid>
                                           <type>2</type>
                                           <declaration>+getName()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{d040f3f5-3190-468a-a12e-06a99e762c41}</uid>
+                                          <uid>{92a3f92f-386f-424b-9946-dde7b62c82de}</uid>
                                           <type>2</type>
                                           <declaration>+isFunction()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{23c9588e-3d14-4f4f-92f6-cf0cc6e0196a}</uid>
+                                          <uid>{97448369-8b70-45af-bbcb-6c56edf15086}</uid>
                                           <type>2</type>
                                           <declaration>+setData(Interface*)</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{d736bf82-4106-4989-930c-5c408ef7823a}</uid>
+                                          <uid>{0eff9834-20f4-4344-ae51-e0adf53d6932}</uid>
                                           <type>2</type>
                                           <declaration>+exec()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{069b6840-c729-4619-a0e0-ea05e6ddfec9}</uid>
+                                          <uid>{d3ad453f-bdac-455f-bb25-0f141f790ba0}</uid>
                                           <type>2</type>
                                           <declaration>+getResult()</declaration>
                                          </MClassMember>

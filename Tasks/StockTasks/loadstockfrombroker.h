@@ -35,7 +35,6 @@
 #include "Data/Stock/stocks.h"
 
 namespace Task {
-using namespace Data;
 
 
 ///Задача загрузки свечей из БД за указанный временной интервал
@@ -44,7 +43,7 @@ class LoadStockFromBroker : public IBaseTask
     Q_OBJECT
 
 public:
-    explicit LoadStockFromBroker(const StockKey &stockKey);
+    explicit LoadStockFromBroker(const Data::StockKey &stockKey);
     ~LoadStockFromBroker();
 
     void setData(SharedInterface &inputData) override;
@@ -80,7 +79,7 @@ private:
     InterfaceWrapper<Data::Range> range;
     InterfaceWrapper<Data::Stock> stock;
 
-    Range curRange;     //Текущий подинтервал загрузки
+    Data::Range curRange;     //Текущий подинтервал загрузки
 };
 
 }

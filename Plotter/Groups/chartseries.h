@@ -18,7 +18,9 @@ public:
     explicit ChartSeries();
     virtual ~ChartSeries();
 
-    void attachAxis(Axis *_axis);
+    virtual void attachAxis(Axis *axis);
+    const Data::StockKey& getStockKey();
+
 
 public slots:
     virtual void repaint() = 0;
@@ -28,11 +30,11 @@ signals:
     void changed();
 
 protected:
-    bool isChanged = false;
-    Axis *hAxis;     //horizontal axis
-    Axis *vAxis;     //vertical axis
+    bool isRepaintRequired = false;
+    Axis *xAxis;     //horizontal axis
+    Axis *yAxis;     //vertical axis
+    Data::StockKey stockKey;
 
-    virtual void updateData() = 0;
     virtual void clear() = 0;
 };
 

@@ -92,7 +92,7 @@ void IBaseCommand::startTask(IBaseTask *task)
 
 void IBaseCommand::taskFinished()
 {
-    auto finishedTask = dynamic_cast<IBaseTask*>(sender());
+    auto *finishedTask = dynamic_cast<IBaseTask*>(sender());
 
     assert(finishedTask != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft: %2")
             .arg(getName()).arg(taskList.size()).toStdString().data());

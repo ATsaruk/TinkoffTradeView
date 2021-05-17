@@ -3,8 +3,8 @@
 namespace Plotter {
 
 
-PriceAxis::PriceAxis()
-    : NumericAxis()
+PriceAxis::PriceAxis(qreal range, qreal offset)
+    : NumericAxis(range, offset)
 {
 
 }

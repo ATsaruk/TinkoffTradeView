@@ -13,7 +13,7 @@ StocksQuery::StocksQuery()
 
 void StocksQuery::insertCandles(const Stock &stock)
 {
-    auto db = Glo.dataBase.data();
+    auto *db = Glo.dataBase.data();
     QMutexLocker locker(&db->mutex);
 
     if (!db->isOpen())
@@ -39,7 +39,7 @@ void StocksQuery::insertCandles(const Stock &stock)
 
 void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateTime &end, const uint candleCount)
 {
-    auto db = Glo.dataBase.data();
+    auto *db = Glo.dataBase.data();
     QMutexLocker locker(&db->mutex);
 
     if (!db->isOpen())

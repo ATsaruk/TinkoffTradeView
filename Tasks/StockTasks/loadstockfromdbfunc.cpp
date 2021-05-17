@@ -7,6 +7,9 @@ namespace Task {
 LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount_)
     : IFunction("LoadStockFromDbFunc")
 {
+    if (stockKey.interval() == Data::StockKey::INTERVAL::ANY)
+        throw std::logic_error("LoadStock(): can't load stock with ANY interval!");
+
     stock->key = stockKey;
     minCandlesCount = minCandlesCount_;
 }

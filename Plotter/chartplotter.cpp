@@ -15,20 +15,6 @@ ChartPlotter::ChartPlotter(QWidget *parent) : QGraphicsView(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    graphicScene = new QGraphicsScene();
-    setScene(graphicScene);
-
-    ///temp
-    dateAxis = new DateAxis;
-    dateAxis->setDataRange(100);
-    dateAxis->setDataOffset(-75);
-    graphicScene->addItem(dateAxis);
-
-    priceAxis = new Axis(Axis::VERTICAL);
-    priceAxis->setDataRange(1500);
-    priceAxis->setDataOffset(0);
-    ///temp
-
     plotTimer = new QTimer(this);
     connect(plotTimer, &QTimer::timeout, this, &ChartPlotter::drawScene);
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
@@ -37,31 +23,25 @@ ChartPlotter::ChartPlotter(QWidget *parent) : QGraphicsView(parent)
 
 ChartPlotter::~ChartPlotter()
 {
+    for (auto &it : scenes)
+        delete it;
 }
 
-void ChartPlotter::setDrawStockKey(const Data::StockKey &_stockKey)
+void ChartPlotter::showStock(const Data::StockKey &stockKey)
 {
-    if (stockKey == _stockKey)
-        return;
-
-    stockKey = _stockKey;
-
-    bool isExist = false;
-    /*for (auto &it : graphicScene->items()) {
-        if (ChartSeries *series = dynamic_cast<ChartSeries*>(it)) {
-            bool isVisible = series->getStockKey() == stockKey;
-            series->setVisible(isVisible);
-            if (isVisible)
-                isExist = true;
-        }
-    }*/
-
-    if (!isExist) {
-        auto series = new CandlesSeries(stockKey);
-        series->attachAxis(dateAxis);
-        series->attachAxis(priceAxis);
-        graphicScene->addItem(series);
+    ChartScene *existedScene = nullptr;
+    for (auto &it : scenes) {
+        if (it->getStockKey().figi() == stockKey.figi())
+            existedScene = it;
     }
+
+    if (existedScene == nullptr) {
+        existedScene = new ChartScene;
+        scenes.push_back(existedScene);
+    }
+
+    existedScene->showStock(stockKey);
+    setScene(existedScene);
 }
 
 void ChartPlotter::wheelEvent(QWheelEvent *event)
@@ -73,8 +53,8 @@ void ChartPlotter::wheelEvent(QWheelEvent *event)
     qreal anchorX = deltaX;
     qreal anchorY = 1 - deltaY;
 
-    dateAxis->setScale(steps, anchorX);
-    priceAxis->setScale(steps, anchorY);
+    if (auto [curScene, ok] = getCurScene(); ok)
+        curScene->setScale(steps, anchorX, steps, anchorY);
 
     event->accept();
 }
@@ -84,13 +64,13 @@ void ChartPlotter::mouseMoveEvent(QMouseEvent *event)
     qreal dx = prevMousePos.x() - event->pos().x();
     qreal dy = event->pos().y() - prevMousePos.y();
 
-    if (pressedButton == Qt::LeftButton) {
-        dateAxis->setMove(dx);
-        priceAxis->setMove(dy);
-    } else if (pressedButton == Qt::MiddleButton) {
-        dateAxis->setScale(dx, mouseAnchorPos.x());
-        priceAxis->setScale(dy, mouseAnchorPos.y());
-    }// else if (pressedButton == Qt::RightButton)
+    if (auto [curScene, ok] = getCurScene(); ok) {
+        if (pressedButton == Qt::LeftButton)
+            curScene->setMove(dx, dy);
+        else if (pressedButton == Qt::MiddleButton)
+            curScene->setScale(dx, mouseAnchorPos.x(), dy, mouseAnchorPos.y());
+        // else if (pressedButton == Qt::RightButton)
+    }
 
     prevMousePos = event->pos();
     event->accept();
@@ -119,19 +99,23 @@ void ChartPlotter::resizeEvent(QResizeEvent *event)
     QRectF rec(0, -height(), width(), height());
 
     setSceneRect(rec);
-    graphicScene->setSceneRect(rec);
-    priceAxis->setSceneRect(rec);
-    dateAxis->setSceneRect(rec);
+    if (auto [curScene, ok] = getCurScene(); ok)
+        curScene->setRect(rec);
 
     QGraphicsView::resizeEvent(event);
 }
 
+std::tuple<ChartScene*, bool> ChartPlotter::getCurScene()
+{
+    ChartScene *currentScene = dynamic_cast<ChartScene*>(scene());
+    bool ok = currentScene != nullptr;
+    return std::make_tuple(currentScene, ok);
+}
+
 void ChartPlotter::drawScene()
 {
-    for (auto &it : graphicScene->items()) {
-        if (ChartSeries *series = dynamic_cast<ChartSeries*>(it) )
-            series->repaint();
-    }
+    if (auto [curScene, ok] = getCurScene(); ok)
+        curScene->drawScene();
 }
 
 }

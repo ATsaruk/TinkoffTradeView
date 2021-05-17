@@ -17,35 +17,30 @@ public:
     explicit Axis(const AXIS_TYPE _axisType);
     virtual ~Axis();
 
+    virtual qreal getScale() = 0;
+    virtual qreal getRange() = 0;
+    virtual qreal getOffset() = 0;
+
+    virtual void setDataRange(const qreal range) = 0;
+    virtual void setDataOffset(const qreal offset) = 0;
+
     const AXIS_TYPE& getAxisType();
-
-    virtual qreal getScale();
-    virtual qreal getRange();
-    virtual qreal getOffset();
-
-    virtual void setDataRange(const qreal range);
-    virtual void setDataOffset(const qreal offset);
-
-    //Определяем виртуальный метод, который возвращает область, в которой находится треугольник
-    virtual QRectF boundingRect() const override {return QRectF();}// = 0;
 
 public slots:
     //Изменение размеров окна
     virtual void setSceneRect(const QRectF &_rect);
 
     //Масштабирование delta - число шагов для смещения
-    virtual void setMove(const qreal delta);
+    virtual void setMove(const qreal delta) = 0;
 
     //Масштабирование delta - во сколько раз, anchor - якорь привязки [0..1], 0 - левый край, 0.5 середина, 1 - правый край
-    virtual void setScale(const qreal newScale, const qreal anchor);
+    virtual void setScale(const qreal newScale, const qreal anchor) = 0;
 
 signals:
     void scaled();
 
 protected:
     QRectF sceneRect;
-    qreal  dataRange;
-    qreal  dataOffset;
 
     //Определяем метод для отрисовки треугольника
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override {Q_UNUSED(painter);Q_UNUSED(option);Q_UNUSED(widget);}// = 0;

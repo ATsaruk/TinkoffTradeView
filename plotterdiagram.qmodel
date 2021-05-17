@@ -50,12 +50,18 @@
                          <object>{91c87055-644b-4c14-9a98-6c9fe6164dc8}</object>
                          <context>Plotter</context>
                          <name>ChartPlotter</name>
-                         <pos>x:390;y:-745</pos>
-                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <pos>x:75;y:-660</pos>
+                         <rect>x:-65;y:-130;w:130;h:260</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <template>
+                        <qlist>
+                         <item>QGraphicsView</item>
+                        </qlist>
+                       </template>
+                       <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
                     </item>
@@ -72,12 +78,17 @@
                          <object>{bb974337-4612-4168-9401-2ed737d074ae}</object>
                          <context>Plotter</context>
                          <name>ChartScene</name>
-                         <pos>x:390;y:-600</pos>
-                         <rect>x:-85;y:-45;w:170;h:90</rect>
+                         <pos>x:400;y:-710</pos>
+                         <rect>x:-125;y:-55;w:250;h:110</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <template>
+                        <qlist>
+                         <item>QGraphicsScene</item>
+                        </qlist>
+                       </template>
                        <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
@@ -95,12 +106,17 @@
                          <object>{813661e8-5a24-4d00-aba0-14ad39cab549}</object>
                          <context>Groups</context>
                          <name>ChartSeries</name>
-                         <pos>x:620;y:-460</pos>
-                         <rect>x:-85;y:-45;w:170;h:90</rect>
+                         <pos>x:620;y:-425</pos>
+                         <rect>x:-85;y:-60;w:170;h:120</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <template>
+                        <qlist>
+                         <item>QGraphicsItemGroup</item>
+                        </qlist>
+                       </template>
                        <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
@@ -118,7 +134,7 @@
                          <object>{1482ca43-76cb-4d93-a905-a71cb2688865}</object>
                          <context>Candles</context>
                          <name>CandlesSeries</name>
-                         <pos>x:470;y:-310</pos>
+                         <pos>x:470;y:-245</pos>
                          <rect>x:-85;y:-65;w:170;h:130</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -141,12 +157,17 @@
                          <object>{e5ed5626-4993-4986-88fe-dda39455a4e1}</object>
                          <context>Candles</context>
                          <name>CandleItem</name>
-                         <pos>x:355;y:-65</pos>
+                         <pos>x:355;y:-30</pos>
                          <rect>x:-70;y:-95;w:140;h:190</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <template>
+                        <qlist>
+                         <item>QGraphicsItem</item>
+                        </qlist>
+                       </template>
                        <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
@@ -242,12 +263,18 @@
                          <object>{5c2dd36c-f979-4593-904d-71f4881ff29a}</object>
                          <context>Axis</context>
                          <name>Axis</name>
-                         <pos>x:195;y:-460</pos>
-                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <pos>x:195;y:-425</pos>
+                         <rect>x:-40;y:-45;w:80;h:90</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <template>
+                        <qlist>
+                         <item>QGraphicsItem</item>
+                        </qlist>
+                       </template>
+                       <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
                     </item>
@@ -324,12 +351,13 @@
                          <object>{4018b507-c9d5-4c25-a352-47f5df3f6d71}</object>
                          <context>Axis</context>
                          <name>DateAxis</name>
-                         <pos>x:270;y:-310</pos>
-                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <pos>x:270;y:-275</pos>
+                         <rect>x:-50;y:-45;w:100;h:90</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
                     </item>
@@ -364,12 +392,13 @@
                          <object>{d3ad3653-7b37-48fd-87d1-8c31823c6b40}</object>
                          <context>Axis</context>
                          <name>NumericAxis</name>
-                         <pos>x:120;y:-310</pos>
-                         <rect>x:-40;y:-35;w:80;h:70</rect>
+                         <pos>x:120;y:-275</pos>
+                         <rect>x:-50;y:-45;w:100;h:90</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
                        <namespace>Plotter</namespace>
+                       <show-all-members>true</show-all-members>
                       </DClass>
                      </instance>
                     </item>
@@ -404,7 +433,7 @@
                          <object>{95f46c18-3885-46d8-a60b-8185fd922499}</object>
                          <context>Axis</context>
                          <name>PriceAxis</name>
-                         <pos>x:120;y:-160</pos>
+                         <pos>x:120;y:-125</pos>
                          <rect>x:-40;y:-35;w:80;h:70</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -432,32 +461,6 @@
                      </instance>
                     </item>
                     <item>
-                     <instance type="DAssociation">
-                      <DAssociation>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{ecdf0852-d96b-4d15-8fb9-fc8699cf0bc3}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{74d2479a-bc87-4efe-b6c8-1860070f6fba}</object>
-                         <a>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</a>
-                         <b>{22bd8cb1-e9d6-4387-b188-ac1dc3dae6de}</b>
-                         <name>seriesList : QList&lt;ChartSeries*&gt;</name>
-                        </DRelation>
-                       </base-DRelation>
-                       <a>
-                        <DAssociationEnd>
-                         <cradinality>*</cradinality>
-                         <navigable>true</navigable>
-                         <kind>1</kind>
-                        </DAssociationEnd>
-                       </a>
-                      </DAssociation>
-                     </instance>
-                    </item>
-                    <item>
                      <instance type="DClass">
                       <DClass>
                        <base-DObject>
@@ -469,7 +472,7 @@
                          </base-DElement>
                          <object>{f15d637c-c28a-4d15-855e-9d3d0eaf6aa9}</object>
                          <name>CandleParams</name>
-                         <pos>x:570;y:-70</pos>
+                         <pos>x:570;y:-35</pos>
                          <rect>x:-80;y:-75;w:160;h:150</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -525,9 +528,39 @@
                       </DDependency>
                      </instance>
                     </item>
+                    <item>
+                     <instance type="DAssociation">
+                      <DAssociation>
+                       <base-DRelation>
+                        <DRelation>
+                         <base-DElement>
+                          <DElement>
+                           <uid>{ee58fb08-d4ae-422c-b48d-8c4fc33832c3}</uid>
+                          </DElement>
+                         </base-DElement>
+                         <object>{1a1c7b1e-db54-4653-8cab-40b9d5cde069}</object>
+                         <a>{22bd8cb1-e9d6-4387-b188-ac1dc3dae6de}</a>
+                         <b>{ed01c582-4bf0-4d58-a914-2e6ba09aeaf6}</b>
+                        </DRelation>
+                       </base-DRelation>
+                       <a>
+                        <DAssociationEnd>
+                         <cradinality>*</cradinality>
+                         <navigable>true</navigable>
+                         <kind>1</kind>
+                        </DAssociationEnd>
+                       </a>
+                       <b>
+                        <DAssociationEnd>
+                         <cradinality>2</cradinality>
+                        </DAssociationEnd>
+                       </b>
+                      </DAssociation>
+                     </instance>
+                    </item>
                    </qlist>
                   </elements>
-                  <last-modified>1620325809293</last-modified>
+                  <last-modified>1621230551920</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -634,6 +667,106 @@
                                        </MObject>
                                       </base-MObject>
                                       <namespace>Plotter</namespace>
+                                      <template>
+                                       <qlist>
+                                        <item>QGraphicsView</item>
+                                       </qlist>
+                                      </template>
+                                      <members>
+                                       <qlist>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{207174b0-842b-409d-bdfa-b737d131f879}</uid>
+                                          <type>1</type>
+                                          <declaration>-keyReleaseEvent() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{ef048120-93c4-43bb-9c53-dd2ec12de2eb}</uid>
+                                          <type>1</type>
+                                          <declaration>-contextMenuEvent() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{d588288a-08ad-4e13-b4ee-59cc3af21aea}</uid>
+                                          <type>1</type>
+                                          <declaration>-dragEnterEvent() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{7bfccacc-15df-4bde-9ed9-9725b764d9f4}</uid>
+                                          <type>1</type>
+                                          <declaration>-dragLeaveEvent() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{f41dcc47-bf8c-4d9d-a2b9-551c7a4d0998}</uid>
+                                          <type>1</type>
+                                          <declaration>-dragMoveEvent() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{38e29e4e-53e3-4b38-9c13-6b706f6660f8}</uid>
+                                          <type>1</type>
+                                          <declaration>-dropEvent() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{1df7bd00-2513-4c08-91f3-a2c01c524892}</uid>
+                                          <type>2</type>
+                                          <declaration>-mouseMoveEvent()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{e51b3c26-d863-4c07-9d5d-5ca06addcdf0}</uid>
+                                          <type>2</type>
+                                          <declaration>-mousePressEvent()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{055445d3-a7b4-4b06-b8ce-3627143c8203}</uid>
+                                          <type>2</type>
+                                          <declaration>-mouseReleaseEvent()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{695d7eb5-6026-4fd9-98b7-3e05ff1674ad}</uid>
+                                          <type>2</type>
+                                          <declaration>-wheelEvent()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{9308c467-0d6a-4db2-9708-3ac515477dc3}</uid>
+                                          <type>2</type>
+                                          <declaration>-resizeEvent()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{619f9e56-36f0-494f-8171-69b0e50bbfa7}</uid>
+                                          <type>2</type>
+                                          <declaration>+showStock()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{95e444e0-4358-455a-b380-c4a4203b1d26}</uid>
+                                          <type>1</type>
+                                          <declaration>+drawLine() -</declaration>
+                                         </MClassMember>
+                                        </item>
+                                       </qlist>
+                                      </members>
                                      </MClass>
                                     </instance>
                                    </target>
@@ -733,13 +866,25 @@
                                        </MObject>
                                       </base-MObject>
                                       <namespace>Plotter</namespace>
+                                      <template>
+                                       <qlist>
+                                        <item>QGraphicsScene</item>
+                                       </qlist>
+                                      </template>
                                       <members>
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{32a4d451-4187-48d0-a7ba-562c9c741899}</uid>
+                                          <uid>{29e983a4-9dfc-4cd9-a847-92865f2917fa}</uid>
                                           <type>1</type>
                                           <declaration>-curStockKey : const  StockKey</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{d8bb6b6a-257d-4aef-9205-96dfae7d55ab}</uid>
+                                          <type>1</type>
+                                          <declaration>-candlesMap : std::map&lt;interval, ChartSeries&gt;</declaration>
                                          </MClassMember>
                                         </item>
                                        </qlist>
@@ -783,16 +928,77 @@
                                                     </MElement>
                                                    </base-MElement>
                                                    <name>ChartSeries</name>
+                                                   <relations>
+                                                    <handles>
+                                                     <handles>
+                                                      <qlist>
+                                                       <item>
+                                                        <handle>
+                                                         <uid>{1a1c7b1e-db54-4653-8cab-40b9d5cde069}</uid>
+                                                         <target>
+                                                          <instance type="MAssociation">
+                                                           <MAssociation>
+                                                            <base-MRelation>
+                                                             <MRelation>
+                                                              <base-MElement>
+                                                               <MElement>
+                                                                <uid>{1a1c7b1e-db54-4653-8cab-40b9d5cde069}</uid>
+                                                               </MElement>
+                                                              </base-MElement>
+                                                              <a>{813661e8-5a24-4d00-aba0-14ad39cab549}</a>
+                                                              <b>{5c2dd36c-f979-4593-904d-71f4881ff29a}</b>
+                                                             </MRelation>
+                                                            </base-MRelation>
+                                                            <a>
+                                                             <MAssociationEnd>
+                                                              <cardinality>*</cardinality>
+                                                              <navigable>true</navigable>
+                                                              <kind>1</kind>
+                                                             </MAssociationEnd>
+                                                            </a>
+                                                            <b>
+                                                             <MAssociationEnd>
+                                                              <cardinality>2</cardinality>
+                                                             </MAssociationEnd>
+                                                            </b>
+                                                           </MAssociation>
+                                                          </instance>
+                                                         </target>
+                                                        </handle>
+                                                       </item>
+                                                      </qlist>
+                                                     </handles>
+                                                    </handles>
+                                                   </relations>
                                                   </MObject>
                                                  </base-MObject>
                                                  <namespace>Plotter</namespace>
+                                                 <template>
+                                                  <qlist>
+                                                   <item>QGraphicsItemGroup</item>
+                                                  </qlist>
+                                                 </template>
                                                  <members>
                                                   <qlist>
                                                    <item>
                                                     <MClassMember>
-                                                     <uid>{03dc4799-1f5e-4338-b868-ef46dbfb286a}</uid>
+                                                     <uid>{833d5fc4-2afd-46ff-af1d-de23a8bac005}</uid>
                                                      <type>1</type>
                                                      <declaration>-curStockKey : const StockKey&amp;</declaration>
+                                                    </MClassMember>
+                                                   </item>
+                                                   <item>
+                                                    <MClassMember>
+                                                     <uid>{8dcc713d-1fe3-452a-b953-7d7783db11f1}</uid>
+                                                     <type>1</type>
+                                                     <declaration>-xAxis : Axis*</declaration>
+                                                    </MClassMember>
+                                                   </item>
+                                                   <item>
+                                                    <MClassMember>
+                                                     <uid>{b11d33b8-71ef-4ecf-b76c-2719a97488c1}</uid>
+                                                     <type>1</type>
+                                                     <declaration>-yAxiy : Axis*</declaration>
                                                     </MClassMember>
                                                    </item>
                                                   </qlist>
@@ -940,28 +1146,28 @@
                                                              <qlist>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{f710e76f-e78d-40a1-86ba-8bc5dfc42ad7}</uid>
+                                                                <uid>{d7925055-3ba9-49f5-bc71-bc4c0662c2fd}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-curStockKey : const StockKey&amp;</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{0432f441-23d2-4ff2-989b-590a059f1b5b}</uid>
+                                                                <uid>{54e42f8a-9a57-4752-b265-e1ff7b5bb010}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-beginCandle : iterator</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{b5451066-338f-490e-aac6-572aedf39d52}</uid>
+                                                                <uid>{d4a770fe-d9ea-4d4b-b647-d7429479a3af}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-EndCandle : iterator</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{2f40a950-7f9c-48c9-a843-3533c24dd055}</uid>
+                                                                <uid>{d444bce2-16e6-4054-bdc1-d42b714b46d2}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-candleItems : std::map</declaration>
                                                                </MClassMember>
@@ -1021,60 +1227,65 @@
                                                              </MObject>
                                                             </base-MObject>
                                                             <namespace>Plotter</namespace>
+                                                            <template>
+                                                             <qlist>
+                                                              <item>QGraphicsItem</item>
+                                                             </qlist>
+                                                            </template>
                                                             <members>
                                                              <qlist>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{fbead965-c064-44c1-9f52-2f8cd1929dfe}</uid>
+                                                                <uid>{fdc81232-dad6-4aeb-9d32-66a71fb855df}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-params : CandleParams*</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{52e220d7-d794-416b-a9e0-0849b34c6b66}</uid>
+                                                                <uid>{b9ed5c3f-a04c-4807-a845-a782e0a2076a}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-pen : QPen</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{6c48a3d6-ced9-4e77-9200-43f498652261}</uid>
+                                                                <uid>{a5091352-00f9-4524-a4e8-9a5ceea20da3}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-brush : QBrush</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{a1126f3b-8635-400b-848d-5f30639d96f5}</uid>
+                                                                <uid>{5f4471dc-a6ea-48f2-8e78-6fbb4278ceb5}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-candle : Data::Candle</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{be26afcd-15b0-488c-9a75-1793deb41182}</uid>
+                                                                <uid>{7facf840-85d6-4b18-afb1-d7809bcb937d}</uid>
                                                                 <type>2</type>
                                                                 <declaration>+getData()</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{8896c957-672e-4d66-9056-5c1f040bae3d}</uid>
+                                                                <uid>{f06e7355-d5e0-40e6-b389-ff5bd154115e}</uid>
                                                                 <type>2</type>
                                                                 <declaration>+update()</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{98add6d6-28a9-4766-bfde-ea9025f659cd}</uid>
+                                                                <uid>{6d7a156e-f43e-490c-ad5d-9ce4801faec5}</uid>
                                                                 <type>2</type>
                                                                 <declaration>-boundingRect()</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{e9911017-f2da-4a90-844c-1072b77e168b}</uid>
+                                                                <uid>{54385072-bba5-4cfe-a5eb-2052c9ae6c85}</uid>
                                                                 <type>2</type>
                                                                 <declaration>-paint()</declaration>
                                                                </MClassMember>
@@ -1142,47 +1353,25 @@
                                                     </MElement>
                                                    </base-MElement>
                                                    <name>Axis</name>
-                                                   <relations>
-                                                    <handles>
-                                                     <handles>
-                                                      <qlist>
-                                                       <item>
-                                                        <handle>
-                                                         <uid>{74d2479a-bc87-4efe-b6c8-1860070f6fba}</uid>
-                                                         <target>
-                                                          <instance type="MAssociation">
-                                                           <MAssociation>
-                                                            <base-MRelation>
-                                                             <MRelation>
-                                                              <base-MElement>
-                                                               <MElement>
-                                                                <uid>{74d2479a-bc87-4efe-b6c8-1860070f6fba}</uid>
-                                                               </MElement>
-                                                              </base-MElement>
-                                                              <name>seriesList : QList&lt;ChartSeries*&gt;</name>
-                                                              <a>{5c2dd36c-f979-4593-904d-71f4881ff29a}</a>
-                                                              <b>{813661e8-5a24-4d00-aba0-14ad39cab549}</b>
-                                                             </MRelation>
-                                                            </base-MRelation>
-                                                            <a>
-                                                             <MAssociationEnd>
-                                                              <cardinality>*</cardinality>
-                                                              <navigable>true</navigable>
-                                                              <kind>1</kind>
-                                                             </MAssociationEnd>
-                                                            </a>
-                                                           </MAssociation>
-                                                          </instance>
-                                                         </target>
-                                                        </handle>
-                                                       </item>
-                                                      </qlist>
-                                                     </handles>
-                                                    </handles>
-                                                   </relations>
                                                   </MObject>
                                                  </base-MObject>
                                                  <namespace>Plotter</namespace>
+                                                 <template>
+                                                  <qlist>
+                                                   <item>QGraphicsItem</item>
+                                                  </qlist>
+                                                 </template>
+                                                 <members>
+                                                  <qlist>
+                                                   <item>
+                                                    <MClassMember>
+                                                     <uid>{37b469af-d7ad-473a-8135-2c89b464dcd8}</uid>
+                                                     <type>1</type>
+                                                     <declaration>-axisType</declaration>
+                                                    </MClassMember>
+                                                   </item>
+                                                  </qlist>
+                                                 </members>
                                                 </MClass>
                                                </instance>
                                               </target>
@@ -1236,6 +1425,17 @@
                                                   </MObject>
                                                  </base-MObject>
                                                  <namespace>Plotter</namespace>
+                                                 <members>
+                                                  <qlist>
+                                                   <item>
+                                                    <MClassMember>
+                                                     <uid>{e6c7fcee-ddab-4c84-9ef7-fa47e7bf4732}</uid>
+                                                     <type>1</type>
+                                                     <declaration>-axisType : XAxis</declaration>
+                                                    </MClassMember>
+                                                   </item>
+                                                  </qlist>
+                                                 </members>
                                                 </MClass>
                                                </instance>
                                               </target>
@@ -1289,6 +1489,17 @@
                                                   </MObject>
                                                  </base-MObject>
                                                  <namespace>Plotter</namespace>
+                                                 <members>
+                                                  <qlist>
+                                                   <item>
+                                                    <MClassMember>
+                                                     <uid>{f9c2bd08-c484-43dd-aaac-54daf404c02f}</uid>
+                                                     <type>1</type>
+                                                     <declaration>-axisType : YAxis</declaration>
+                                                    </MClassMember>
+                                                   </item>
+                                                  </qlist>
+                                                 </members>
                                                 </MClass>
                                                </instance>
                                               </target>
@@ -1400,49 +1611,49 @@
                  <qlist>
                   <item>
                    <MClassMember>
-                    <uid>{7d11b956-e96d-40ea-8e58-a02e1fa6f1bb}</uid>
+                    <uid>{d5226d8e-1002-41bf-ab0f-9807588d1e0f}</uid>
                     <type>1</type>
                     <declaration>+horizontalWidth : qreal</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{90db749d-8def-42c9-b42b-b4839205cf03}</uid>
+                    <uid>{b9321bbc-d634-4616-baf5-e61312b07a1d}</uid>
                     <type>1</type>
                     <declaration>+horizontalClearance : qreal</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{ed94579d-04b2-462b-8b17-4fefc37fc308}</uid>
+                    <uid>{c000e3ae-40bd-4e37-84a4-fed20ab6e154}</uid>
                     <type>1</type>
                     <declaration>+verticalScale : qreal</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{54ffe02c-2f7d-494a-9877-4ad7e3aff5cf}</uid>
+                    <uid>{0f1d5566-ba2f-4d66-85d0-6daa8a3296f5}</uid>
                     <type>1</type>
                     <declaration>+redPen : QPen</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{4a9d464e-2a1e-4991-bae0-5d2288c84413}</uid>
+                    <uid>{edb6a790-114c-4c2f-b007-6b953dae6113}</uid>
                     <type>1</type>
                     <declaration>+redBrush : QBrush</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{ed16545f-677d-4e9b-b986-2deef9e010fb}</uid>
+                    <uid>{bcff0932-48d5-45bf-9ec1-9de06a24b9e6}</uid>
                     <type>1</type>
                     <declaration>+greenPen : QPen</declaration>
                    </MClassMember>
                   </item>
                   <item>
                    <MClassMember>
-                    <uid>{9e191eb6-5c85-4d0c-895c-1860b461db4d}</uid>
+                    <uid>{44c8adec-782a-4eb6-aec7-34ff04b1c786}</uid>
                     <type>1</type>
                     <declaration>+greenBrush : QBrush</declaration>
                    </MClassMember>

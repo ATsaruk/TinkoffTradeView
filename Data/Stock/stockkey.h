@@ -29,7 +29,8 @@ public:
         MIN30,  ///< Свечи длительностью 30 минут
         HOUR,   ///< Свечи длительностью 1 час
         DAY,    ///< Свечи длительностью 1 день
-        WEEK    ///< Свечи длительностью 1 неделя
+        WEEK,   ///< Свечи длительностью 1 неделя
+        ANY     ///< Любая свеча
     };
 
     explicit StockKey();
@@ -43,7 +44,7 @@ public:
     const INTERVAL &interval()const;
 
     ///Возвращает количество секунд в отрезке времени interval
-    long time() const;
+    std::optional<long> time() const;
 
     ///Преобразует значение interval в строку
     QString intervalToString() const;

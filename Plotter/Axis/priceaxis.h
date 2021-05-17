@@ -9,7 +9,7 @@ namespace Plotter {
 class PriceAxis : public NumericAxis
 {
 public:
-    explicit PriceAxis();
+    explicit PriceAxis(qreal range = 1, qreal offset = 0);
 };
 
 }

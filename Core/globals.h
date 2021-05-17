@@ -39,6 +39,11 @@ namespace Core {
 class Globals
 {
 public:
+    Globals(Globals &&) = delete;
+    Globals(const Globals &) = delete;
+    Globals& operator = (Globals &&) = delete;
+    Globals& operator = (const Globals &) = delete;
+
     //Основные инструменты
     QScopedPointer<Config> conf;
     QScopedPointer<LoggerList> logger;

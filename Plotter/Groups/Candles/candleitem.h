@@ -5,6 +5,8 @@
 #include <QBrush>
 #include <QGraphicsItem>
 
+#include "candleparams.h"
+
 #include "Data/Stock/candle.h"
 #include "Plotter/Axis/axis.h"
 
@@ -14,12 +16,10 @@ namespace Plotter {
 class CandleItem : public QGraphicsItem
 {
 public:
-    explicit CandleItem(Data::Candle &&_candle);
+    explicit CandleItem(Data::Candle &&candle, CandleParams *candleParams);
 
     const Data::Candle& getData();
-
-    void setCandleVerticalScale(const qreal newScale);
-    void setCandleHorizontalScale(const qreal newWidth);
+    void updateYPos();
 
 protected:
     //Определяем виртуальный метод, который возвращает область, в которой находится треугольник
@@ -29,12 +29,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-    qreal horizontalWidth;      //Ширина свечи
-    qreal horizontalClearance;  //Зазор между свечами
-    qreal verticalScale;        //масштабирование по оси Y
-
-    QPen pen;                   //ручка для очертания свечи
-    QBrush brush;               //кисть для тела свечи
+    CandleParams *params;
 
     Data::Candle candle;        //данные по свечи
 };

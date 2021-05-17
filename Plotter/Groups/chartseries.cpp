@@ -14,19 +14,24 @@ ChartSeries::~ChartSeries()
 
 }
 
-void ChartSeries::attachAxis(Axis *_axis)
+void ChartSeries::attachAxis(Axis *axis)
 {
-    if (_axis->getAxisType() == Axis::HORIZONTAL)
-        hAxis = _axis;
+    if (axis->getAxisType() == Axis::HORIZONTAL)
+        xAxis = axis;
     else
-        vAxis = _axis;
+        yAxis = axis;
 
-    connect(_axis, &Axis::scaled, this, &ChartSeries::setScalse);
+    connect(axis, &Axis::scaled, this, &ChartSeries::setScalse);
+}
+
+const Data::StockKey &ChartSeries::getStockKey()
+{
+    return stockKey;
 }
 
 void ChartSeries::setScalse()
 {
-    isChanged = true;
+    isRepaintRequired = true;
 }
 
 }

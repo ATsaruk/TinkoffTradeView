@@ -32,7 +32,7 @@ void LoadStockFromBroker::exec()
 
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
     curRange.setRange(range->getEnd(), -maxLoadRange);
-    curRange.constrain(range());
+    curRange.constrain(range);
 
     connect(Glo.broker.data(), &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
@@ -70,7 +70,7 @@ bool LoadStockFromBroker::getNextLoadRange()
 
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval()) + candleInterval;
     curRange.addSecs(-maxLoadRange);
-    curRange.constrain(range());
+    curRange.constrain(range);
     return true;
 }
 
@@ -93,7 +93,7 @@ void LoadStockFromBroker::setData(SharedInterface &inputData)
 
 SharedInterface &LoadStockFromBroker::getResult()
 {
-    return *stock;
+    return &stock;
 }
 
 bool LoadStockFromBroker::readCandles(const QByteArray &answer)

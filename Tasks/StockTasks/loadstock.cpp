@@ -29,14 +29,14 @@ void LoadStock::setData(SharedInterface &inputData)
 
 SharedInterface &LoadStock::getResult()
 {
-    return *stock;
+    return &stock;
 }
 
 void LoadStock::exec()
 {
     assert(range->isValid() && "LoadStock::exec(): Invalid range!");
 
-    auto *loadFromDb = execFunc<LoadStockFromDbFunc>(*range, stock->key, minCandleCount);
+    auto *loadFromDb = execFunc<LoadStockFromDbFunc>(&range, stock->key, minCandleCount);
     stock = loadFromDb->getResult();
 
     if (stock->candles.empty()) {
@@ -88,7 +88,7 @@ void LoadStock::startLoading()
 {
     //Закрузка недостающих данных от брокера
     auto *task = createTask<LoadStockFromBroker>(stock->key);
-    task->setData(*range);
+    task->setData(&range);
 
     runNextTask();
 }
@@ -128,9 +128,6 @@ bool LoadStock::isLoadFinished()
     }
     return false;
 }
-
-//сделать
-//taskFinished()
 
 void LoadStock::taskFinished()
 {

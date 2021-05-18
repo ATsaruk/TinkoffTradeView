@@ -12,7 +12,7 @@ namespace Plotter {
 
 ChartScene::ChartScene()
 {
-    ///setItemIndexMethod(QGraphicsScene::NoIndex); //@todo проверить производительность!
+    //setItemIndexMethod(QGraphicsScene::NoIndex); //@todo проверить производительность!
     dateAxis = new DateAxis(100, -75);
     addItem(dateAxis);
 
@@ -98,8 +98,8 @@ void ChartScene::createSeries()
     series.emplace_back(new CandlesSeries(stockKey));
     auto *curSeries = series.back();
     connect(curSeries, &CandlesSeries::requestData, this, &ChartScene::loadData);
-    curSeries->attachAxis(dateAxis);
     curSeries->attachAxis(axis);
+    curSeries->attachAxis(dateAxis);
 
     addItem(curSeries);
 }
@@ -124,7 +124,7 @@ void ChartScene::loadData(const Data::Range &loadRange)
     Task::InterfaceWrapper<Data::Range> range = loadRange;
 
     //Загружаем свечи
-    auto *command = TaskManager->createTask<Task::LoadStock>(*range, stockKey, minCandles);
+    auto *command = TaskManager->createTask<Task::LoadStock>(&range, stockKey, minCandles);
     if (auto curSeries = getCurCandleSeries(); curSeries)
         command->connect(*curSeries, SLOT(loadCandlesFinished()));
     else

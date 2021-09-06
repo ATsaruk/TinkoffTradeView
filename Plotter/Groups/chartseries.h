@@ -3,8 +3,9 @@
 
 #include <QGraphicsItemGroup>
 
-#include "Data/Stock/stockkey.h"
 #include "Plotter/Axis/axis.h"
+#include "Data/Stock/stockkey.h"
+#include "Candles/candlesdata.h"
 
 namespace Plotter {
 
@@ -24,16 +25,12 @@ public:
 
 public slots:
     virtual void repaint() = 0;
-    virtual void setScalse();
-
-signals:
-    void changed();
 
 protected:
-    bool isRepaintRequired = false;
     Axis *xAxis;     //horizontal axis
     Axis *yAxis;     //vertical axis
-    Data::StockKey stockKey;
+
+    CandlesData candlesData;
 
     virtual void clear() = 0;
 };

@@ -33,7 +33,7 @@ SOURCES += \
     Plotter/Axis/numericaxis.cpp \
     Plotter/Axis/priceaxis.cpp \
     Plotter/Groups/Candles/candleitem.cpp \
-    Plotter/Groups/Candles/candleparams.cpp \
+    Plotter/Groups/Candles/candlesdata.cpp \
     Plotter/Groups/Candles/candlesseries.cpp \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
@@ -71,7 +71,7 @@ HEADERS += \
     Plotter/Axis/numericaxis.h \
     Plotter/Axis/priceaxis.h \
     Plotter/Groups/Candles/candleitem.h \
-    Plotter/Groups/Candles/candleparams.h \
+    Plotter/Groups/Candles/candlesdata.h \
     Plotter/Groups/Candles/candlesseries.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
@@ -98,9 +98,9 @@ RESOURCES += \
   source.qrc
 
 DISTFILES += \
-  datamodel.qmodel \
-  logsdiagram.qmodel \
-  plotterdiagram.qmodel \
-  tasksdiagram.qmodel
+  Models/datamodel.qmodel \
+  Models/logsdiagram.qmodel \
+  Models/plotterdiagram.qmodel \
+  Models/tasksdiagram.qmodel
 
 STATECHARTS +=

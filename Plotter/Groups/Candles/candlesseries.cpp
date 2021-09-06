@@ -13,7 +13,7 @@ namespace Plotter {
 
 CandlesSeries::CandlesSeries(const Data::StockKey &stockKey)
 {
-    this->stockKey = stockKey;
+    candlesData.stockKey = stockKey;
 
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
@@ -40,14 +40,12 @@ void CandlesSeries::repaint()
 
     scaleByXAxis();
 
-    if (autoPriceRange)
+    if (candlesData.autoPriceRange)
         updatePriceRange();
 
     scaleByYAxis();
 
     isRepaintRequired = false;
-
-    emit changed();
 
     drawMutex.unlock();
 }
@@ -85,18 +83,22 @@ void CandlesSeries::updateData()
     if (isDataRequested)
         return;
 
-    int32_t displayedCandlesCount = xAxis->getRange();
-    int32_t intervalSec = *stockKey.time();
+    auto intervalSec = candlesData.stockKey.time(); //Возвращает опцион
+    if (!intervalSec) { //Проверяем наличие интервала
+        logCritical << "Empty candlesData.stockKey.time() in void CandlesSeries::updateData()";
+        return;
+    }
 
-    Data::Range range;;
+    Data::Range range;
+    int32_t displayedCandlesCount = xAxis->getRange();
     if (candleItems.empty()) {
-        range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
+        range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * *intervalSec * 2);
         isDataRequested = true;
         emit requestData(range);
     } else {
         int32_t offset = xAxis->getOffset();
         if (offset < candleItems.begin()->first) {
-            range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
+            range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * *intervalSec);
             isDataRequested = true;
             emit requestData(range);
         }
@@ -139,8 +141,8 @@ void CandlesSeries::scaleByXAxis()
 void CandlesSeries::scaleByYAxis()
 {
     qreal yScale = yAxis->getScale();
-    if (candleParams.scale.y() != yScale) {
-        candleParams.scale.setY(yScale);
+    if (candlesData.yScale != yScale) {
+        candlesData.yScale = yScale;
 
         for (auto it = beginCandle; it != endCandle; ++it)
             it->second->updateYPos();
@@ -224,7 +226,7 @@ void CandlesSeries::addCandle(Data::Candle &&candleData)
     if(candleItems.find(index) != candleItems.end())
         return; //Свеча уже существует
 
-    CandleItem *cndl = new CandleItem(std::move(candleData), &candleParams);
+    CandleItem *cndl = new CandleItem(std::move(candleData), &candlesData);
     cndl->setX(index * xAxis->getScale());
     if (index >= xAxis->getOffset() &&
             index <= xAxis->getOffset() + xAxis->getRange() )
@@ -261,11 +263,11 @@ void CandlesSeries::addCandles(Data::Candles &&candles)
 
 void CandlesSeries::setXScale(qreal scale)
 {
-    if (candleParams.scale.x() != scale) {
-        candleParams.clearance = scale * 0.34;
-        if (candleParams.clearance > 2.)
-            candleParams.clearance = 2.;
-        candleParams.scale.setX(scale);
+    if (candlesData.xScale != scale) {
+        candlesData.clearance = scale * 0.34;
+        if (candlesData.clearance > 2.)
+            candlesData.clearance = 2.;
+        candlesData.xScale = scale;
     }
 
     for (auto it = beginCandle; it != endCandle; ++it)

@@ -16,7 +16,6 @@
 
 #include "../chartseries.h"
 #include "candleitem.h"
-#include "candleparams.h"
 
 #include "Data/range.h"
 
@@ -57,17 +56,10 @@ protected slots:
 private:
     uint drawWait;
     QMutex drawMutex;
-    CandleParams candleParams;
-
-    bool autoPriceRange = true;    //Перенести в ChartVerticalAxis!
     bool isDataRequested = false;
+    bool isRepaintRequired = false;
 
-    ///@todo разобратся с типом контейнера!
-    //Данные для рисования
-    //QList<CandleItem*> candleItems;
-    //qsizetype beginCandle;
-    //qsizetype endCandle;
-
+    //абстрактная фабрика? или как там, где элементы не удаляем, а освобождаем и переназначаем
     std::map<int32_t, CandleItem*> candleItems;
     std::map<int32_t, CandleItem*>::iterator beginCandle;
     std::map<int32_t, CandleItem*>::iterator endCandle;

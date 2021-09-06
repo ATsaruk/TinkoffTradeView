@@ -5,18 +5,20 @@
 #include <QBrush>
 #include <QGraphicsItem>
 
-#include "candleparams.h"
+#include "candlesdata.h"
 
-#include "Data/Stock/candle.h"
 #include "Plotter/Axis/axis.h"
+#include "Data/Stock/candle.h"
 
 namespace Plotter {
+
+class CandlesData;
 
 ///Класс отрисовка свечи (calndle)
 class CandleItem : public QGraphicsItem
 {
 public:
-    explicit CandleItem(Data::Candle &&candle, CandleParams *candleParams);
+    explicit CandleItem(Data::Candle &&candle, CandlesData *candleParams) noexcept;
 
     const Data::Candle& getData();
     void updateYPos();
@@ -29,7 +31,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-    CandleParams *params;
+    CandlesData *params;
 
     Data::Candle candle;        //данные по свечи
 };

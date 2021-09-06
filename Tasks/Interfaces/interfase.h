@@ -43,7 +43,7 @@ struct InterfaceData : public Interface
     explicit InterfaceData() = default;
 
     template<class N>
-    InterfaceData(N &&init) : data(std::forward<N>(init)) { }
+    InterfaceData(N &&init) noexcept : data(std::forward<N>(init)) { }
 };
 
 
@@ -65,10 +65,10 @@ public:
 
     //Конструирует sharedPtr из forwarding reference
     template<class N>
-    InterfaceWrapper(N &&data) : sharePtr( new InterfaceData<T>(std::forward<N>(data)) ) { }
+    InterfaceWrapper(N &&data) noexcept : sharePtr( new InterfaceData<T>(std::forward<N>(data)) ) { }
 
     template<class N>
-    void operator=(N &&data) {
+    void operator=(N &&data) noexcept {
         if (sharePtr.isNull())
             sharePtr = QSharedPointer<Interface>( new InterfaceData<T>(std::forward<N>(data)) );
         else

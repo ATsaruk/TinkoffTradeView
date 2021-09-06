@@ -6,7 +6,7 @@
 
 namespace Plotter {
 
-CandleItem::CandleItem(Data::Candle &&candle, CandleParams *candleParams)
+CandleItem::CandleItem(Data::Candle &&candle, CandlesData *candleParams) noexcept
 {
     params = candleParams;
     this->candle = std::move(candle);
@@ -21,7 +21,7 @@ const Data::Candle &CandleItem::getData()
 
 void CandleItem::updateYPos()
 {
-    setY(-1 * candle.high * params->scale.y());
+    setY(-1 * candle.high * params->xScale);
 }
 
 QRectF CandleItem::boundingRect() const
@@ -29,8 +29,8 @@ QRectF CandleItem::boundingRect() const
     QRectF rect;
     rect.setLeft(0);
     rect.setTop (0);
-    rect.setWidth(params->scale.x());
-    rect.setHeight((candle.high - candle.low) * params->scale.y());
+    rect.setWidth(params->xScale);
+    rect.setHeight((candle.high - candle.low) * params->yScale);
 
     return rect;
 }
@@ -46,15 +46,15 @@ void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QPolygon body; //Полигон, для отрисовки тела свечи
 
     //Помещаем координаты точек в полигональную модель
-    body << QPoint(0, (candle.high - candle.open) * params->scale.y())
-         << QPoint(0, (candle.high - candle.close) * params->scale.y())
-         << QPoint(params->scale.x() - params->clearance, (candle.high - candle.close) * params->scale.y())
-         << QPoint(params->scale.x() - params->clearance, (candle.high - candle.open) * params->scale.y());
+    body << QPoint(0, (candle.high - candle.open) * params->yScale)
+         << QPoint(0, (candle.high - candle.close) * params->yScale)
+         << QPoint(params->xScale - params->clearance, (candle.high - candle.close) * params->yScale)
+         << QPoint(params->xScale - params->clearance, (candle.high - candle.open) * params->yScale);
 
     //Рисуем тень свечи
-    painter->drawLine((params->scale.x() - params->clearance) / 2.,
-                      (candle.high - candle.low) * params->scale.y(),
-                      (params->scale.x() - params->clearance) / 2.,
+    painter->drawLine((params->xScale - params->clearance) / 2.,
+                      (candle.high - candle.low) * params->yScale,
+                      (params->xScale - params->clearance) / 2.,
                       0.);
 
     //Рисуем тело свечи по полигональной модели

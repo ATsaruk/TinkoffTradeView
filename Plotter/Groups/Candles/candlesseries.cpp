@@ -2,7 +2,6 @@
 
 #include "Core/globals.h"
 #include "Plotter/Axis/axis.h"
-#include "Tasks/StockTasks/loadstock.h"
 
 #include "DataBase/Query/stocksquery.h"
 
@@ -12,14 +11,15 @@
 
 namespace Plotter {
 
-CandlesSeries::CandlesSeries()
+CandlesSeries::CandlesSeries(const Data::StockKey &stockKey)
 {
+    candlesData.stockKey = stockKey;
+
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
 
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
     drawWait = plotInterval * 3 / 4;
-    //connect(Glo.stocks, &DataStocks::dataChanged, this, &ChartCandlesGroup::dataChanged);
 }
 
 CandlesSeries::~CandlesSeries()
@@ -30,45 +30,38 @@ CandlesSeries::~CandlesSeries()
 
 void CandlesSeries::repaint()
 {
-    if (drawMutex.tryLock(drawWait)) {
-        ///@todo подумать над методом обновления данных
-        //if (isDataChanged) {
-            //addCandles();
-            //isDataChanged = false;
-        //}
-        if (isScaled)
-            updateScale();
-    }
+    updateData();
+
+    if (!isRepaintRequired || candleItems.empty())
+        return;
+
+    if (!drawMutex.tryLock(drawWait))
+        return;
+
+    scaleByXAxis();
+
+    if (candlesData.autoPriceRange)
+        updatePriceRange();
+
+    scaleByYAxis();
+
+    isRepaintRequired = false;
+
     drawMutex.unlock();
 }
 
-void CandlesSeries::updateData()
+void CandlesSeries::loadCandlesFinished()
 {
-    if (isDataRequested)
-        return;
-
-    long displayedCandlesCount = hAxis->getRange();
-    long intervalSec = curStockKey.time();
-
-    Data::Range range;;
-    if (candleItems.empty()) {
-        range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
-        loadData(range);
-    } else {
-        long offset = hAxis->getOffset();
-        if (offset < candleItems.begin()->first) {
-            ///@todo проверить может быть в Glo.stocks->getRange() уже есть нужный диапазон?
-            range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
-            loadData(range);
-        }
-    }
+    Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(sender());
+    Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
+    addCandles(std::move(stock->candles));
 }
 
-bool CandlesSeries::clear()
+void CandlesSeries::clear()
 {
     //Если в текущий момент запрошены свечные данные, то пока мы их не обработаем, мы не может произвести очистку
-    if (isDataRequested)
-        return false;
+    while (isDataRequested)
+        QThread::msleep(1);  ///@todo проверить не приведет ли к зависанию!
 
     //Удаляем свечи
     for (auto &it : candleItems) {
@@ -83,27 +76,30 @@ bool CandlesSeries::clear()
     //Сбрасываем отображаемый интервал
     beginCandle = candleItems.end();
     endCandle = candleItems.end();
-
-    return true;
 }
 
-void CandlesSeries::updateScale()
+void CandlesSeries::updateData()
 {
-    isScaled = false;
-
-    if (candleItems.empty())
+    if (isDataRequested)
         return;
 
-    updateData();
+    long intervalSec = candlesData.stockKey.time(); //Возвращает опцион
 
-    scaleByXAxis();
 
-    if (autoPriceRange)
-        updatePriceRange();
-
-    scaleByYAxis();
-
-    emit changed();
+    Data::Range range;
+    int32_t displayedCandlesCount = xAxis->getRange();
+    if (candleItems.empty()) {
+        range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
+        isDataRequested = true;
+        emit requestData(range);
+    } else {
+        int32_t offset = xAxis->getOffset();
+        if (offset < candleItems.begin()->first) {
+            range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
+            isDataRequested = true;
+            emit requestData(range);
+        }
+    }
 }
 
 /* Функция мастабирования оси Х
@@ -114,16 +110,16 @@ void CandlesSeries::updateScale()
 void CandlesSeries::scaleByXAxis()
 {
     ///Определяем новый индекс начали интервала отображения свечей
-    long firstDisplayedIntex = hAxis->getOffset();
-    auto newBeginCandle = candleItems.find(firstDisplayedIntex);
+    int32_t firstDisplayedIntex = xAxis->getOffset();
+    auto &&newBeginCandle = candleItems.find(firstDisplayedIntex);
     //Если элемент с индексом firstDisplayedIntex не найден, то будем отображать с первого элемента
     if (newBeginCandle == candleItems.end())
         newBeginCandle = candleItems.begin();
 
     ///Определяем новый индекс конца интервала отображения свечей
-    // +1 т.к. чтобы отображать часть свечи, которая невлезла целиком на экран
-    long lastDisplayedIndex = firstDisplayedIntex + hAxis->getRange() + 1;
-    auto newEndCandle = candleItems.find(lastDisplayedIndex);
+    // +1 т.к. чтобы отображать часть свечи, которая невлезла целиком на экран ??????? не актуально???
+    int32_t lastDisplayedIndex = firstDisplayedIntex + xAxis->getRange();// + 1; ///@todo !проверить не будет ли наложений при большом количестве свечей
+    auto &&newEndCandle = candleItems.find(lastDisplayedIndex);
 
     setCandleVisible(newBeginCandle, beginCandle);
     beginCandle = newBeginCandle;
@@ -132,11 +128,8 @@ void CandlesSeries::scaleByXAxis()
     endCandle = newEndCandle;
 
     //Обновляем масштаб и положение видимых свечей по оси oX
-    qreal xScale = hAxis->getScale();
-    for (auto it = newBeginCandle; it != newEndCandle; ++it) {
-        it->second->setCandleHorizontalScale(xScale);
-        it->second->setX(it->first * xScale);
-    }
+    qreal xScale = xAxis->getScale();
+    setXScale(xScale);
 
     //Задаем положение на экране всей QGraphicsItemGroup
     setX(-1 * firstDisplayedIntex * xScale);
@@ -144,11 +137,15 @@ void CandlesSeries::scaleByXAxis()
 
 void CandlesSeries::scaleByYAxis()
 {
-    qreal yScale = vAxis->getScale();
-    for (auto it = beginCandle; it != endCandle; ++it)
-        it->second->setCandleVerticalScale(yScale);
+    qreal yScale = yAxis->getScale();
+    if (candlesData.yScale != yScale) {
+        candlesData.yScale = yScale;
 
-    qreal yOffset = vAxis->getOffset();
+        for (auto it = beginCandle; it != endCandle; ++it)
+            it->second->updateYPos();
+    }
+
+    qreal yOffset = yAxis->getOffset();
     this->setY(yOffset * yScale);
 }
 
@@ -158,21 +155,20 @@ void CandlesSeries::scaleByYAxis()
  * Если первичный ключ first_iterator'а БОЛЬШЕ чем первичный ключ second_iterator'а, это означает,
  * что мы будем скрывать свечи из интервала [second_iterator..first_iterator] (т.к. у нас не reverse_iterator)
  */
-void CandlesSeries::setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator)
+void CandlesSeries::setCandleVisible(const std::map<int32_t, CandleItem*>::iterator &first_iterator, const std::map<int32_t, CandleItem*>::iterator &second_iterator)
 {
     //Принцип определения параметра visible описан выше
     bool visible  = first_iterator->first < second_iterator->first;
     //Определяем порядок движения (от меньшего значения к большему)
-    auto begin = visible ? first_iterator : second_iterator;
-    auto end   = visible ? second_iterator : first_iterator;
+    auto &begin = visible ? first_iterator : second_iterator;
+    auto &end   = visible ? second_iterator : first_iterator;
 
-    qreal xScale = hAxis->getScale();
     for (auto it = begin; it != end; ++it) {
         it->second->setVisible(visible);
 
         if (visible) { //Для видимых свечей
             //Обновляем масштаб свечи по оси оY
-            it->second->setCandleVerticalScale(xScale);
+            it->second->updateYPos();
 
             //Добавляем в группу QGraphicsItemGroup, что бы элемент обрабатывался
             this->addToGroup(it->second);
@@ -197,36 +193,27 @@ void CandlesSeries::updatePriceRange()
             maxPrice = data.high;
     }
 
+    ///@todo !!проблемы с масштабированием! разобратся с поведением range и offset для priceAxis
     qreal priceRange = maxPrice - minPrice;
-    qreal newRange = priceRange + priceRange * 0.2; // + 20% что бы на графике сверху и снизу быз "зазор"
-    qreal newOffset = minPrice - priceRange * 0.1;  // - 10% половина от расширения диапазона
-    vAxis->setDataRange(newRange);
-    vAxis->setDataOffset(newOffset);
+    qreal newRange = priceRange;// * 1.2; // + 20% что бы на графике сверху и снизу быз "зазор"
+    qreal newOffset = minPrice;// - priceRange * 0.2;  // - 10% половина от расширения диапазона
+    yAxis->setDataRange(newRange);
+    yAxis->setDataOffset(newOffset);
 
     //autoPriceRange = false;   //while settings autoPriceRange off is absent
 }
 
-const QDateTime CandlesSeries::getDateByIndex(const long index)
+const QDateTime CandlesSeries::getDateByIndex(const int32_t index)
 {
     if (candleItems.find(index) != candleItems.end())
         return candleItems[index]->getData().dateTime;
     return QDateTime();
 }
 
-void CandlesSeries::loadData(const Data::Range &loadRange)
-{
-    isDataRequested = true;
-
-    uint minCandles = hAxis->getRange() / 3.;
-    Task::InterfaceWrapper<Data::Range> range = loadRange;
-    auto *command = TaskManager->createTask<Task::LoadStock>(*range, curStockKey, minCandles);
-    command->connect(this, SLOT(loadCandlesFinished()));
-}
-
 //Добавление 1 свечи, поиск нового индекса
 void CandlesSeries::addCandle(Data::Candle &&candleData)
 {
-    long index = 0.;
+    int32_t index = 0.;
     if (!candleItems.empty()) {
         if (candleItems.begin()->second->getData().dateTime > candleData.dateTime)
             index = candleItems.begin()->first - 1;
@@ -237,11 +224,10 @@ void CandlesSeries::addCandle(Data::Candle &&candleData)
     if(candleItems.find(index) != candleItems.end())
         return; //Свеча уже существует
 
-    CandleItem *cndl = new CandleItem(std::forward<Data::Candle>(candleData));
-    cndl->setCandleHorizontalScale(hAxis->getScale());
-    cndl->setX(index * hAxis->getScale());
-    if (index >= hAxis->getOffset() &&
-            index <= hAxis->getOffset() + hAxis->getRange() )
+    CandleItem *cndl = new CandleItem(std::move(candleData), &candlesData);
+    cndl->setX(index * xAxis->getScale());
+    if (index >= xAxis->getOffset() &&
+            index <= xAxis->getOffset() + xAxis->getRange() )
         //Добавляем новые объекты для отрисовки
         addToGroup(cndl);
     candleItems[index] = cndl;
@@ -250,78 +236,40 @@ void CandlesSeries::addCandle(Data::Candle &&candleData)
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
 void CandlesSeries::addCandles(Data::Candles &&candles)
 {
-    bool isCandlesAdded = false;
     ///@todo переделать с использование стандартных алгритмов
     for (auto it = candles.rbegin(); it != candles.rend(); ++it) {
-        bool isExist = false;
+        bool isExisted = false;
 
         if (!candleItems.empty()) {
             QDateTime curBeginInterval = candleItems.begin()->second->getData().dateTime;
             QDateTime curEndInterval = candleItems.rbegin()->second->getData().dateTime;
             if (curBeginInterval <= it->dateTime && it->dateTime <= curEndInterval)
-                isExist = true;
+                isExisted = true;
         }
 
-        if (!isExist) {
+        if (!isExisted) {
             addCandle(std::move(*it));
-            isCandlesAdded = true;
+            isRepaintRequired = true;
         }
     }
 
-    if (isCandlesAdded) {
-        isScaled = true;
-
-        //Если beginCandle == candleItems.end() это означает, инициализация интервала для отрисовки
-        if (beginCandle == candleItems.end())
-            beginCandle = candleItems.begin();
-    }
+    if (beginCandle == candleItems.end() && !candleItems.empty())
+        beginCandle = candleItems.begin();
 
     isDataRequested = false;
 }
-/*
-void CandlesSeries::addCandles(Data::Candles &&candles)
+
+void CandlesSeries::setXScale(qreal scale)
 {
-    bool isCandlesAdded = false;
-    ///@todo переделать с использование стандартных алгритмов
-    for (auto it = candles.rbegin(); it != candles.rend(); ++it) {
-        bool isExist = false;
-
-        if (!candleItems.empty()) {
-            QDateTime curBeginInterval = candleItems.begin()->second->getData().dateTime;
-            QDateTime curEndInterval = candleItems.rbegin()->second->getData().dateTime;
-            if (curBeginInterval <= it->dateTime && it->dateTime <= curEndInterval)
-                isExist = true;
-        }
-
-        if (!isExist) {
-            addCandle(std::move(*it));
-            isCandlesAdded = true;
-        }
+    if (candlesData.xScale != scale) {
+        candlesData.clearance = scale * 0.34;
+        if (candlesData.clearance > 2.)
+            candlesData.clearance = 2.;
+        candlesData.xScale = scale;
     }
 
-    if (isCandlesAdded) {
-        isScaled = true;
-
-        //Если beginCandle == candleItems.end() это означает, инициализация интервала для отрисовки
-        if (beginCandle == candleItems.end())
-            beginCandle = candleItems.begin();
-    }
-
-    isDataRequested = false;
-}
-*/
-
-void CandlesSeries::loadCandlesFinished()
-{
-    Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(sender());
-    Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
-    addCandles(std::move(stock->candles));
-    //isDataChanged = true;
-}
-
-void CandlesSeries::loadTaskFinished()
-{
-    isDataRequested = false;
+    for (auto it = beginCandle; it != endCandle; ++it)
+        it->second->setX(it->first * scale);
 }
 
 }

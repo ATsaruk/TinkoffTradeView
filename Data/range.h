@@ -29,6 +29,12 @@ public:
     ///@return FALSE - если одна из дат !isValid или если begin >= end
     bool isValid() const;
 
+    ///@return TRUE - если одна isValid();
+    operator bool() const;
+
+    ///@return TRUE - если одна !isValid();
+    bool operator !() const;
+
     ///@return количество секунд в диапазоне
     qint64 toSec() const;
 

@@ -26,11 +26,11 @@ void Globals::init()
     for (const auto &it : logTags)
         logger->add(it);
 
-    taskManager.reset( new Task::Manager );
-
     stocks.reset( new Data::Stocks );
     dataBase.reset( new DB::PostgreSql );
     broker.reset( new Broker::TinkoffApi );
+
+    taskManager.reset( new Task::Manager );
 
     // Что бы не пропустить предупреждение выводим его дополнительно на экран! Можно удалить
     logger->add<MsgBoxLogger>(logTags[2]);

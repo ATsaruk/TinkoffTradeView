@@ -14,8 +14,9 @@
 #include <QMutex>
 #include <QObject>
 
-#include "candleitem.h"
 #include "../chartseries.h"
+#include "candleitem.h"
+
 #include "Data/range.h"
 
 namespace Plotter {
@@ -26,43 +27,41 @@ class CandlesSeries : public ChartSeries
     Q_OBJECT
 
 public:
-    explicit CandlesSeries();
+    explicit CandlesSeries(const Data::StockKey &stockKey);
     ~CandlesSeries();
 
 public slots:
     void repaint() override;
+    void loadCandlesFinished();
+
+signals:
+    void requestData(const Data::Range &);
 
 protected:
-    void updateData() override;
-    bool clear() override;
+    void clear() override;
 
-    void updateScale();
+    void updateData();
     void scaleByXAxis();
     void scaleByYAxis();
-    void setCandleVisible(const std::map<long, CandleItem*>::iterator &first_iterator, const std::map<long, CandleItem*>::iterator &second_iterator);
+    void setCandleVisible(const std::map<int32_t, CandleItem*>::iterator &first_iterator, const std::map<int32_t, CandleItem*>::iterator &second_iterator);
     void updatePriceRange();
-    const QDateTime getDateByIndex(const long index);
+    const QDateTime getDateByIndex(const int32_t index);
 
-    void loadData(const Data::Range &loadRange);
     void addCandle(Data::Candle &&candleData);
     void addCandles(Data::Candles &&candles);
 
 protected slots:
-    void loadCandlesFinished();
-    void loadTaskFinished();
+    void setXScale(qreal scale);
 
 private:
     uint drawWait;
     QMutex drawMutex;
-
-    bool autoPriceRange = true;    //Перенести в ChartVerticalAxis!
     bool isDataRequested = false;
-    bool isDataChanged = false;
 
-    //Данные для рисования
-    std::map<long, CandleItem*>::iterator beginCandle;
-    std::map<long, CandleItem*>::iterator endCandle;
-    std::map<long, CandleItem*> candleItems;
+    //абстрактная фабрика? или как там, где элементы не удаляем, а освобождаем и переназначаем
+    std::map<int32_t, CandleItem*> candleItems;
+    std::map<int32_t, CandleItem*>::iterator beginCandle;
+    std::map<int32_t, CandleItem*>::iterator endCandle;
 };
 
 }

@@ -3,9 +3,10 @@
 
 #include <QGraphicsView>
 
-#include "Axis/axis.h"
-#include "Axis/horizontaldateaxis.h"
+#include "Axis/dateaxis.h"
+#include "Axis/numericaxis.h"
 #include "Groups/chartseries.h"
+#include "chartscene.h"
 
 class QTimer;
 class QWheelEvent;
@@ -21,7 +22,7 @@ public:
     explicit ChartPlotter(QWidget *parent = nullptr);
     ~ChartPlotter();
 
-    void setDrawStockKey( const Data::StockKey &_stockKey );
+    void showStock(const Data::StockKey &stockKey);
 
 protected:
     void wheelEvent( QWheelEvent *event ) override;
@@ -31,6 +32,8 @@ protected:
 
     //событие изменения размеров окна
     void resizeEvent(QResizeEvent *event) override;
+
+    std::tuple<ChartScene *, bool> getCurScene();
 
 protected slots:
     void drawScene();   //слот отрисовки сцены
@@ -43,16 +46,8 @@ private:
     QPointF mouseAnchorPos;             //Предыдущее положение мыши
     Qt::MouseButtons pressedButton;     //Идентефикаторы нажатых кнопок
 
-    //temp
-    HorizontalDateAxis *dateAxis;
-    Axis *priceAxis;
-    //temp
-
     QTimer *plotTimer;                  //Таймер для перерисовки сцены
-    QGraphicsScene *graphicScene;       //сцена для отрисовки
-
-    //Данные для рисования
-    Data::StockKey stockKey;
+    std::vector<ChartScene*> scenes;          //сцена для отрисовки
 };
 
 }

@@ -6,20 +6,10 @@
 
 namespace Plotter {
 
-CandleItem::CandleItem(Data::Candle &&_candle)
+CandleItem::CandleItem(Data::Candle &&candle, CandlesData *candleParams) noexcept
 {
-    candle = std::forward<Data::Candle>(_candle);
-
-    QColor redPen     = Glo.conf->getValue("ChartPlotter/CandleItem/redPen", QColor(235, 77, 92));
-    QColor redBrush   = Glo.conf->getValue("ChartPlotter/CandleItem/redBrush", QColor(235, 77, 92));
-    QColor greenPen   = Glo.conf->getValue("ChartPlotter/CandleItem/greePen", QColor(83, 185, 135));
-    QColor greenBrush = Glo.conf->getValue("ChartPlotter/CandleItem/greenBrush", QColor(83, 185, 135));
-
-    //Красный для медвежей свечи, зеленый для бычей свечи
-    bool isBearCandle = candle.open > candle.close;
-    pen.setColor  ( isBearCandle ? redPen   : greenPen );
-    brush.setColor( isBearCandle ? redBrush : greenBrush );
-    brush.setStyle(Qt::SolidPattern);
+    params = candleParams;
+    this->candle = std::move(candle);
 
     setToolTip(QString("%1").arg(candle.dateTime.toString()));
 }
@@ -29,22 +19,9 @@ const Data::Candle &CandleItem::getData()
     return candle;
 }
 
-void CandleItem::setCandleVerticalScale(const qreal newScale)
+void CandleItem::updateYPos()
 {
-    if (verticalScale != newScale) {
-        verticalScale = newScale;
-        setY(-1 * candle.high * verticalScale);
-    }
-}
-
-void CandleItem::setCandleHorizontalScale(const qreal newWidth)
-{
-    if (horizontalWidth != newWidth) {
-        horizontalClearance = newWidth * 0.34;
-        if (horizontalClearance > 2.)
-            horizontalClearance = 2.;
-        horizontalWidth = newWidth;
-    }
+    setY(-1 * candle.high * params->yScale);
 }
 
 QRectF CandleItem::boundingRect() const
@@ -52,8 +29,8 @@ QRectF CandleItem::boundingRect() const
     QRectF rect;
     rect.setLeft(0);
     rect.setTop (0);
-    rect.setWidth(horizontalWidth);
-    rect.setHeight((candle.high - candle.low) * verticalScale);
+    rect.setWidth(params->xScale);
+    rect.setHeight((candle.high - candle.low) * params->yScale);
 
     return rect;
 }
@@ -61,22 +38,22 @@ QRectF CandleItem::boundingRect() const
 void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //Устанавливаем инструменты для рисования
-    painter->setPen(pen);
-    painter->setBrush(brush);
+    bool isBearCandle = candle.open > candle.close;
+
+    painter->setPen  ( isBearCandle ? params->redPen   : params->greenPen   );
+    painter->setBrush( isBearCandle ? params->redBrush : params->greenBrush );
 
     QPolygon body; //Полигон, для отрисовки тела свечи
 
     //Помещаем координаты точек в полигональную модель
-    body << QPoint(0, (candle.high - candle.open) * verticalScale)
-         << QPoint(0, (candle.high - candle.close) * verticalScale)
-         << QPoint(horizontalWidth - horizontalClearance, (candle.high - candle.close) * verticalScale)
-         << QPoint(horizontalWidth - horizontalClearance, (candle.high - candle.open) * verticalScale);
+    body << QPoint(0, (candle.high - candle.open) * params->yScale)
+         << QPoint(0, (candle.high - candle.close) * params->yScale)
+         << QPoint(params->xScale - params->clearance, (candle.high - candle.close) * params->yScale)
+         << QPoint(params->xScale - params->clearance,  (candle.high - candle.open) * params->yScale);
 
     //Рисуем тень свечи
-    painter->drawLine((horizontalWidth - horizontalClearance) / 2.,
-                      (candle.high - candle.low) * verticalScale,
-                      (horizontalWidth - horizontalClearance) / 2.,
-                      0.);
+    painter->drawLine((params->xScale - params->clearance) / 2., (candle.high - candle.low) * params->yScale,
+                      (params->xScale - params->clearance) / 2., 0.);
 
     //Рисуем тело свечи по полигональной модели
     painter->drawPolygon(body);

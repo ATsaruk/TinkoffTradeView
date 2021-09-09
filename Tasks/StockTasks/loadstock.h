@@ -26,14 +26,13 @@
 #include "Data/Stock/stocks.h"
 
 namespace Task {
-using namespace Data;
 
 
 ///Команда получения данных по акции
 class LoadStock : public IBaseCommand
 {
 public:
-    explicit LoadStock(const StockKey &stockKey, const uint minCandleCount_ = 1);
+    explicit LoadStock(const Data::StockKey &stockKey, const uint minCandleCount_ = 1);
 
     void setData(SharedInterface &inputData) override;
     SharedInterface &getResult() override;
@@ -52,9 +51,9 @@ protected slots:
     virtual void taskFinished() override;
 
 private:
-    InterfaceWrapper<Range> range;
-    InterfaceWrapper<Stock> stock;
-    InterfaceWrapper<Stock> loadedCandles;
+    InterfaceWrapper<Data::Range> range;
+    InterfaceWrapper<Data::Stock> stock;
+    InterfaceWrapper<Data::Stock> loadedCandles;
     bool forwardLoading = false;
     uint minCandleCount;
     QDateTime endLoadDate;

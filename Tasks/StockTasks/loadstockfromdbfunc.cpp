@@ -16,7 +16,7 @@ LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const u
  */
 void LoadStockFromDbFunc::exec()
 {
-    DB::StocksQuery::loadCandles(stock(), loadRange->getBegin(), loadRange->getEnd());
+    DB::StocksQuery::loadCandles(stock, loadRange->getBegin(), loadRange->getEnd());
 
     if (stock->candles.size() < minCandlesCount)
         loadByCount();
@@ -25,7 +25,7 @@ void LoadStockFromDbFunc::exec()
         if (stock->candles.front().dateTime > loadRange->getBegin()) {
             //Загружаем ещё одну свечу
             QDateTime &end = std::min_element(stock->candles.begin(), stock->candles.end())->dateTime;
-            DB::StocksQuery::loadCandles(stock(), QDateTime(), end, 1);
+            DB::StocksQuery::loadCandles(stock, QDateTime(), end, 1);
         }
         std::sort(stock->candles.begin(), stock->candles.end());
     }
@@ -38,17 +38,17 @@ void LoadStockFromDbFunc::setData(SharedInterface &inputData)
 
 SharedInterface &LoadStockFromDbFunc::getResult()
 {
-    return *stock;
+    return &stock;
 }
 
 void LoadStockFromDbFunc::loadByCount()
 {
     //Дату начала оставляем пустой, значит на неё не будет накладываться ограничения
     QDateTime begin = QDateTime();
-    QDateTime end = stock->candles.empty() ? loadRange->getBegin() : stock->candles.front().dateTime;
+    QDateTime end = stock->candles.empty() ? loadRange->getBegin() : stock->candles.back().dateTime;
     uint remainsCount = minCandlesCount - stock->candles.size();
 
-    DB::StocksQuery::loadCandles(stock(), begin, end, remainsCount);
+    DB::StocksQuery::loadCandles(stock, begin, end, remainsCount);
 }
 
 }

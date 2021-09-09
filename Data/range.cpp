@@ -72,6 +72,16 @@ bool Range::isValid() const
     return true;
 }
 
+Data::Range::operator bool() const
+{
+    return isValid();
+}
+
+bool Range::operator !() const
+{
+    return  !isValid();
+}
+
 qint64 Range::toSec() const
 {
     if (!isValid())

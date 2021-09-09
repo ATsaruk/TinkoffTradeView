@@ -10,7 +10,7 @@
 
 namespace Task {
 
-LoadStockFromBroker::LoadStockFromBroker(const StockKey &stockKey)
+LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey)
     : IBaseTask("LoadStockFromBroker")
 {
     stock->key = stockKey;
@@ -29,7 +29,7 @@ void LoadStockFromBroker::exec()
 
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
     curRange.setRange(range->getEnd(), -maxLoadRange);
-    curRange.constrain(range());
+    curRange.constrain(range);
 
     connect(Glo.broker.data(), &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
@@ -61,13 +61,13 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    auto candleInterval = stock->key.time();
+    long candleInterval = stock->key.time();
     if ( curRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;
 
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval()) + candleInterval;
     curRange.addSecs(-maxLoadRange);
-    curRange.constrain(range());
+    curRange.constrain(range);
     return true;
 }
 
@@ -90,7 +90,7 @@ void LoadStockFromBroker::setData(SharedInterface &inputData)
 
 SharedInterface &LoadStockFromBroker::getResult()
 {
-    return *stock;
+    return &stock;
 }
 
 bool LoadStockFromBroker::readCandles(const QByteArray &answer)
@@ -116,15 +116,15 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
     stock->candles.reserve(stock->candles.size() + candlesArray.size());
     for (const auto &it: candlesArray)
-        stock->candles.emplace_back( Candle::fromJson(it.toObject()) );
+        stock->candles.emplace_back( Data::Candle::fromJson(it.toObject()) );
 
     return true;
 }
 
 bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
 {
-    try {  //StockKey::fromJson кидается исключениями
-        StockKey recievedKey;
+    try {  //StockKey::fromJson кидается исключениями, в случае не возможности определить интервал свечи
+        Data::StockKey recievedKey;
         recievedKey.fromJson(payload);   //payload содержит ключ акции
         if(recievedKey != stock->key) {
             QString errorCode = QString("LoadStockFromBroker;checkStockKey();recievedKey!=stockKey:;%1;%2")
@@ -148,9 +148,9 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
  */
 void LoadStockFromBroker::removeIncompleteCandle()
 {
-    Candle &lastCandle = stock->candles.back();
+    Data::Candle &lastCandle = stock->candles.back();
 
-    uint64_t candleDuration = stock->key.time();
+    long candleDuration = stock->key.time();
     QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
 
     if (timeCandleComplite > range->getEnd())

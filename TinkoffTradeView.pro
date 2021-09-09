@@ -29,11 +29,15 @@ SOURCES += \
     DataBase/idatabase.cpp \
     DataBase/postgresql.cpp \
     Plotter/Axis/axis.cpp \
-    Plotter/Axis/horizontaldateaxis.cpp \
+    Plotter/Axis/dateaxis.cpp \
+    Plotter/Axis/numericaxis.cpp \
+    Plotter/Axis/priceaxis.cpp \
     Plotter/Groups/Candles/candleitem.cpp \
+    Plotter/Groups/Candles/candlesdata.cpp \
     Plotter/Groups/Candles/candlesseries.cpp \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
+    Plotter/chartscene.cpp \
     Tasks/StockTasks/loadstockfrombroker.cpp \
     Tasks/StockTasks/loadstock.cpp \
     Tasks/StockTasks/loadstockfromdbfunc.cpp \
@@ -63,11 +67,15 @@ HEADERS += \
     DataBase/idatabase.h \
     DataBase/postgresql.h \
     Plotter/Axis/axis.h \
-    Plotter/Axis/horizontaldateaxis.h \
+    Plotter/Axis/dateaxis.h \
+    Plotter/Axis/numericaxis.h \
+    Plotter/Axis/priceaxis.h \
     Plotter/Groups/Candles/candleitem.h \
+    Plotter/Groups/Candles/candlesdata.h \
     Plotter/Groups/Candles/candlesseries.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
+    Plotter/chartscene.h \
     Tasks/Interfaces/interfase.h \
     Tasks/StockTasks/loadstockfrombroker.h \
     Tasks/StockTasks/loadstock.h \
@@ -90,9 +98,9 @@ RESOURCES += \
   source.qrc
 
 DISTFILES += \
-  datamodel.qmodel \
-  logsdiagram.qmodel \
-  plotterdiagram.qmodel \
-  tasksdiagram.qmodel
+  Models/datamodel.qmodel \
+  Models/logsdiagram.qmodel \
+  Models/plotterdiagram.qmodel \
+  Models/tasksdiagram.qmodel
 
 STATECHARTS +=

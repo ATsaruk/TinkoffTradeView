@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     plotter = new Plotter::ChartPlotter;
     setCentralWidget(plotter);
 
-    plotter->setDrawStockKey(getStockKey());
+    plotter->showStock(getStockKey());
 }
 
 MainWindow::~MainWindow()
@@ -31,7 +31,7 @@ const Data::StockKey MainWindow::getStockKey()
 
 void MainWindow::on_actUpdate_triggered()
 {
-    plotter->setDrawStockKey(getStockKey());
+    plotter->showStock(getStockKey());
 }
 
 void MainWindow::on_actExit_triggered()

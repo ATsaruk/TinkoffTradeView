@@ -1,3 +1,6 @@
+///Убрать void operator= (InterfaceWrapper &other)!
+
+
 #ifndef INPUTINTERFASE_H
 #define INPUTINTERFASE_H
 
@@ -38,8 +41,9 @@ struct InterfaceData : public Interface
 {
     T data;
     explicit InterfaceData() = default;
-    InterfaceData(T &&init) : data(std::forward<T>(init)) { }
-    InterfaceData(const T &init) : data(init) { }
+
+    template<class N>
+    InterfaceData(N &&init) noexcept : data(std::forward<N>(init)) { }
 };
 
 
@@ -48,22 +52,6 @@ template<class S, class T = std::remove_reference_t<std::remove_pointer_t<S>>>
 class InterfaceWrapper {
 public:
     explicit InterfaceWrapper() = default;
-
-    //Копирует sharedPtr из другого DataWrapper
-    InterfaceWrapper(InterfaceWrapper &other) : sharePtr(*other) { }
-    void operator= (InterfaceWrapper &other) { sharePtr = *other; }
-
-    //Конструирует sharedPtr из forwarding reference
-    InterfaceWrapper(T &&data) : sharePtr( new InterfaceData<T>(std::forward<T>(data)) ) { }
-    void operator=(T &&data) { sharePtr = QSharedPointer<Interface>(new InterfaceData<T>(std::forward<T>(data))); }
-
-    //Конструирует sharedPtr из const reference
-    InterfaceWrapper(const T &data) : sharePtr( new InterfaceData<T>(data) ) { }
-    void operator=(const T &data) { sharePtr = QSharedPointer<Interface>(new InterfaceData<T>(data)); }
-
-    //Конструирует sharedPtr из T* (забирает ресурсы у data и удаляет старый объект)
-    InterfaceWrapper(T *data) : sharePtr( new InterfaceData<T>(std::move(*data)) ) { delete data; }
-    void operator=(T *data) { sharePtr = QSharedPointer<Interface>(new InterfaceData<T>(std::move(*data))); delete data; }
 
     //Дропает старую ссылку, и получает новую (если интерфейсы совместимы!)
     InterfaceWrapper(QSharedPointer<Task::Interface> &inputData) {
@@ -75,14 +63,20 @@ public:
         sharePtr = inputData;
     }
 
-    //Каст к костантной ссылке
-    operator const T& () {
-        deferredInit();
-        return sharePtr.data()->get<T>();
+    //Конструирует sharedPtr из forwarding reference
+    template<class N>
+    InterfaceWrapper(N &&data) noexcept : sharePtr( new InterfaceData<T>(std::forward<N>(data)) ) { }
+
+    template<class N>
+    void operator=(N &&data) noexcept {
+        if (sharePtr.isNull())
+            sharePtr = QSharedPointer<Interface>( new InterfaceData<T>(std::forward<N>(data)) );
+        else
+            sharePtr.data()->get<T>() = std::forward<N>(data);
     }
 
-    //Оператор () возвращает ссылку на данные (для изменения данных)
-    T& operator() () {
+    //Каст к ссылке
+    operator T& () {
         deferredInit();
         return sharePtr.data()->get<T>();
     }
@@ -93,8 +87,8 @@ public:
         return &(sharePtr.data()->get<T>());
     }
 
-    //Оператор * возвращает ссылку на sharedPoint
-    QSharedPointer<Interface>& operator*() {
+    //Оператор & возвращает ссылку на sharedPoint
+    QSharedPointer<Interface>& operator & () {
         deferredInit();
         return sharePtr;
     }

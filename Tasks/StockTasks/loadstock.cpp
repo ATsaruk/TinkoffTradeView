@@ -1,4 +1,4 @@
-///@todo проверить загрузку пустой акции и загрузку backward!
+///@todo !проверить загрузку пустой акции и загрузку backward!
 
 #include <QThread>
 
@@ -11,7 +11,7 @@
 
 namespace Task {
 
-LoadStock::LoadStock(const StockKey &stockKey, const uint minCandleCount_)
+LoadStock::LoadStock(const Data::StockKey &stockKey, const uint minCandleCount_)
     : IBaseCommand("LoadStock")
 {
     stock->key = stockKey;
@@ -26,14 +26,14 @@ void LoadStock::setData(SharedInterface &inputData)
 
 SharedInterface &LoadStock::getResult()
 {
-    return *stock;
+    return &stock;
 }
 
 void LoadStock::exec()
 {
     assert(range->isValid() && "LoadStock::exec(): Invalid range!");
 
-    auto *loadFromDb = execFunc<LoadStockFromDbFunc>(*range, stock->key, minCandleCount);
+    auto *loadFromDb = execFunc<LoadStockFromDbFunc>(&range, stock->key, minCandleCount);
     stock = loadFromDb->getResult();
 
     if (stock->candles.empty()) {
@@ -44,14 +44,13 @@ void LoadStock::exec()
     Glo.stocks->insertCandles(stock);
 
     //Определяем направление загрузки и вообще её необходимость!
-    Range existedRange = Glo.stocks->getRange(stock->key);
+    Data::Range existedRange = Glo.stocks->getRange(stock->key);
     bool isLeftBorder = existedRange.getBegin() <= range->getBegin();
 
-    QDateTime maxDateTime = std::max_element(stock->candles.begin(), stock->candles.end())->dateTime;
-    bool isRightBorder = existedRange.getEnd() <= maxDateTime.addSecs(stock->key.time());
+    bool isRightBorder = QDateTime::currentDateTime() > existedRange.getEnd().addSecs(stock->key.time());
 
     if (isRightBorder) {
-        forwardLoading = true;
+        forwardLoading = true;      ///@todo !!!при forwardLoading загружаем от брокера новые данные, а далее проверяем нужно ли загружать в конец?
         loadForwardFromBroker();
     } else if (isLeftBorder)
         loadBackwardFromBroker();
@@ -85,7 +84,7 @@ void LoadStock::startLoading()
 {
     //Закрузка недостающих данных от брокера
     auto *task = createTask<LoadStockFromBroker>(stock->key);
-    task->setData(*range);
+    task->setData(&range);
 
     runNextTask();
 }
@@ -93,7 +92,7 @@ void LoadStock::startLoading()
 void LoadStock::finishLoading()
 {
     if (!loadedCandles->candles.empty()) {
-        Stock newCandles = Glo.stocks->insertCandles(loadedCandles);
+        Data::Stock newCandles = Glo.stocks->insertCandles(loadedCandles);
         DB::StocksQuery::insertCandles(newCandles);
         stock->appendCandles(loadedCandles->candles);
     }
@@ -102,12 +101,12 @@ void LoadStock::finishLoading()
 
 void LoadStock::receiveResult(QObject *sender)
 {
-    auto task = dynamic_cast<LoadStockFromBroker*>(sender);
+    auto *task = dynamic_cast<LoadStockFromBroker*>(sender);
 
     assert(task != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft: %2")
             .arg(getName()).arg(taskList.size()).toStdString().data());
 
-    InterfaceWrapper<Stock> brokerCandles = task->getResult();
+    InterfaceWrapper<Data::Stock> brokerCandles = task->getResult();
     loadedCandles->appendStock(brokerCandles);
 
     logDebug << QString("%1;taskFinished();finished: %2;loaded;%3;candles")
@@ -119,15 +118,13 @@ void LoadStock::receiveResult(QObject *sender)
 bool LoadStock::isLoadFinished()
 {
     int remainsCount = minCandleCount - stock->candles.size() - loadedCandles->candles.size();
+    ///@todo !!!сделать загрузку предыдущего 2 недельного интервала
     if (remainsCount <= 0 || endLoadDate.secsTo(range->getBegin()) < stock->key.time())  {
         finishLoading();
         return true;
     }
     return false;
 }
-
-//сделать
-//taskFinished()
 
 void LoadStock::taskFinished()
 {
@@ -140,7 +137,7 @@ void LoadStock::taskFinished()
 
     //Сдвигаем интервал загрузки
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
-    range->setRange(range->getBegin().addSecs(-stock->key.time()), -maxLoadRange);
+    range->setRange(range->getBegin().addSecs(stock->key.time() * -1), -maxLoadRange);
 
     startLoading();
 }

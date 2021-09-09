@@ -14,34 +14,23 @@ ChartSeries::~ChartSeries()
 
 }
 
-void ChartSeries::attachAxis(Axis *_axis)
+void ChartSeries::attachAxis(Axis *axis)
 {
-    if (_axis->getAxisType() == Axis::HORIZONTAL)
-        hAxis = _axis;
+    if (axis->getAxisType() == Axis::HORIZONTAL)
+        xAxis = axis;
     else
-        vAxis = _axis;
-
-    connect(_axis, &Axis::scaled, this, &ChartSeries::setScalse);
-}
-
-void ChartSeries::setStockKey(const Data::StockKey &stockKey)
-{
-    while (!clear())
-        QThread::msleep(1);
-
-    curStockKey = stockKey;
-
-    updateData();
+        yAxis = axis;
+    connect(axis, &Axis::scaled, this, &ChartSeries::update);
 }
 
 const Data::StockKey &ChartSeries::getStockKey()
 {
-    return curStockKey;
+    return candlesData.stockKey;
 }
 
-void ChartSeries::setScalse()
+void ChartSeries::update()
 {
-    isScaled = true;
+    isRepaintRequired = true;
 }
 
 }

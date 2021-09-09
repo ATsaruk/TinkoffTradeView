@@ -26,9 +26,6 @@ ChartScene::~ChartScene()
 
 void ChartScene::showStock(const Data::StockKey &stockKey)
 {
-    if (stockKey.interval() == Data::StockKey::INTERVAL::ANY)
-        throw std::logic_error("ChartScene::showStock(): stockKey.interval can't be ANY!");
-
     if (this->stockKey == stockKey)
         return;
 

@@ -83,22 +83,19 @@ void CandlesSeries::updateData()
     if (isDataRequested)
         return;
 
-    auto intervalSec = candlesData.stockKey.time(); //Возвращает опцион
-    if (!intervalSec) { //Проверяем наличие интервала
-        logCritical << "Empty candlesData.stockKey.time() in void CandlesSeries::updateData()";
-        return;
-    }
+    long intervalSec = candlesData.stockKey.time(); //Возвращает опцион
+
 
     Data::Range range;
     int32_t displayedCandlesCount = xAxis->getRange();
     if (candleItems.empty()) {
-        range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * *intervalSec * 2);
+        range.setRange(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
         isDataRequested = true;
         emit requestData(range);
     } else {
         int32_t offset = xAxis->getOffset();
         if (offset < candleItems.begin()->first) {
-            range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * *intervalSec);
+            range.setRange(candleItems.begin()->second->getData().dateTime, -displayedCandlesCount * intervalSec);
             isDataRequested = true;
             emit requestData(range);
         }
@@ -120,8 +117,8 @@ void CandlesSeries::scaleByXAxis()
         newBeginCandle = candleItems.begin();
 
     ///Определяем новый индекс конца интервала отображения свечей
-    // +1 т.к. чтобы отображать часть свечи, которая невлезла целиком на экран
-    int32_t lastDisplayedIndex = firstDisplayedIntex + xAxis->getRange() + 1;
+    // +1 т.к. чтобы отображать часть свечи, которая невлезла целиком на экран ??????? не актуально???
+    int32_t lastDisplayedIndex = firstDisplayedIntex + xAxis->getRange();// + 1; ///@todo !проверить не будет ли наложений при большом количестве свечей
     auto &&newEndCandle = candleItems.find(lastDisplayedIndex);
 
     setCandleVisible(newBeginCandle, beginCandle);
@@ -196,9 +193,10 @@ void CandlesSeries::updatePriceRange()
             maxPrice = data.high;
     }
 
+    ///@todo !!проблемы с масштабированием! разобратся с поведением range и offset для priceAxis
     qreal priceRange = maxPrice - minPrice;
-    qreal newRange = priceRange + priceRange * 0.2; // + 20% что бы на графике сверху и снизу быз "зазор"
-    qreal newOffset = minPrice - priceRange * 0.1;  // - 10% половина от расширения диапазона
+    qreal newRange = priceRange;// * 1.2; // + 20% что бы на графике сверху и снизу быз "зазор"
+    qreal newOffset = minPrice;// - priceRange * 0.2;  // - 10% половина от расширения диапазона
     yAxis->setDataRange(newRange);
     yAxis->setDataOffset(newOffset);
 

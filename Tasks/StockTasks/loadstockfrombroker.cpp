@@ -13,9 +13,6 @@ namespace Task {
 LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey)
     : IBaseTask("LoadStockFromBroker")
 {
-    if (stockKey.interval() == Data::StockKey::INTERVAL::ANY)
-        throw std::logic_error("LoadStockFromBroker(): can't load stock with ANY interval!");
-
     stock->key = stockKey;
 }
 
@@ -64,7 +61,7 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    long candleInterval = *stock->key.time();
+    long candleInterval = stock->key.time();
     if ( curRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;
 
@@ -126,7 +123,7 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
 bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
 {
-    try {  //StockKey::fromJson кидается исключениями
+    try {  //StockKey::fromJson кидается исключениями, в случае не возможности определить интервал свечи
         Data::StockKey recievedKey;
         recievedKey.fromJson(payload);   //payload содержит ключ акции
         if(recievedKey != stock->key) {
@@ -153,7 +150,7 @@ void LoadStockFromBroker::removeIncompleteCandle()
 {
     Data::Candle &lastCandle = stock->candles.back();
 
-    uint64_t candleDuration = *stock->key.time();
+    long candleDuration = stock->key.time();
     QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
 
     if (timeCandleComplite > range->getEnd())

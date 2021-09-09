@@ -21,7 +21,7 @@ const Data::Candle &CandleItem::getData()
 
 void CandleItem::updateYPos()
 {
-    setY(-1 * candle.high * params->xScale);
+    setY(-1 * candle.high * params->yScale);
 }
 
 QRectF CandleItem::boundingRect() const
@@ -49,13 +49,11 @@ void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     body << QPoint(0, (candle.high - candle.open) * params->yScale)
          << QPoint(0, (candle.high - candle.close) * params->yScale)
          << QPoint(params->xScale - params->clearance, (candle.high - candle.close) * params->yScale)
-         << QPoint(params->xScale - params->clearance, (candle.high - candle.open) * params->yScale);
+         << QPoint(params->xScale - params->clearance,  (candle.high - candle.open) * params->yScale);
 
     //Рисуем тень свечи
-    painter->drawLine((params->xScale - params->clearance) / 2.,
-                      (candle.high - candle.low) * params->yScale,
-                      (params->xScale - params->clearance) / 2.,
-                      0.);
+    painter->drawLine((params->xScale - params->clearance) / 2., (candle.high - candle.low) * params->yScale,
+                      (params->xScale - params->clearance) / 2., 0.);
 
     //Рисуем тело свечи по полигональной модели
     painter->drawPolygon(body);

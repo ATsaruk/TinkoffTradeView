@@ -1,4 +1,4 @@
-///@todo проверить загрузку пустой акции и загрузку backward!
+///@todo !проверить загрузку пустой акции и загрузку backward!
 
 #include <QThread>
 
@@ -14,9 +14,6 @@ namespace Task {
 LoadStock::LoadStock(const Data::StockKey &stockKey, const uint minCandleCount_)
     : IBaseCommand("LoadStock")
 {
-    if (stockKey.interval() == Data::StockKey::INTERVAL::ANY)
-        throw std::logic_error("LoadStock(): can't load stock with ANY interval!");
-
     stock->key = stockKey;
     loadedCandles->key = stockKey;
     minCandleCount = minCandleCount_;
@@ -50,11 +47,10 @@ void LoadStock::exec()
     Data::Range existedRange = Glo.stocks->getRange(stock->key);
     bool isLeftBorder = existedRange.getBegin() <= range->getBegin();
 
-    QDateTime maxDateTime = std::max_element(stock->candles.begin(), stock->candles.end())->dateTime;
-    bool isRightBorder = existedRange.getEnd() <= maxDateTime.addSecs(*stock->key.time());
+    bool isRightBorder = QDateTime::currentDateTime() > existedRange.getEnd().addSecs(stock->key.time());
 
     if (isRightBorder) {
-        forwardLoading = true;
+        forwardLoading = true;      ///@todo !!!при forwardLoading загружаем от брокера новые данные, а далее проверяем нужно ли загружать в конец?
         loadForwardFromBroker();
     } else if (isLeftBorder)
         loadBackwardFromBroker();
@@ -65,7 +61,7 @@ void LoadStock::exec()
 void LoadStock::loadForwardFromBroker()
 {
     QDateTime last = std::max_element(stock->candles.begin(), stock->candles.end())->dateTime;
-    range->setBegin(last.addSecs(*stock->key.time()));
+    range->setBegin(last.addSecs(stock->key.time()));
 
     if (range->toSec() >= stock->key.time())
         startLoading();
@@ -122,6 +118,7 @@ void LoadStock::receiveResult(QObject *sender)
 bool LoadStock::isLoadFinished()
 {
     int remainsCount = minCandleCount - stock->candles.size() - loadedCandles->candles.size();
+    ///@todo !!!сделать загрузку предыдущего 2 недельного интервала
     if (remainsCount <= 0 || endLoadDate.secsTo(range->getBegin()) < stock->key.time())  {
         finishLoading();
         return true;
@@ -140,7 +137,7 @@ void LoadStock::taskFinished()
 
     //Сдвигаем интервал загрузки
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
-    range->setRange(range->getBegin().addSecs(*stock->key.time() * -1), -maxLoadRange);
+    range->setRange(range->getBegin().addSecs(stock->key.time() * -1), -maxLoadRange);
 
     startLoading();
 }

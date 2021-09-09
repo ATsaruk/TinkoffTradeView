@@ -20,11 +20,17 @@ void ChartSeries::attachAxis(Axis *axis)
         xAxis = axis;
     else
         yAxis = axis;
+    connect(axis, &Axis::scaled, this, &ChartSeries::update);
 }
 
 const Data::StockKey &ChartSeries::getStockKey()
 {
     return candlesData.stockKey;
+}
+
+void ChartSeries::update()
+{
+    isRepaintRequired = true;
 }
 
 }

@@ -57,7 +57,6 @@ private:
     uint drawWait;
     QMutex drawMutex;
     bool isDataRequested = false;
-    bool isRepaintRequired = false;
 
     //абстрактная фабрика? или как там, где элементы не удаляем, а освобождаем и переназначаем
     std::map<int32_t, CandleItem*> candleItems;

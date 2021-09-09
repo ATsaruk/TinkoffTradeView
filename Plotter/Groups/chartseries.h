@@ -27,12 +27,17 @@ public slots:
     virtual void repaint() = 0;
 
 protected:
+    bool isRepaintRequired = false;
+
     Axis *xAxis;     //horizontal axis
     Axis *yAxis;     //vertical axis
 
     CandlesData candlesData;
 
     virtual void clear() = 0;
+
+protected slots:
+    virtual void update();
 };
 
 }

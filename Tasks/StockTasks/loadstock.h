@@ -31,6 +31,8 @@ namespace Task {
 ///Команда получения данных по акции
 class LoadStock : public IBaseCommand
 {
+    Q_OBJECT
+
 public:
     explicit LoadStock(const Data::StockKey &stockKey, const uint minCandleCount_ = 1);
 
@@ -38,26 +40,20 @@ public:
     SharedInterface &getResult() override;
 
 protected:
-    void exec() override;
-    void loadForwardFromBroker();
-    void loadBackwardFromBroker();
-    void startLoading();
-    void finishLoading();
-    void receiveResult(QObject *sender);
-    bool isLoadFinished();
+    void exec() override;                   //запуск задачи
+    void createLoadingTasks();              //подготовка интервалов загрузки
+    void startNextTask();                   //запрос свечей из подинтервала subRange
 
 protected slots:
-    //Обработка завершения потока
-    virtual void taskFinished() override;
+    virtual void taskFinished() override;   //обработка завершения задачи
 
 private:
-    InterfaceWrapper<Data::Range> range;
-    InterfaceWrapper<Data::Stock> stock;
-    InterfaceWrapper<Data::Stock> loadedCandles;
-    bool forwardLoading = false;
-    uint minCandleCount;
-    QDateTime endLoadDate;
-
+    bool extraRangeLoaded;          //производистся загрузка дополнительного 2х недельного интервала
+    uint minCandleCount;            //Минимальное число свечей, которое необходимо загрузить
+    Data::Range existedRange;       //интервал на котором данные уже существуют
+    InterfaceWrapper<Data::Range> range;            //исходный интервал загрузки
+    InterfaceWrapper<Data::Stock> stock;            //список загруженных акций (из БД + от брокера)
+    InterfaceWrapper<Data::Stock> loadedCandles;    //список акций полученных от брокера
 };
 
 }

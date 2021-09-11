@@ -1,5 +1,6 @@
 #include "loadstockfromdbfunc.h"
 
+#include "Core/globals.h"
 #include "DataBase/Query/stocksquery.h"
 
 namespace Task {
@@ -16,6 +17,11 @@ LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const u
  */
 void LoadStockFromDbFunc::exec()
 {
+    if (!loadRange->isValid()) {
+        logCritical << "LoadStockFromDbFunc::exec:;invalid loadRange!";
+        return;
+    }
+
     DB::StocksQuery::loadCandles(stock, loadRange->getBegin(), loadRange->getEnd());
 
     if (stock->candles.size() < minCandlesCount)
@@ -34,6 +40,8 @@ void LoadStockFromDbFunc::exec()
 void LoadStockFromDbFunc::setData(SharedInterface &inputData)
 {
     loadRange = inputData;
+    if (!loadRange->isValid())
+        logCritical << "LoadStockFromDbFunc::setData:;invalid loadRange!";
 }
 
 SharedInterface &LoadStockFromDbFunc::getResult()

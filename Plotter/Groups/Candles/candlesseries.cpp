@@ -83,7 +83,7 @@ void CandlesSeries::updateData()
     if (isDataRequested)
         return;
 
-    long intervalSec = candlesData.stockKey.time(); //Возвращает опцион
+    long intervalSec = candlesData.stockKey.intervalToSec(); //Возвращает опцион
 
 
     Data::Range range;

@@ -34,7 +34,7 @@ const StockKey::INTERVAL &StockKey::interval() const
     return _interval;
 }
 
-long StockKey::time() const
+long StockKey::intervalToSec() const
 {
     switch (_interval) {
       case INTERVAL::MIN1  : return 60;           break;

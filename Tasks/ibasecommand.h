@@ -179,8 +179,8 @@
  *   connect(command, &CommandLoadStock::finished, this, &ChartCandlesGroup::addCandles);
  *   TaskManager::get()->registerTask(command);
  *
- * Если открыть класс CommandLoadStock, то можно увидеть что он состоит из вызова двух задач TaskLoadStockFromDb
- * и TaskLoadStocksFromBroker что мы собственно и сделали
+ * Если открыть класс LoadStock, то можно увидеть что он состоит из вызова двух задач LoadStockFromDbFunc
+ * и LoadStocksFromBroker что мы собственно и сделали
  */
 
 #ifndef IBASECOMMAND_H
@@ -249,8 +249,8 @@ public:
         return newTask;
     }
 
-    ///Подключает method к сигналу finished : thisCommand->connect(this, SLOT(slotFinished())), this - это this класса к которому принадлежит слот
-    void connect(QObject *receiver, const char *method);
+    //Подключает method к сигналу finished : thisCommand->connect(this, SLOT(slotFinished())), this - это this класса к которому принадлежит слот
+    void connect(QObject *receiver, const char *method);        //пример в ChartScene::loadData()
 
 signals:
     //Сигнал остановки всех задач

@@ -24,7 +24,10 @@ void Globals::init()
 
     logger.reset( new LoggerList );
     for (const auto &it : logTags)
-        logger->add(it);
+        logger->add(it);            //Добавление FileLogger's
+
+    logger->add<MsgBoxLogger>(logTags[2]);  // Что бы не пропустить warning выводим его дополнительно на экран! Можно удалить
+    logger->add<MsgBoxLogger>(logTags[3]);  // Что бы не пропустить critical выводим его дополнительно на экран! Можно удалить
 
     stocks.reset( new Data::Stocks );
     dataBase.reset( new DB::PostgreSql );
@@ -32,8 +35,6 @@ void Globals::init()
 
     taskManager.reset( new Task::Manager );
 
-    // Что бы не пропустить предупреждение выводим его дополнительно на экран! Можно удалить
-    logger->add<MsgBoxLogger>(logTags[2]);
 }
 
 }

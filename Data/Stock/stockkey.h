@@ -43,7 +43,7 @@ public:
     const INTERVAL &interval()const;
 
     ///Возвращает количество секунд в отрезке времени interval
-    long time() const;
+    long intervalToSec() const;
 
     ///Преобразует значение interval в строку
     QString intervalToString() const;

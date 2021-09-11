@@ -66,6 +66,7 @@ protected:
     //Читает свечи из QJsonDocument'а
     bool readCandles(const QByteArray &answer);
 
+    //Проверяет корректность полученного ключа акции
     bool checkStockKey(const QJsonObject &payload);
 
     //Удаляет незавершенную свечу
@@ -79,7 +80,7 @@ private:
     InterfaceWrapper<Data::Range> range;
     InterfaceWrapper<Data::Stock> stock;
 
-    Data::Range curRange;     //Текущий подинтервал загрузки
+    Data::Range subRange;     //Текущий подинтервал загрузки
 };
 
 }

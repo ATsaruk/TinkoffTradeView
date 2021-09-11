@@ -20,16 +20,33 @@ LoadStockFromBroker::~LoadStockFromBroker()
 {
 }
 
+void LoadStockFromBroker::setData(SharedInterface &inputData)
+{
+    range = inputData;
+    if (!range->isValid())
+        logCritical << "LoadStockFromBroker::setData:;invalid loadRange!";
+}
+
+SharedInterface &LoadStockFromBroker::getResult()
+{
+    return &stock;
+}
 
 void LoadStockFromBroker::exec()
 {
     Glo.broker->mutex.lock();
 
-    assert(range->isValid() && "LoadStockFromBroker::setData: invalid loadRange!");
+    if (!range->isValid()) {
+        logCritical << "LoadStockFromBroker::exec:;invalid loadRange!";
+        finishTask();
+        return;
+    }
 
+    //Формируем первый подинтервал, длинна которого не более чем максимально доступный интервал загрузки
+    //для данной длительности свечи (интервалы определяет брокер)
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
-    curRange.setRange(range->getEnd(), -maxLoadRange);
-    curRange.constrain(range);
+    subRange.setRange(range->getEnd(), -maxLoadRange);
+    subRange.constrain(range);
 
     connect(Glo.broker.data(), &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
 
@@ -42,7 +59,7 @@ bool LoadStockFromBroker::sendRequest()
     if (isStopRequested)
         return false;
 
-    if (!Glo.broker->loadCandles(stock->key, curRange))
+    if (!Glo.broker->loadCandles(stock->key, subRange))
         return false;
 
     return true;
@@ -50,24 +67,21 @@ bool LoadStockFromBroker::sendRequest()
 
 void LoadStockFromBroker::onResponse(QByteArray answer)
 {
-    if (!readCandles(answer) || !getNextLoadRange()) {
-        finishTask();
-        return;
-    }
-
-    if (!sendRequest())
+    //В соответствии с принципом ленивых вычислений функции будут выполнены по порядку readCandles, getNextLoadRange,
+    //sendRequest если хотя бы одна из них false, последующие функцие выполнятся не будут, и будет вызов finishTask()
+    if (!readCandles(answer) || !getNextLoadRange() || !sendRequest())
         finishTask();
 }
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    long candleInterval = stock->key.time();
-    if ( curRange.getBegin() < range->getBegin().addSecs(candleInterval) )
+    long candleInterval = stock->key.intervalToSec();
+    if ( subRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;
 
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval()) + candleInterval;
-    curRange.addSecs(-maxLoadRange);
-    curRange.constrain(range);
+    subRange.addSecs(-maxLoadRange);
+    subRange.constrain(range);
     return true;
 }
 
@@ -81,16 +95,6 @@ void LoadStockFromBroker::finishTask()
     }
 
     emit finished();
-}
-
-void LoadStockFromBroker::setData(SharedInterface &inputData)
-{
-    range = inputData;
-}
-
-SharedInterface &LoadStockFromBroker::getResult()
-{
-    return &stock;
 }
 
 bool LoadStockFromBroker::readCandles(const QByteArray &answer)
@@ -150,7 +154,7 @@ void LoadStockFromBroker::removeIncompleteCandle()
 {
     Data::Candle &lastCandle = stock->candles.back();
 
-    long candleDuration = stock->key.time();
+    long candleDuration = stock->key.intervalToSec();
     QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
 
     if (timeCandleComplite > range->getEnd())

@@ -210,34 +210,11 @@ const QDateTime CandlesSeries::getDateByIndex(const int32_t index)
     return QDateTime();
 }
 
-//Добавление 1 свечи, поиск нового индекса
-void CandlesSeries::addCandle(Data::Candle &&candleData)
-{
-    int32_t index = 0.;
-    if (!candleItems.empty()) {
-        if (candleItems.begin()->second->getData().dateTime > candleData.dateTime)
-            index = candleItems.begin()->first - 1;
-        if (candleItems.rbegin()->second->getData().dateTime < candleData.dateTime)
-            index = candleItems.rbegin()->first + 1;
-    }
-
-    if(candleItems.find(index) != candleItems.end())
-        return; //Свеча уже существует
-
-    CandleItem *cndl = new CandleItem(std::move(candleData), &candlesData);
-    cndl->setX(index * xAxis->getScale());
-    if (index >= xAxis->getOffset() &&
-            index <= xAxis->getOffset() + xAxis->getRange() )
-        //Добавляем новые объекты для отрисовки
-        addToGroup(cndl);
-    candleItems[index] = cndl;
-}
-
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
 void CandlesSeries::addCandles(Data::Candles &&candles)
 {
-    //Удалям существующие свечи
-    const auto &isExisted = [&] (const auto &it) {
+    //1. Удалям существующие (повторяющиеся) свечи
+    auto isExisted = [&] (const auto &it) {
         if (candleItems.empty())
             return false;
         QDateTime curBeginInterval = candleItems.begin()->second->getData().dateTime;
@@ -248,8 +225,28 @@ void CandlesSeries::addCandles(Data::Candles &&candles)
     std::remove_if(candles.rbegin(), candles.rend(), isExisted);
     isRepaintRequired = !candles.empty();
 
-    //Добавляем новые свечи
-    std::for_each(candles.rbegin(), candles.rend(), [&](auto &it) {addCandle(std::move(it));});
+    //2. Добавляем новые свечи
+    int32_t increment, index;
+    auto insertCalnde = [&] (auto &it) {
+        candleItems[index] = new CandleItem(std::move(it), &candlesData);
+        candleItems[index]->setX(index * xAxis->getScale());
+        if (index >= xAxis->getOffset() && index <= xAxis->getOffset() + xAxis->getRange() )
+            addToGroup(candleItems[index]);   //Добавляем новые объекты для отрисовки
+        index += increment;
+    };
+
+    //Определяем место вставки, в начало или в конец списка
+    if(candleItems.empty() || candles.rbegin()->dateTime < candleItems.begin()->second->getData().dateTime) {
+        //Новые свечи левее существующих
+        increment = -1; //свече добавляем с конца списка и уменьшаем индекс
+        index = candleItems.empty() ? 0 : candleItems.begin()->first - 1;
+        std::for_each(candles.rbegin(), candles.rend(), insertCalnde);
+    } else {
+        //Новые свечи правее существующих
+        increment = 1;  //свечи добавляем с начала списка и увеличиваем индекс
+        index = candleItems.rbegin()->first + 1;
+        std::for_each(candles.begin(), candles.end(), insertCalnde);
+    }
 
     isDataRequested = false;
 }

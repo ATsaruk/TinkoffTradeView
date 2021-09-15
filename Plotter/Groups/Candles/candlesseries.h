@@ -47,7 +47,6 @@ protected:
     void updatePriceRange();
     const QDateTime getDateByIndex(const int32_t index);
 
-    void addCandle(Data::Candle &&candleData);
     void addCandles(Data::Candles &&candles);
 
 protected slots:

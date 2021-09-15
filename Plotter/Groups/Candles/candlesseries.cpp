@@ -61,7 +61,7 @@ void CandlesSeries::clear()
 {
     //Если в текущий момент запрошены свечные данные, то пока мы их не обработаем, мы не может произвести очистку
     while (isDataRequested)
-        QThread::msleep(1);  ///@todo проверить не приведет ли к зависанию!
+        QThread::msleep(1);  ///@note QThread::msleep(1) может привести к зависанию при очистке CandlesSeries
 
     //Удаляем свечи
     for (auto &it : candleItems) {
@@ -236,25 +236,20 @@ void CandlesSeries::addCandle(Data::Candle &&candleData)
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
 void CandlesSeries::addCandles(Data::Candles &&candles)
 {
-    ///@todo переделать с использование стандартных алгритмов
-    for (auto it = candles.rbegin(); it != candles.rend(); ++it) {
-        bool isExisted = false;
+    //Удалям существующие свечи
+    const auto &isExisted = [&] (const auto &it) {
+        if (candleItems.empty())
+            return false;
+        QDateTime curBeginInterval = candleItems.begin()->second->getData().dateTime;
+        QDateTime curEndInterval = candleItems.rbegin()->second->getData().dateTime;
+        return (curBeginInterval <= it.dateTime && it.dateTime <= curEndInterval);  //если it в диапазоне, то он existed
+    };
 
-        if (!candleItems.empty()) {
-            QDateTime curBeginInterval = candleItems.begin()->second->getData().dateTime;
-            QDateTime curEndInterval = candleItems.rbegin()->second->getData().dateTime;
-            if (curBeginInterval <= it->dateTime && it->dateTime <= curEndInterval)
-                isExisted = true;
-        }
+    std::remove_if(candles.rbegin(), candles.rend(), isExisted);
+    isRepaintRequired = !candles.empty();
 
-        if (!isExisted) {
-            addCandle(std::move(*it));
-            isRepaintRequired = true;
-        }
-    }
-
-    if (beginCandle == candleItems.end() && !candleItems.empty())
-        beginCandle = candleItems.begin();
+    //Добавляем новые свечи
+    std::for_each(candles.rbegin(), candles.rend(), [&](auto &it) {addCandle(std::move(it));});
 
     isDataRequested = false;
 }

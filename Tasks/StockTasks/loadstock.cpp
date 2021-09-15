@@ -46,8 +46,6 @@ void LoadStock::exec()
     auto *loadFromDb = execFunc<LoadStockFromDbFunc>(&range, stock->key, minCandleCount);
     stock = loadFromDb->getResult();
 
-    ///@todo !!!!баг загрузки, пропуск 1 15 минутной свечи на границе суток!
-
     createLoadingTasks();   //создаем задачи для загрузки оставшихся свечей от брокера
 
     startNextTask();
@@ -96,7 +94,8 @@ void LoadStock::startNextTask()
         }
 
         //Подготавливам дополнительный 2 недельный интервал для загрузки
-        auto *task = createTask<LoadStockFromBroker>(stock->key);
+        uint missingCandlesCount = minCandleCount - stock->candles.size();
+        auto *task = createTask<LoadStockFromBroker>(stock->key, missingCandlesCount);
         InterfaceWrapper<Data::Range> subRange;
         subRange->setRange(std::min(range->getBegin(), existedRange.getBegin()), -secInTwoWeek);
         task->setData( &subRange );

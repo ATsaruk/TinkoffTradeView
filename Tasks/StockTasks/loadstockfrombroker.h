@@ -43,7 +43,11 @@ class LoadStockFromBroker : public IBaseTask
     Q_OBJECT
 
 public:
-    explicit LoadStockFromBroker(const Data::StockKey &stockKey);
+    /** @brief LoadStockFromBroker
+     *  @param stockKey - ключ акции для загрузки
+     *  @param minCandlesCount_ - минимальное число свечей, после которого можно прекратить загрузку
+     */
+    explicit LoadStockFromBroker(const Data::StockKey &stockKey, const uint minCandlesCount_ = 0);
     ~LoadStockFromBroker();
 
     void setData(SharedInterface &inputData) override;
@@ -77,6 +81,8 @@ protected slots:
     void onResponse(QByteArray answer);
 
 private:
+    uint minCandlesCount;
+
     InterfaceWrapper<Data::Range> range;
     InterfaceWrapper<Data::Stock> stock;
 

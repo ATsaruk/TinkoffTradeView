@@ -10,8 +10,8 @@
 
 namespace Task {
 
-LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey)
-    : IBaseTask("LoadStockFromBroker")
+LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey, const uint minCandlesCount_)
+    : IBaseTask("LoadStockFromBroker"), minCandlesCount(minCandlesCount_)
 {
     stock->key = stockKey;
 }
@@ -75,6 +75,9 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
+    if (minCandlesCount > 0 && stock->candles.size() >= minCandlesCount)
+        return false;
+
     long candleInterval = stock->key.intervalToSec();
     if ( subRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;

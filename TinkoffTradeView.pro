@@ -2,7 +2,7 @@ QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11 c++14 c++17 c++2a
+CONFIG += c++17 # c++2a C++20 unused
 
 #uncomment to disable std::assert warnings!
 #DEFINES += NDEBUG
@@ -98,9 +98,9 @@ RESOURCES += \
   source.qrc
 
 DISTFILES += \
-  Models/datamodel.qmodel \
-  Models/logsdiagram.qmodel \
-  Models/plotterdiagram.qmodel \
-  Models/tasksdiagram.qmodel
+  Core/logsdiagram.qmodel \
+  Data/datamodel.qmodel \
+  Plotter/plotterdiagram.qmodel \
+  Tasks/tasksdiagram.qmodel
 
 STATECHARTS +=

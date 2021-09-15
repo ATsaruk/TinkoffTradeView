@@ -32,7 +32,7 @@ void ChartScene::showStock(const Data::StockKey &stockKey)
     for (auto &it : this->items()) {
         if (ChartSeries *series = dynamic_cast<ChartSeries*>(it) )
             if (series->getStockKey() == this->stockKey)
-                removeItem(it);  //удаляем series, которые привязаны к this->stockKey (series c INTERVAL::ANY остаются)
+                removeItem(it);  //удаляем series, которые привязаны к this->stockKey
     }
 
     this->stockKey = stockKey;

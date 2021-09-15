@@ -117,8 +117,7 @@ void CandlesSeries::scaleByXAxis()
         newBeginCandle = candleItems.begin();
 
     ///Определяем новый индекс конца интервала отображения свечей
-    // +1 т.к. чтобы отображать часть свечи, которая невлезла целиком на экран ??????? не актуально???
-    int32_t lastDisplayedIndex = firstDisplayedIntex + xAxis->getRange();// + 1; ///@todo !проверить не будет ли наложений при большом количестве свечей
+    int32_t lastDisplayedIndex = firstDisplayedIntex + xAxis->getRange();
     auto &&newEndCandle = candleItems.find(lastDisplayedIndex);
 
     setCandleVisible(newBeginCandle, beginCandle);
@@ -141,12 +140,12 @@ void CandlesSeries::scaleByYAxis()
     if (candlesData.yScale != yScale) {
         candlesData.yScale = yScale;
 
+        qreal yOffset = yAxis->getOffset();
+        this->setY(yOffset * candlesData.yScale);
+
         for (auto it = beginCandle; it != endCandle; ++it)
             it->second->updateYPos();
     }
-
-    qreal yOffset = yAxis->getOffset();
-    this->setY(yOffset * yScale);
 }
 
 /* Функция, которая скрывает или отображает свечи, в зависимости от переданного интервала
@@ -193,10 +192,11 @@ void CandlesSeries::updatePriceRange()
             maxPrice = data.high;
     }
 
-    ///@todo !!проблемы с масштабированием! разобратся с поведением range и offset для priceAxis
     qreal priceRange = maxPrice - minPrice;
-    qreal newRange = priceRange;// * 1.2; // + 20% что бы на графике сверху и снизу быз "зазор"
-    qreal newOffset = minPrice;// - priceRange * 0.2;  // - 10% половина от расширения диапазона
+    qreal clearence = priceRange * 0.1; // + 10% от диапазона цен зазор верху и снизу
+    qreal newRange = priceRange + clearence * 2.; // * 2. т.к. зазор сверху + зазор снизу
+    qreal newOffset = minPrice - clearence;  // минус зазор снизу
+
     yAxis->setDataRange(newRange);
     yAxis->setDataOffset(newOffset);
 

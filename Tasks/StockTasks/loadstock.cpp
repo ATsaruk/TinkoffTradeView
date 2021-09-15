@@ -46,6 +46,8 @@ void LoadStock::exec()
     auto *loadFromDb = execFunc<LoadStockFromDbFunc>(&range, stock->key, minCandleCount);
     stock = loadFromDb->getResult();
 
+    ///@todo !!!!баг загрузки, пропуск 1 15 минутной свечи на границе суток!
+
     createLoadingTasks();   //создаем задачи для загрузки оставшихся свечей от брокера
 
     startNextTask();

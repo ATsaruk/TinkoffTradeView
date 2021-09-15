@@ -12,7 +12,7 @@ namespace Plotter {
 
 ChartScene::ChartScene()
 {
-    //setItemIndexMethod(QGraphicsScene::NoIndex); //@todo проверить производительность!
+    setItemIndexMethod(QGraphicsScene::NoIndex); //NoIndex меньше лаг отрисовки при перемещении по экрану большого кол-ва свечей
     dateAxis = new DateAxis(100, -75);
     addItem(dateAxis);
 

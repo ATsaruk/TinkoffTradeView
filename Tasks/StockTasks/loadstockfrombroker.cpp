@@ -79,7 +79,7 @@ bool LoadStockFromBroker::getNextLoadRange()
     if ( subRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;
 
-    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval()) + candleInterval;
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
     subRange.addSecs(-maxLoadRange);
     subRange.constrain(range);
     return true;

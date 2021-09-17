@@ -29,7 +29,7 @@ public slots:
     void setScale(const qreal scale, const qreal anchor) override;
 
 protected:
-    //Определяем метод для отрисовки треугольника
+    //Определяем метод для отрисовки
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:

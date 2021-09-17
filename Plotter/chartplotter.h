@@ -1,6 +1,7 @@
 #ifndef CHARTPLOTTER_H
 #define CHARTPLOTTER_H
 
+#include <QTimer>
 #include <QGraphicsView>
 
 #include "Axis/dateaxis.h"
@@ -8,7 +9,6 @@
 #include "Groups/chartseries.h"
 #include "chartscene.h"
 
-class QTimer;
 class QWheelEvent;
 class QMouseEvent;
 
@@ -22,21 +22,23 @@ public:
     explicit ChartPlotter(QWidget *parent = nullptr);
     ~ChartPlotter();
 
+    //Отображает акцию с ключем stockKey
     void showStock(const Data::StockKey &stockKey);
 
 protected:
-    void wheelEvent( QWheelEvent *event ) override;
-    void mouseMoveEvent( QMouseEvent *event ) override;
-    void mousePressEvent( QMouseEvent *event ) override;
-    void mouseReleaseEvent( QMouseEvent *event ) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     //событие изменения размеров окна
     void resizeEvent(QResizeEvent *event) override;
 
-    std::tuple<ChartScene *, bool> getCurScene();
+    //Возвращает текущую сцену + признак того, что эта сцена является ChartScene
+    std::tuple<ChartScene*, bool> getCurScene() const;
 
 protected slots:
-    void drawScene();   //слот отрисовки сцены
+    void drawScene() const;   //слот отрисовки сцены
 
 private:
     Q_OBJECT
@@ -46,8 +48,8 @@ private:
     QPointF mouseAnchorPos;             //Предыдущее положение мыши
     Qt::MouseButtons pressedButton;     //Идентефикаторы нажатых кнопок
 
-    QTimer *plotTimer;                  //Таймер для перерисовки сцены
-    std::vector<ChartScene*> scenes;          //сцена для отрисовки
+    QTimer plotTimer;                   //Таймер для перерисовки сцены
+    std::vector<std::shared_ptr<ChartScene>> scenes;    //список сцен для отрисовки
 };
 
 }

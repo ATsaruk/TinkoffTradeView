@@ -7,10 +7,10 @@ namespace Plotter {
 
 CandlesData::CandlesData()
 {
-    redPen     = Glo.conf->getValue("ChartPlotter/CandleItem/redPen", QColor(235, 77, 92));
-    redBrush   = Glo.conf->getValue("ChartPlotter/CandleItem/redBrush", QColor(235, 77, 92));
-    greenPen   = Glo.conf->getValue("ChartPlotter/CandleItem/greePen", QColor(83, 185, 135));
-    greenBrush = Glo.conf->getValue("ChartPlotter/CandleItem/greenBrush", QColor(83, 185, 135));
+    bearPen   = Glo.conf->getValue("ChartPlotter/CandleItem/bearPen", QColor(235, 77, 92));
+    bearBrush = Glo.conf->getValue("ChartPlotter/CandleItem/bearBrush", QColor(235, 77, 92));
+    bullPen   = Glo.conf->getValue("ChartPlotter/CandleItem/bullPen", QColor(83, 185, 135));
+    bullBrush = Glo.conf->getValue("ChartPlotter/CandleItem/bullBrush", QColor(83, 185, 135));
 }
 
 

@@ -27,6 +27,10 @@ public slots:
     //Масштабирование delta - во сколько раз, anchor - якорь привязки [0..1], 0 - левый край, 0.5 середина, 1 - правый край
     void setScale(const qreal newScale, const qreal anchor) override;
 
+protected:
+    //Определяем метод для отрисовки
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+
 private:
     qreal axisWidth;
     qreal dataRange;

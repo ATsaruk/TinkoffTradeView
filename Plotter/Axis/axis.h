@@ -42,9 +42,6 @@ signals:
 protected:
     QRectF sceneRect;
 
-    //Определяем метод для отрисовки треугольника
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override {Q_UNUSED(painter);Q_UNUSED(option);Q_UNUSED(widget);}// = 0;
-
 private:
     AXIS_TYPE axisType;
 };

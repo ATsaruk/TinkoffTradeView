@@ -138,8 +138,8 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
                     .arg(recievedKey.keyToString(), stock->key.keyToString());
             throw std::logic_error(errorCode.toUtf8().data());
         }
-    }  catch (std::exception &error) {
-        logCritical << error.what();
+    }  catch (std::exception &except) {
+        logCritical << QString("catch std::exception in LoadStockFromBroker::checkStockKey():;") + QString(except.what());
         return false;
     }
     return true;

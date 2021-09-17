@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         return a.exec();
     }
     catch (std::exception &except) {
-        logCritical << except.what();
+        logCritical << QString("catch std::exception in main():;") + QString(except.what());
         qDebug() << except.what();
     }
     return 0;

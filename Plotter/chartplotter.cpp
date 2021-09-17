@@ -15,33 +15,32 @@ ChartPlotter::ChartPlotter(QWidget *parent) : QGraphicsView(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    plotTimer = new QTimer(this);
-    connect(plotTimer, &QTimer::timeout, this, &ChartPlotter::drawScene);
+    connect(&plotTimer, &QTimer::timeout, this, &ChartPlotter::drawScene);
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
-    plotTimer->start(plotInterval);
+    plotTimer.start(plotInterval);
 }
 
 ChartPlotter::~ChartPlotter()
 {
-    for (auto &it : scenes)
-        delete it;
+
 }
 
+/** @brief ChartPlotter::showStock Отображает акцию с ключем stockKey
+ *  @param stockKey - ключ акции
+ *
+ *  Ищет существующую сцену с ключем stockKey, если не находит создает её
+ */
 void ChartPlotter::showStock(const Data::StockKey &stockKey)
 {
-    ChartScene *existedScene = nullptr;
-    for (auto &it : scenes) {
-        if (it->getStockKey().figi() == stockKey.figi())
-            existedScene = it;
-    }
+    auto isSameStockKey = [&stockKey](const auto &it){ return it->getStockKey().figi() == stockKey.figi(); };
+    auto findedIterator = std::find_if(scenes.begin(), scenes.end(), isSameStockKey);
 
-    if (existedScene == nullptr) {
-        existedScene = new ChartScene;
-        scenes.push_back(existedScene);
-    }
-
-    existedScene->showStock(stockKey);
-    setScene(existedScene);
+    if (findedIterator == scenes.end()) {
+        //сцены для акции с ключом stockKey не найдено
+        scenes.emplace_back(new ChartScene(stockKey));
+        setScene( scenes.back().get()     );
+    } else
+        setScene( (*findedIterator).get() );
 }
 
 void ChartPlotter::wheelEvent(QWheelEvent *event)
@@ -96,7 +95,7 @@ void ChartPlotter::mouseReleaseEvent(QMouseEvent *event)
 
 void ChartPlotter::resizeEvent(QResizeEvent *event)
 {
-    QRectF rec(0, -height(), width(), height());
+    QRectF rec(0, -event->size().height(), event->size().width(), event->size().height());
 
     setSceneRect(rec);
     if (auto [curScene, ok] = getCurScene(); ok)
@@ -105,14 +104,14 @@ void ChartPlotter::resizeEvent(QResizeEvent *event)
     QGraphicsView::resizeEvent(event);
 }
 
-std::tuple<ChartScene*, bool> ChartPlotter::getCurScene()
+std::tuple<ChartScene*, bool> ChartPlotter::getCurScene() const
 {
     ChartScene *currentScene = dynamic_cast<ChartScene*>(scene());
     bool ok = currentScene != nullptr;
     return std::make_tuple(currentScene, ok);
 }
 
-void ChartPlotter::drawScene()
+void ChartPlotter::drawScene() const
 {
     if (auto [curScene, ok] = getCurScene(); ok)
         curScene->drawScene();

@@ -67,4 +67,13 @@ void NumericAxis::setScale(const qreal scale, const qreal anchor)
     emit scaled();
 }
 
+void NumericAxis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    ///@todo сделать подписи цены
+
+    Q_UNUSED(painter);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+}
+
 }

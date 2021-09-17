@@ -71,6 +71,7 @@ void DateAxis::setScale(const qreal scale, const qreal anchor)
 
 void DateAxis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    ///@todo сделать подписи даты
     painter->drawLine(0, -axisHeight, sceneRect.width(), -axisHeight);
 
     Q_UNUSED(option);

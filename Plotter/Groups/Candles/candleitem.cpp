@@ -1,27 +1,28 @@
+#include <QPen>
+#include <QBrush>
 #include <QPainter>
-#include <type_traits>
+//#include <type_traits>
 
 #include "candleitem.h"
 #include "Core/globals.h"
 
 namespace Plotter {
 
-CandleItem::CandleItem(Data::Candle &&candle, CandlesData *candleParams) noexcept
+CandleItem::CandleItem(const int32_t candleIndex, std::shared_ptr<CandlesData> candleParams) noexcept
+    : index(candleIndex), params(candleParams)
 {
-    params = candleParams;
-    this->candle = std::move(candle);
-
-    setToolTip(QString("%1").arg(candle.dateTime.toString()));
+    setToolTip(QString("%1").arg(params->data[index].dateTime.toString()));
 }
 
-const Data::Candle &CandleItem::getData()
+const int32_t &CandleItem::getIndex()
 {
-    return candle;
+    return index;
 }
 
-void CandleItem::updateYPos()
+void CandleItem::updatePos()
 {
-    setY(-1 * candle.high * params->yScale);
+    setX(params->xScale * index);
+    setY(params->yScale * params->data[index].high * -1.);
 }
 
 QRectF CandleItem::boundingRect() const
@@ -29,8 +30,8 @@ QRectF CandleItem::boundingRect() const
     QRectF rect;
     rect.setLeft(0);
     rect.setTop (0);
-    rect.setWidth(params->xScale);
-    rect.setHeight((candle.high - candle.low) * params->yScale);
+    rect.setWidth (params->xScale);
+    rect.setHeight(params->yScale * (params->data[index].high - params->data[index].low));
 
     return rect;
 }
@@ -38,28 +39,27 @@ QRectF CandleItem::boundingRect() const
 void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //Устанавливаем инструменты для рисования
-    bool isBearCandle = candle.open > candle.close;
+    bool isBearCandle = params->data[index].open > params->data[index].close;
 
-    painter->setPen  ( isBearCandle ? params->redPen   : params->greenPen   );
-    painter->setBrush( isBearCandle ? params->redBrush : params->greenBrush );
+    painter->setPen  ( isBearCandle ? params->bearPen   : params->bullPen   );
+    painter->setBrush( isBearCandle ? params->bearBrush : params->bullBrush );
 
     QPolygon body; //Полигон, для отрисовки тела свечи
 
     //Помещаем координаты точек в полигональную модель
-    body << QPoint(0, (candle.high - candle.open) * params->yScale)
-         << QPoint(0, (candle.high - candle.close) * params->yScale)
-         << QPoint(params->xScale - params->clearance, (candle.high - candle.close) * params->yScale)
-         << QPoint(params->xScale - params->clearance,  (candle.high - candle.open) * params->yScale);
+    body << QPoint(0, (params->data[index].high - params->data[index].open) * params->yScale)
+         << QPoint(0, (params->data[index].high - params->data[index].close) * params->yScale)
+         << QPoint(params->xScale - params->clearance, (params->data[index].high - params->data[index].close) * params->yScale)
+         << QPoint(params->xScale - params->clearance,  (params->data[index].high - params->data[index].open) * params->yScale);
 
     //Рисуем тень свечи
-    painter->drawLine((params->xScale - params->clearance) / 2., (candle.high - candle.low) * params->yScale,
+    painter->drawLine((params->xScale - params->clearance) / 2., (params->data[index].high - params->data[index].low) * params->yScale,
                       (params->xScale - params->clearance) / 2., 0.);
 
     //Рисуем тело свечи по полигональной модели
     painter->drawPolygon(body);
 
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
+    Q_UNUSED(option); Q_UNUSED(widget);
 }
 
 }

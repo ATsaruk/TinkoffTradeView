@@ -5,6 +5,7 @@
 #include <QBrush>
 
 #include "candleitem.h"
+#include "Data/Stock/candle.h"
 #include "Data/Stock/stockkey.h"
 
 class Axis;
@@ -13,25 +14,26 @@ class ChartSeries;
 
 namespace Plotter {
 
-
+///Класс содержащий данные для отрисовки свечной информации, а так же саму свечную информацию
 class CandlesData
 {
 public:
     CandlesData();
 
 private:
-    long xScale = 0;
-    long yScale = 0;
-    qreal clearance = 0.;
+    long xScale = 0;                //Масштаб по оси Х
+    long yScale = 0;                //Масштаб по оси Y
+    qreal clearance = 0.;           //Зазор по оси Х между свечами
 
-    bool autoPriceRange = true;
+    bool autoPriceRange = true;     //Режим автомастабирования оси Y по цене //@note возможно его нужно от сюда перенести?
 
-    QPen redPen;
-    QPen greenPen;
-    QBrush redBrush;
-    QBrush greenBrush;
+    //Pen и Brush для отрисовки свечи (обычно бычьи свечи - красные, медвежьи свечи - зеленые)
+    QPen bearPen, bullPen;
+    QBrush bearBrush, bullBrush;
 
-    Data::StockKey stockKey;
+    Data::StockKey stockKey;                //Ключи акции для которой предназначены данные
+    std::map<int32_t, Data::Candle> data;   //Список позиция свечи + её дата
+    ///@todo !!Использовать в data данные, хранящиеся в Data::Stocks::stock, рассмотреть вариант std::map<int32_t, QDateTime> data
 
     friend class Axis;
     friend class CandleItem;

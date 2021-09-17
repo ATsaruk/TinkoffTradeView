@@ -18,9 +18,11 @@
 #include "candleitem.h"
 
 #include "Data/range.h"
+#include "Data/Stock/candle.h"
 
 namespace Plotter {
 
+using CandleItems = std::map<int32_t, std::shared_ptr<CandleItem>>;
 
 class CandlesSeries : public ChartSeries
 {
@@ -40,27 +42,30 @@ signals:
 protected:
     void clear() override;
 
-    void updateData();
-    void scaleByXAxis();
-    void scaleByYAxis();
-    void setCandleVisible(const std::map<int32_t, CandleItem*>::iterator &first_iterator, const std::map<int32_t, CandleItem*>::iterator &second_iterator);
+    void updateScaleByXAxis();
+    void updateScaleByYAxis();
     void updatePriceRange();
-    const QDateTime getDateByIndex(const int32_t index);
+    void updateCandlesPos();
 
+    void updateData();
+    void setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator);
+
+    ///Добавляем загруженные свечи
     void addCandles(Data::Candles &&candles);
+    ///Удалям свечи, которые уже существуют
+    void removeExistedCandles(Data::Candles &candles);
 
-protected slots:
-    void setXScale(qreal scale);
+    const QDateTime getDateByIndex(const int32_t index);
 
 private:
     uint drawWait;
     QMutex drawMutex;
     bool isDataRequested = false;
+    bool isUpdatePosRequered = false;
 
-    //абстрактная фабрика? или как там, где элементы не удаляем, а освобождаем и переназначаем
-    std::map<int32_t, CandleItem*> candleItems;
-    std::map<int32_t, CandleItem*>::iterator beginCandle;
-    std::map<int32_t, CandleItem*>::iterator endCandle;
+    CandleItems candleItems;
+    CandleItems::iterator beginCandle;
+    CandleItems::iterator endCandle;
 };
 
 }

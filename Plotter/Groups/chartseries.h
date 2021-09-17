@@ -19,7 +19,8 @@ public:
     explicit ChartSeries();
     virtual ~ChartSeries();
 
-    virtual void attachAxis(Axis *axis);
+    virtual std::shared_ptr<Axis>& getAxis(const Axis::AXIS_TYPE &type);
+    virtual void attachAxis(std::shared_ptr<Axis> axis);
     const Data::StockKey& getStockKey();
 
 
@@ -29,10 +30,10 @@ public slots:
 protected:
     bool isRepaintRequired = false;
 
-    Axis *xAxis;     //horizontal axis
-    Axis *yAxis;     //vertical axis
+    std::shared_ptr<Axis> xAxis;  //horizontal axis
+    std::shared_ptr<Axis> yAxis = nullptr;  //vertical axis
 
-    CandlesData candlesData;
+    std::shared_ptr<CandlesData> candlesData;
 
     virtual void clear() = 0;
 

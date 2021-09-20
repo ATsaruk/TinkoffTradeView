@@ -6,7 +6,7 @@
 namespace Core {
 
 MsgBoxLogger::MsgBoxLogger(const QString &tag_)
-    : IMultiLogger(tag_), tag(tag_)
+    : IMultiLogger(tag_)
 {
 }
 
@@ -15,10 +15,8 @@ QString MsgBoxLogger::getClassName() const
     return "MsgBoxLogger";
 }
 
-void MsgBoxLogger::message(const QString &text)
+void MsgBoxLogger::showMessage(const QString &text)
 {
-    IMultiLogger::message(text);
-
     QMutexLocker loker(&mutex);
     if (tag.toLower() == QString("critical"))
         QMessageBox::critical(0, tag, text);

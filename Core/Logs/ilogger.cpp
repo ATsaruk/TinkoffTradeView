@@ -13,20 +13,15 @@ ILogger::~ILogger()
 
 }
 
-const QString &ILogger::getTag() const
-{
-    return tag;
-}
-
 void ILogger::setWriteLog(bool on)
 {
     isWriteLog = on;
 }
 
-ILogger *ILogger::operator<<(const QString &text)
+ILogger& ILogger::operator <<(const QString &text)
 {
     message(text);
-    return this;
+    return *this;
 }
 
 }

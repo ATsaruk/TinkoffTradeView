@@ -20,19 +20,16 @@ public:
 
     /** @brief Отправляет GET запрос
       * @param[IN] path - путь, который добавляется в заголовок запроса
-      * @warning Если отсутсвует токен авторизации, то получим исключение! */
+      * @return true - запрос отправлен, false - не найден токен для авторизации*/
     bool sendGet(const QString &path);
 
 
     /** @brief Отправляет POST запрос
       * @param[IN] path - путь, который добавляется в заголовок запроса
       * @param[IN] data - данные, которые будут отправлены в теле запроса
-      * @warning Если отсутсвует токен авторизации, то получим исключение! */
+      * @return true - запрос отправлен, false - не найден токен для авторизации*/
     bool sendPost(const QString &path, const QByteArray &data);
 
-
-    /// Возвращает TRUE - если токен авторизации найдет, FALSE - если токен авторизации отсутствует
-    bool isTokenAvailable() const;
 
     /// Возвращает TRUE - если включем режим "в песочнице"
     bool isSandMode() const;
@@ -51,6 +48,9 @@ protected:
     /// Загружает токен авторизации и читает из настроек адресс сервера брокера для работы в соответсвующем режиме.
     void initMode();
 
+    ///Отправляет POST/GET запрос
+    bool send(const QString &path, const QByteArray &data);
+
 protected slots:
     /// Обрабатывает ответы от брокера и генерирует сигнал с полученным ответом
     void onResponse(QNetworkReply*);
@@ -58,12 +58,9 @@ protected slots:
 private:
     Q_OBJECT
 
-    //Текущий режим работы
-    //TRUE - режим работы в песочнице
-    //FALSE - режим работы с основным сервером брокера
+    //Текущий режим работы: true - режим работы в песочнице, false - режим работы с основным сервером брокера
     bool sandMode;
 
-    QString tokenFile;          //Имя файла с токеном авторизации
     QString baseUri;            //Адрес сервера для работы с биржей
     QString webSocketBaseUri;   //Адрес сервера для подписки на свечи
     QByteArray authToken;       //Токен для авторизации

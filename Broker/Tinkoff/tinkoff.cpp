@@ -11,7 +11,7 @@ constexpr quint64 SECS_IN_ONE_MONTH = 30 * SECS_IN_ONE_DAY;
 TinkoffApi::TinkoffApi()
     : html(new Request)
 {
-    connect(html.data(), &Request::getResopnse, this, &Api::getResopnse);
+    connect(html.get(), &Request::getResopnse, this, &Api::getResopnse);
 }
 
 bool TinkoffApi::loadStocks()
@@ -58,13 +58,12 @@ qint64 TinkoffApi::getMaxLoadInterval(const Data::StockKey::INTERVAL &interval)
     switch (interval) {
     case Data::StockKey::INTERVAL::DAY  :   //no break;
     case Data::StockKey::INTERVAL::WEEK :
-        //Свечи длительностью 1 день и более загрузаются с максимальным интервалом 1 месяц
+        //Свечи длительностью 1 день и более загружаются с максимальным интервалом 1 месяц
         return SECS_IN_ONE_MONTH;
 
     case Data::StockKey::INTERVAL::HOUR :
-        //Свечи длительностью 1 час загрузаются с максимальным интервалом 1 неделя
+        //Свечи длительностью 1 час загружаются с максимальным интервалом 1 неделя
         return SECS_IN_ONE_WEEK;
-
     default :
         break;
     }

@@ -45,14 +45,11 @@ void Config::load(const QString &fileName)
     fromJSON(doc.object());
 }
 
-void Config::save(QString fileName)
+void Config::save()
 {
     QReadLocker locker(&lock);
 
-    if (fileName.isNull())
-        fileName = _fileName;
-
-    QFile file(fileName);
+    QFile file(_fileName);
     if (!file.open(QIODevice::WriteOnly))
         return;
 
@@ -102,16 +99,16 @@ void Config::save(QString fileName)
 void Config::toJSON(const QString &key, const QVariant &value, QJsonObject &obj) const
 {
     int index = key.indexOf("/");
-    if (index == -1) {
-        obj.insert(key, QJsonValue::fromVariant(value));
-    } else { //key содержит subPath
+    if (index >= 0) {
+        //key содержит subPath
         QString curKey = key.left(index);
         QString subPath = key.mid(index + 1);
 
         QJsonObject newObj = obj[curKey].toObject();
         toJSON(subPath, value, newObj);
         obj[curKey] = std::move(newObj);
-    }
+    } else
+        obj.insert(key, QJsonValue::fromVariant(value));
 }
 
 /* Младшая сестра предыдущей функции
@@ -155,11 +152,11 @@ void Config::fromJSON(const QJsonObject &obj, const QString &subPath /* = QStrin
 {
     for (auto it = obj.begin(); it < obj.end(); it++) {
         if (it.value().isObject()) {
+            //it является веткой
             QString newPath = subPath + it.key() + QString('/');
             fromJSON(it.value().toObject(), newPath);
-        } else {
+        } else
             settingsMap[subPath + it.key()] = it.value().toVariant();
-        }
     }
 }
 

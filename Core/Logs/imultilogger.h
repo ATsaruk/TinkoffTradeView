@@ -40,25 +40,26 @@ namespace Core {
   * Лучше создать 1 IMultiLogger с тэгом warning.
   * Данный класс может содержать в себе другие логгеры, и после обработки сообщения функцией message, сообщение text
   * будет передано во все логгеры, которые содержатся в данном классе.
-  * Помимо функции message сообщения можно выводить перегруженным оператором <<, перегрузка реализована в ILogger. */
+  * Помимо функции message сообщения можно выводить перегруженным оператором <<, перегрузка реализована в ILogger.
+  * Для наследования от данного класса достаточно перегрузить функции getClassName и showMessage*/
 class IMultiLogger : public ILogger
 {
 public:
     explicit IMultiLogger(const QString &tag_);
     ~IMultiLogger();
 
+    /** @brief Включает/отключает запись текущего лога, а так же вложенных логов (логов с тем же тэгом)
+     *  @param on - вкл/откл ведение лога */
+    void setWriteLog(bool on) override final;
+
+
+    /** @brief Выводит сообщение text в текущий и во все вложенные логи!
+     *  @param text - текст сообщения */
+    void message(const QString &text) override final;
+
+
     /// Имя класса логгера
-    QString getClassName() const override = 0;
-
-
-    /// Включает/отключает запись текущего лога
-    void setWriteLog(bool on) override;
-
-    /** @brief Выводит сообщение text в лог
-      * @warning Данную функцию нужно перегрузить, реализовав в ней обработку сообщения.\n
-      * Для передачи сообще вложенным логгерам в конце реализации функции нужно вызвать @code
-      * IMultiLogger::message(text);  * @endcode */
-    void message(const QString &text) override;
+    virtual QString getClassName() const = 0;
 
 
     /** @brief Добавляет новый обработчик сообщений (волженный логгер)
@@ -69,21 +70,35 @@ public:
     {
         QMutexLocker locker(&mutex);
 
-        T *newLogger = new T(tag);
+        std::shared_ptr<T> newLogger = std::make_shared<T>(tag);
         QString newClass = newLogger->getClassName();
         auto count = std::count_if(loggers.begin(), loggers.end(), [&newClass] (auto &it) {return it->getClassName() == newClass;});
 
         //Нам не нужны 2 логера одного и того же класса (с одним и тем же тэгом)
-        if (count > 0 || newClass == this->getClassName()) {  //оператор == перегружен в ILogger, он сравнивает getClassName()
+        if (count > 0 || newClass == this->getClassName())   //оператор == перегружен в ILogger, он сравнивает getClassName()
             qDebug() << QString("Logger %1 (%2) is allready existed").arg(newClass, tag);
-            delete newLogger;
-        } else
+        else
             loggers.push_back(newLogger);
     }
 
 protected:
     /// Список вложенных логгеров, которым так же будет передаваться сообщение для обработки
-    std::vector<IMultiLogger*> loggers;
+    std::vector<std::shared_ptr<IMultiLogger>> loggers;
+
+    /** @brief Вызывается при вызове функции setWriteLog(bool)
+     *  @param on - признак вкл/откл запись лога
+     *
+     *      Если при отклыючении/включении лога нужно произвести какие то дополнительные действия, то нужно перегрузить
+     *  данную функцию, например для FileLogger при отключении можно закрыть файл.
+     *  параметр isWriteLog изменять в данной функции не нужно, это будет сделано в setWriteLog
+     *      Функция не является виртуальной т.к. для большенства случаев переопределение её не потребуется */
+    virtual void enableLog(bool on);
+
+    /** @brief showMessage Вызывается при вызове функции message()
+     *  @param text - текст, который нужно сохранить в log
+     *
+     *      В данной функции нужно реализовать вывод сообщения в log */
+    virtual void showMessage(const QString &text) = 0;
 };
 
 }

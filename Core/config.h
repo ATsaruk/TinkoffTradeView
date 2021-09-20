@@ -9,21 +9,22 @@ namespace Core {
 
 /** @ingroup Core
   * @brief Класс настроек приложения
-  * @details Настройки хранятся в файле в формате json. При завершении программы, настройки сохраняются в указанный файл.\n
+  * @details Настройки хранятся в файле в формате json. При завершении программы, настройки сохраняются в указанный файл.
   * @see getValue(), setValue(); */
 class Config
 {
 public:
     /// Загружает настройки из файла
     explicit Config(const QString &fileName = QString("config.cfg"));
+
     /// Сохраняются настройки в файл
     ~Config();
 
     /** @brief Возвращает значение параметра
-      * @param[IN] key ключ параметра
-      * @param[IN] defaultValue значение параметра по умолчания
-      * @return Возвращает значение параметра с ключем key, если такого параметра не найдено, то вернет переданное defaultValue,
-      * а так же создаст параметр с ключем key и инициализирует его значением defaultValue. */
+      * @param[IN] key - ключ параметра
+      * @param[IN] defaultValue - значение параметра по умолчания
+      * @return Возвращает значение параметра с ключем key, если такого параметра не найдено, то вернет переданное
+      * defaultValue, а так же создаст параметр с ключем key и инициализирует его значением defaultValue. */
     template<typename T>
     std::enable_if_t<std::is_constructible_v<QVariant, T>, T>
     getValue(const QString &key, T &&defaultValue) {
@@ -36,21 +37,21 @@ public:
     }
 
     /** @brief Сохраняет значение параметра
-      * @param[IN] key ключ параметра
-      * @param[IN] value значение параметра (будет перемещено)
+      * @param[IN] key - ключ параметра
+      * @param[IN] value - значение параметра (будет перемещено)
       * @details Если параметр с ключем key существует, его значение будет заменено.\n
       * Если параметра с ключем key не существует, то он будет создан и проинициализирован значением value.\n
       * Значение value будет перемещено: @code settingsMap[key] = std::move(value); @endcode */
     void setValue(QString &&key, QVariant &&value);
 
-
+protected:
     /** @brief Загружает настройки приложения из файла
       * @param[IN] fileName имя файла с настройками */
     void load(const QString &fileName);
 
 
     /// Сохранение настройки в файл указанный при загрузке настроек
-    void save(QString fileName = QString());
+    void save();
 
 private:
     //Список настроек

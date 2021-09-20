@@ -26,51 +26,12 @@ Request::~Request()
 
 bool Request::sendGet(const QString &path)
 {
-    if (authToken.isEmpty())
-        return false;
-
-    QNetworkRequest request(baseUri + path);
-
-    //Добавляем данные в заголовок для авторизации
-    QByteArray authInfo("Bearer ");
-    authInfo.append(authToken);
-    request.setRawHeader("Authorization", authInfo);
-    request.setRawHeader("Content-Type", "application/json");
-
-    QNetworkAccessManager *networkAccessManager = new QNetworkAccessManager;
-    connect(networkAccessManager, &QNetworkAccessManager::finished, this, &Request::onResponse);
-
-    QNetworkReply *reply = networkAccessManager->get(request);
-    connect(reply, &QNetworkReply::errorOccurred, this, &Request::onError);
-
-    return true;
+    return send(path, QByteArray());
 }
 
 bool Request::sendPost(const QString &path, const QByteArray &data)
 {
-    if (authToken.isEmpty())
-        return false;;
-
-    QNetworkRequest request(baseUri + path);
-
-    //Добавляем данные в заголовок для авторизации
-    QByteArray authInfo("Bearer ");
-    authInfo.append(authToken);
-    request.setRawHeader("Authorization", authInfo);
-    request.setRawHeader("Content-Type", "application/json");
-
-    QNetworkAccessManager *networkAccessManager = new QNetworkAccessManager;
-    connect(networkAccessManager, &QNetworkAccessManager::finished, this, &Request::onResponse);
-
-    QNetworkReply *reply = networkAccessManager->post(request, data);
-    connect(reply, &QNetworkReply::errorOccurred, this, &Request::onError);
-
-    return true;
-}
-
-bool Request::isTokenAvailable() const
-{
-    return !authToken.isEmpty();
+    return send(path, data);
 }
 
 bool Request::isSandMode() const
@@ -82,6 +43,7 @@ void Request::setSandMode(const bool sand)
 {
     if (sandMode == sand)
         return;
+
     sandMode = sand;
 
     initMode();
@@ -90,6 +52,7 @@ void Request::setSandMode(const bool sand)
 
 void Request::initMode()
 {
+    QString tokenFile;          //Имя файла с токеном авторизации
     if (isSandMode()) {
         baseUri = Glo.conf->getValue("Tinkoff/sandboxBaseUri", QString(defaultSandBaseUri));
         tokenFile = Glo.conf->getValue("Tinkoff/fileSandKey", QString(defaultSandFileToken));
@@ -107,6 +70,31 @@ void Request::initMode()
         logInfo << "BrokerQuery;setMode();Successful loading broker key";
     } else
         logWarning << "BrokerQuery;setMode();Can't finder broker key!";
+}
+
+bool Request::send(const QString &path, const QByteArray &data)
+{
+    if (authToken.isEmpty())
+        return false;;
+
+    QNetworkRequest request(baseUri + path);
+
+    //Добавляем данные в заголовок для авторизации
+    QByteArray authInfo("Bearer ");
+    authInfo.append(authToken);
+    request.setRawHeader("Authorization", authInfo);
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *networkAccessManager = new QNetworkAccessManager;
+    connect(networkAccessManager, &QNetworkAccessManager::finished, this, &Request::onResponse);
+
+    QNetworkReply *reply = data.isEmpty() ?
+                networkAccessManager->get(request) :        //Если data is empty отправляем GET запрос
+                networkAccessManager->post(request, data);  //Иначе отправляем POST запрос
+
+    connect(reply, &QNetworkReply::errorOccurred, this, &Request::onError);
+
+    return true;
 }
 
 // Получает ответ от сервера и отправляет об этом сигнал с полученными данными

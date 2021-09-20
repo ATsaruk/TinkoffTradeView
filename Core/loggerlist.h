@@ -47,11 +47,11 @@ public:
 
 
     /** @brief Возвращает логгер с тэгом tag
-      * @param[IN] tag - тэг лог (debug, info, warning, ... , superPuperLog )
+      * @param[IN] tag - тэг лога (debug, info, warning, ... , superPuperLog )
       * @return Указатель на ILogger, да именно ILogger, а не IMultiLogger, "клиент" будет работать с
-      * интерфейсом ILogger, метод appendLogger ему не нужн.
+      * интерфейсом ILogger, метод appendLogger ему не нужен.
       * @details Если логгер не был создан до этого, то создает defaultLogger (#define defaultLogger FileLogger) */
-    ILogger *get(QString tag);
+    std::shared_ptr<ILogger> get(QString tag);
 
     /** @brief Создает логгер заданного типа с заданным тэгом
       * @param[IN] tag - тэг лог (debug, info, warning, ... )
@@ -64,13 +64,13 @@ public:
     add(const QString &tag)
     {
         if (logs.count(tag) == 0)
-            logs[tag] = new T(tag);
+            logs[tag] = std::make_shared<T>(tag);
         else
             logs[tag]->appendLogger<T>();
     }
 
 private:
-    std::unordered_map<QString, IMultiLogger*> logs;
+    std::unordered_map<QString, std::shared_ptr<IMultiLogger>> logs;
 
     /** @brief Ищет логгер с тэгом tag, если не находит создает его с типом T
       * @param[IN] tag - тэг нашего лога (debug, info, warning, ... , superPuperLog )
@@ -80,13 +80,13 @@ private:
       * @code get("warning")->message("text") @endcode
       * Если warning logger не существует, он будет создан как FileLogger (#define defaultLogger FileLogger) */
     template<class T>
-    typename std::enable_if_t<std::is_base_of_v<IMultiLogger, T>, ILogger*>
+    typename std::enable_if_t<std::is_base_of_v<IMultiLogger, T>, std::shared_ptr<ILogger>>
     get(const QString &tag)
     {
         if (logs.count(tag) == 0)
             add<T>(tag);
 
-        return dynamic_cast <ILogger*> (logs.find(tag)->second);
+        return logs.find(tag)->second;
     }
 };
 

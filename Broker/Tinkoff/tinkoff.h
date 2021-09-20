@@ -43,7 +43,7 @@ public:
 
 protected:
     /// Интерфейс для отправки POST/GET запросов
-    QScopedPointer<Request> html;
+    std::unique_ptr<Request> html;
 
 private:
     Q_OBJECT

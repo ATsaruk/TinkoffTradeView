@@ -11,11 +11,10 @@ LoggerList::LoggerList()
 
 LoggerList::~LoggerList()
 {
-    for (auto &it : logs)
-        delete it.second;
+
 }
 
-ILogger *LoggerList::get(QString tag)
+std::shared_ptr<ILogger> LoggerList::get(QString tag)
 {
     return get<defaultLogger>(tag);
 }

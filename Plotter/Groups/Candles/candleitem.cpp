@@ -8,21 +8,26 @@
 
 namespace Plotter {
 
-CandleItem::CandleItem(const int32_t candleIndex, std::shared_ptr<CandlesData> candleParams) noexcept
-    : index(candleIndex), params(candleParams)
+CandleItem::CandleItem(const int32_t &index, Data::Candle *candle, std::shared_ptr<CandlesData> candleParams) noexcept
+    : pos(index), data(candle), params(candleParams)
 {
-    setToolTip(QString("%1").arg(params->data[index].dateTime.toString()));
+    setToolTip(QString("%1").arg(data->dateTime().toString()));
 }
 
-const int32_t &CandleItem::getIndex()
+void CandleItem::setCandle(Data::Candle *candle)
 {
-    return index;
+    data = candle;
+}
+
+const int32_t &CandleItem::getIndex() const
+{
+    return pos;
 }
 
 void CandleItem::updatePos()
 {
-    setX(params->xScale * index);
-    setY(params->yScale * params->data[index].high * -1.);
+    setX(params->xScale * pos);
+    setY(params->yScale * data->high() * -1.);
 }
 
 QRectF CandleItem::boundingRect() const
@@ -31,7 +36,7 @@ QRectF CandleItem::boundingRect() const
     rect.setLeft(0);
     rect.setTop (0);
     rect.setWidth (params->xScale);
-    rect.setHeight(params->yScale * (params->data[index].high - params->data[index].low));
+    rect.setHeight(params->yScale * (data->high() - data->low()));
 
     return rect;
 }
@@ -39,7 +44,7 @@ QRectF CandleItem::boundingRect() const
 void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //Устанавливаем инструменты для рисования
-    bool isBearCandle = params->data[index].open > params->data[index].close;
+    bool isBearCandle = data->open() > data->close();
 
     painter->setPen  ( isBearCandle ? params->bearPen   : params->bullPen   );
     painter->setBrush( isBearCandle ? params->bearBrush : params->bullBrush );
@@ -47,13 +52,13 @@ void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QPolygon body; //Полигон, для отрисовки тела свечи
 
     //Помещаем координаты точек в полигональную модель
-    body << QPoint(0, (params->data[index].high - params->data[index].open) * params->yScale)
-         << QPoint(0, (params->data[index].high - params->data[index].close) * params->yScale)
-         << QPoint(params->xScale - params->clearance, (params->data[index].high - params->data[index].close) * params->yScale)
-         << QPoint(params->xScale - params->clearance,  (params->data[index].high - params->data[index].open) * params->yScale);
+    body << QPoint(0, (data->high() - data->open()) * params->yScale)
+         << QPoint(0, (data->high() - data->close()) * params->yScale)
+         << QPoint(params->xScale - params->clearance, (data->high() - data->close()) * params->yScale)
+         << QPoint(params->xScale - params->clearance,  (data->high() - data->open()) * params->yScale);
 
     //Рисуем тень свечи
-    painter->drawLine((params->xScale - params->clearance) / 2., (params->data[index].high - params->data[index].low) * params->yScale,
+    painter->drawLine((params->xScale - params->clearance) / 2., (data->high() - data->low()) * params->yScale,
                       (params->xScale - params->clearance) / 2., 0.);
 
     //Рисуем тело свечи по полигональной модели

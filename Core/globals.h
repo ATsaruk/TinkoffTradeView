@@ -10,7 +10,7 @@
 #include "loggerlist.h"
 #include "Broker/api.h"
 #include "DataBase/idatabase.h"
-#include "Data/Stock/stocks.h"
+#include "Data/Stock/stocklist.h"
 #include "Tasks/manager.h"
 
 namespace Core {
@@ -50,7 +50,7 @@ public:
     QScopedPointer<Task::Manager> taskManager;
 
     //Вспомогательные
-    QScopedPointer<Data::Stocks> stocks;
+    QScopedPointer<Data::IStocks> stocks;
     QScopedPointer<DB::IDataBase> dataBase;
     QScopedPointer<Broker::Api> broker;
 

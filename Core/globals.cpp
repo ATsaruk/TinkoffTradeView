@@ -29,7 +29,7 @@ void Globals::init()
     logger->add<MsgBoxLogger>(logTags[2]);  // Что бы не пропустить warning выводим его дополнительно на экран! Можно удалить
     logger->add<MsgBoxLogger>(logTags[3]);  // Что бы не пропустить critical выводим его дополнительно на экран! Можно удалить
 
-    stocks.reset( new Data::Stocks );
+    stocks.reset( new Data::StockList );
     dataBase.reset( new DB::PostgreSql );
     broker.reset( new Broker::TinkoffApi );
 

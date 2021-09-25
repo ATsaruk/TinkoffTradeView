@@ -23,7 +23,7 @@
 #include "Tasks/Interfaces/interfase.h"
 
 #include "Data/range.h"
-#include "Data/Stock/stocks.h"
+#include "Data/Stock/stocklist.h"
 
 namespace Task {
 
@@ -53,7 +53,6 @@ private:
     Data::Range existedRange;       //интервал на котором данные уже существуют
     InterfaceWrapper<Data::Range> range;            //исходный интервал загрузки
     InterfaceWrapper<Data::Stock> stock;            //список загруженных акций (из БД + от брокера)
-    InterfaceWrapper<Data::Stock> loadedCandles;    //список акций полученных от брокера
 };
 
 }

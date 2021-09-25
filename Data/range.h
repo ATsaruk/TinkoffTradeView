@@ -49,6 +49,9 @@ public:
      */
     bool isIntersected(const Range &range) const;
 
+    bool operator >(const Range &range) const;
+    bool operator <(const Range &range) const;
+
     ///Задает начало диапазона
     void setBegin(const QDateTime &begin_);
     ///Задает конец диапазона
@@ -90,6 +93,22 @@ public:
      * 4. Если диапазоны пересекаются, и range находится слева, то this->begin = range.end.
      */
     void remove(const Range &range);
+
+    /**
+     * @brief Возвращает результат вычитация из текущего диапазона
+     * @param[IN] range диапазон, который необходимо удалить
+     * @warning Есть одно НО в работе функции:  если диапазон other находится внутри нашего диапазона (*this), по идее нужно разбивать
+     * текущий диапазон на 2 диапазона "до" range и "после" range. Данная же функция обрежет текущий диапазон (*this) до начала range.begin
+     *
+     * Результат выполнения:
+     * 1. Если диапазоны не пересекаются, вернет пустой диапазон.
+     * 2. Если диапазоны пересекаются, и range находится справа, то this->end = range.begin.
+     * 3. Если диапазоны пересекаются, и range находится слева, то this->begin = range.end.
+     * 4. Если range находится внутри текущего диапазона(*this) этот случай описан в warning.
+     *
+     * В отличии от предыдущей функции, она не изменяет текущий диапазон, а лишь возвращает результат вычитания
+     */
+    [[nodiscard]] Range remove(const Range &range) const;
 
     /**
      * @brief Расширяет текущий диапазон

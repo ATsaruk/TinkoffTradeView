@@ -64,12 +64,12 @@ QString StockKey::intervalToString() const
     throw std::bad_exception();
 }
 
-const QString StockKey::keyToString() const
+QString StockKey::keyToString() const
 {
     return QString("%1:%2").arg(_figi, intervalToString());
 }
 
-StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval)
+StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval) const
 {
     stringInterval = stringInterval.toLower();
     if (stringInterval == QString("1min"))       return INTERVAL::MIN1;

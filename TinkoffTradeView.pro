@@ -2,7 +2,7 @@ QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17 # c++2a C++20 unused
+CONFIG += c++2a # c++11 c++14 c++17 c++2a C++20 unused
 
 #uncomment to disable std::assert warnings!
 #DEFINES += NDEBUG
@@ -21,9 +21,13 @@ SOURCES += \
     Core/globals.cpp \
     Core/config.cpp \
     Core/loggerlist.cpp \
+    Data/Stock/StockView/stockview.cpp \
+    Data/Stock/StockView/stockviewglobal.cpp \
+    Data/Stock/StockView/stockviewreference.cpp \
     Data/Stock/candle.cpp \
+    Data/Stock/stock.cpp \
     Data/Stock/stockkey.cpp \
-    Data/Stock/stocks.cpp \
+    Data/Stock/stocklist.cpp \
     Data/range.cpp \
     DataBase/Query/stocksquery.cpp \
     DataBase/idatabase.cpp \
@@ -59,9 +63,14 @@ HEADERS += \
     Core/config.h \
     Core/globals.h \
     Core/loggerlist.h \
+    Data/Stock/StockView/stockview.h \
+    Data/Stock/StockView/stockviewglobal.h \
+    Data/Stock/StockView/stockviewreference.h \
     Data/Stock/candle.h \
+    Data/Stock/istocks.h \
+    Data/Stock/stock.h \
     Data/Stock/stockkey.h \
-    Data/Stock/stocks.h \
+    Data/Stock/stocklist.h \
     Data/range.h \
     DataBase/Query/stocksquery.h \
     DataBase/idatabase.h \

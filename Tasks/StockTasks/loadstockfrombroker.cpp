@@ -13,7 +13,7 @@ namespace Task {
 LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey, const uint minCandlesCount_)
     : IBaseTask("LoadStockFromBroker"), minCandlesCount(minCandlesCount_)
 {
-    stock->key = stockKey;
+    stock->setStockKey(stockKey);
 }
 
 LoadStockFromBroker::~LoadStockFromBroker()
@@ -44,7 +44,7 @@ void LoadStockFromBroker::exec()
 
     //Формируем первый подинтервал, длинна которого не более чем максимально доступный интервал загрузки
     //для данной длительности свечи (интервалы определяет брокер)
-    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key().interval());
     subRange.setRange(range->getEnd(), -maxLoadRange);
     subRange.constrain(range);
 
@@ -59,7 +59,7 @@ bool LoadStockFromBroker::sendRequest()
     if (isStopRequested)
         return false;
 
-    if (!Glo.broker->loadCandles(stock->key, subRange))
+    if (!Glo.broker->loadCandles(stock->key(), subRange))
         return false;
 
     return true;
@@ -75,14 +75,14 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    if (minCandlesCount > 0 && stock->candles.size() >= minCandlesCount)
+    if (minCandlesCount > 0 && stock->getCandles().size() >= minCandlesCount)
         return false;
 
-    long candleInterval = stock->key.intervalToSec();
+    long candleInterval = stock->key().intervalToSec();
     if ( subRange.getBegin() < range->getBegin().addSecs(candleInterval) )
         return false;
 
-    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key.interval());
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key().interval());
     subRange.addSecs(-maxLoadRange);
     subRange.constrain(range);
     return true;
@@ -92,8 +92,9 @@ void LoadStockFromBroker::finishTask()
 {
     Glo.broker->mutex.unlock();
 
-    if (!stock->candles.empty()) {
-        std::sort(stock->candles.begin(), stock->candles.end());
+    auto &candles = stock->getCandles();
+    if (!candles.empty()) {
+        std::sort(candles.begin(), candles.end());
         removeIncompleteCandle();
     }
 
@@ -121,9 +122,10 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
     QJsonArray candlesArray = payload.value("candles").toArray();
 
-    stock->candles.reserve(stock->candles.size() + candlesArray.size());
+    auto &candles = stock->getCandles();
+    candles.reserve(candles.size() + candlesArray.size());
     for (const auto &it: candlesArray)
-        stock->candles.emplace_back( Data::Candle::fromJson(it.toObject()) );
+        candles.emplace_back( Data::Candle::fromJson(it.toObject()) );
 
     return true;
 }
@@ -133,9 +135,9 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
     try {  //StockKey::fromJson кидается исключениями, в случае не возможности определить интервал свечи
         Data::StockKey recievedKey;
         recievedKey.fromJson(payload);   //payload содержит ключ акции
-        if(recievedKey != stock->key) {
+        if(recievedKey != stock->key()) {
             QString errorCode = QString("LoadStockFromBroker;checkStockKey();recievedKey!=stockKey:;%1;%2")
-                    .arg(recievedKey.keyToString(), stock->key.keyToString());
+                    .arg(recievedKey.keyToString(), stock->key().keyToString());
             throw std::logic_error(errorCode.toUtf8().data());
         }
     }  catch (std::exception &except) {
@@ -155,13 +157,14 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
  */
 void LoadStockFromBroker::removeIncompleteCandle()
 {
-    Data::Candle &lastCandle = stock->candles.back();
+    auto &candles = stock->getCandles();
+    Data::Candle &lastCandle = candles.back();
 
-    long candleDuration = stock->key.intervalToSec();
-    QDateTime timeCandleComplite = lastCandle.dateTime.addSecs(candleDuration);
+    long candleDuration = stock->key().intervalToSec();
+    QDateTime timeCandleComplite = lastCandle.dateTime().addSecs(candleDuration);
 
     if (timeCandleComplite > range->getEnd())
-        stock->candles.pop_back();
+        candles.pop_back();
 }
 
 }

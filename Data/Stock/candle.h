@@ -1,7 +1,6 @@
 #ifndef CANDLE_H
 #define CANDLE_H
 
-#include <vector>
 #include <QDateTime>
 #include <QJsonObject>
 
@@ -12,23 +11,22 @@ namespace Data {
   * @brief Структура содержащая данные по 1 японской свечи
   * @details https://ru.wikipedia.org/wiki/Японские_свечи
   * @see DataStocks */
-struct Candle
+class Candle
 {
-    QDateTime dateTime; ///<дата/время начала свечи
-    float open;         ///<цена открытия
-    float close;        ///<цена закрытия
-    float high;         ///<максимальная цена
-    float low;          ///<минимальная цена
-    uint volume;        ///<объем торгов
-
-    explicit Candle() = default;
+public:
+    Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const uint volume_)
+        : _dateTime(date_), _open(open_), _close(close_), _high(high_), _low(low_), _volume(volume_) { }
     Candle(Candle &&) noexcept = default;
     Candle(const Candle &) = default;
     Candle& operator =(Candle&&) noexcept = default;
     Candle& operator =(const Candle&) = default;
 
-    Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const uint volume_)
-        : dateTime(date_), open(open_), close(close_), high(high_), low(low_), volume(volume_) { }
+    const QDateTime& dateTime() const;
+    const float& open() const;
+    const float& close() const;
+    const float& high() const;
+    const float& low() const;
+    const long& volume() const;
 
     /** @brief Заполняет данные по свечи из Json объекта
       * @param[OUT] candle структура свечной информации, в которую будет помещен результат
@@ -37,17 +35,20 @@ struct Candle
       * можно использовать при анализе ответа от брокера. */
     static Candle fromJson(const QJsonObject &json);
 
-    friend bool operator>  (const Candle &c1, const Candle &c2) { return (c1.dateTime >  c2.dateTime); }
-    friend bool operator<  (const Candle &c1, const Candle &c2) { return (c1.dateTime <  c2.dateTime); }
-    friend bool operator>= (const Candle &c1, const Candle &c2) { return (c1.dateTime >= c2.dateTime); }
-    friend bool operator<= (const Candle &c1, const Candle &c2) { return (c1.dateTime <= c2.dateTime); }
-    friend bool operator== (const Candle &c1, const Candle &c2) { return (c1.dateTime == c2.dateTime); }
-    friend bool operator!= (const Candle &c1, const Candle &c2) { return (c1.dateTime != c2.dateTime); }
+    friend bool operator>  (const Candle &c1, const Candle &c2) { return (c1._dateTime >  c2._dateTime); }
+    friend bool operator<  (const Candle &c1, const Candle &c2) { return (c1._dateTime <  c2._dateTime); }
+    friend bool operator>= (const Candle &c1, const Candle &c2) { return (c1._dateTime >= c2._dateTime); }
+    friend bool operator<= (const Candle &c1, const Candle &c2) { return (c1._dateTime <= c2._dateTime); }
+    friend bool operator== (const Candle &c1, const Candle &c2) { return (c1._dateTime == c2._dateTime); }
+    friend bool operator!= (const Candle &c1, const Candle &c2) { return (c1._dateTime != c2._dateTime); }
+private:
+    QDateTime _dateTime; ///<дата/время начала свечи
+    float _open;         ///<цена открытия
+    float _close;        ///<цена закрытия
+    float _high;         ///<максимальная цена
+    float _low;          ///<минимальная цена
+    long _volume;        ///<объем торгов
 };
-
-/** @ingroup Data
-  * @brief Список свечной информации */
-using Candles = std::vector<Candle>;
 
 }
 

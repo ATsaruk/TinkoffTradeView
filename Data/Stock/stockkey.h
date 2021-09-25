@@ -49,10 +49,10 @@ public:
     QString intervalToString() const;
 
     ///Возвращает ключ акции в формате строки
-    const QString keyToString() const;
+    QString keyToString() const;
 
     ///Преобразует строку QString в interval
-    static INTERVAL stringToInterval(QString stringInterval);
+    INTERVAL stringToInterval(QString stringInterval) const;
 
     /** @brief Взвращает поля первичного ключа акции (StockKey) из json объекта
       * @param[IN] json объект в котором содержится первичный ключ
@@ -69,6 +69,14 @@ private:
     INTERVAL _interval; //интервал из enum CANDLE_INTERVAL, определяет длительность свечи (1min, 5min, 15min, 30min, hour, 4hour, day, week)
 };
 
+}
+
+namespace std {
+  template <>
+  struct hash<Data::StockKey>
+  {
+    std::size_t operator()(const Data::StockKey& k) const { return hash<QString>()(k.intervalToString()); }
+  };
 }
 
 #endif // STOCKKEY_H

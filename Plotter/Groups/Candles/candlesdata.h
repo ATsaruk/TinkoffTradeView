@@ -32,8 +32,7 @@ private:
     QBrush bearBrush, bullBrush;
 
     Data::StockKey stockKey;                //Ключи акции для которой предназначены данные
-    std::map<int32_t, Data::Candle> data;   //Список позиция свечи + её дата
-    ///@todo !!Использовать в data данные, хранящиеся в Data::Stocks::stock, рассмотреть вариант std::map<int32_t, QDateTime> data
+    std::map<int32_t, QDateTime> data;      //Список позиция свечи + её дата
 
     friend class Axis;
     friend class CandleItem;

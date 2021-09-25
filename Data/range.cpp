@@ -114,6 +114,22 @@ bool Range::isIntersected(const Range &range) const
     return !(begin > range.end || end < range.begin);
 }
 
+bool Range::operator >(const Range &range) const
+{
+    if (!isValid() || !range.isValid())
+        return false;
+
+    return begin > range.getEnd();
+}
+
+bool Range::operator <(const Range &range) const
+{
+    if (!isValid() || !range.isValid())
+        return false;
+
+    return end < range.getBegin();
+}
+
 void Range::setBegin(const QDateTime &begin_)
 {
     begin = begin_;
@@ -179,6 +195,20 @@ void Range::remove(const Range &range)
         end = range.begin;
     else
         begin = range.end;
+}
+
+Range Range::remove(const Range &range) const
+{
+    if (!isIntersected(range))
+        return Range(); //диапазоны не пересекаются
+
+    Range result = *this;
+    if (result.begin < range.begin )
+       result.end = range.begin;
+    else
+        result.begin = range.end;
+
+    return result;
 }
 
 void Range::extend(const Range &range)

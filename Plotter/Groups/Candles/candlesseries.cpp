@@ -42,12 +42,12 @@ void CandlesSeries::repaint()
     isRepaintRequired = false;
 }
 
-void CandlesSeries::loadCandlesFinished()
+/*void CandlesSeries::loadCandlesFinished()
 {
     Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(sender());
     Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
     addCandles( std::move(stock->candles) );
-}
+}*/
 
 void CandlesSeries::clear()
 {
@@ -204,7 +204,7 @@ void CandlesSeries::setCandleVisible(const CandleItems::iterator &first_iterator
 }
 
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
-void CandlesSeries::addCandles(Data::Candles &&candles)
+/*void CandlesSeries::addCandles(Data::Candles &&candles)
 {
     removeExistedCandles(candles);
 
@@ -254,7 +254,7 @@ void CandlesSeries::removeExistedCandles(Data::Candles &candles)
     if (uint32_t count = std::distance(start_erase, candles.end()); count > 0)
         logWarning << QString("CandlesSeries::addCandles:;removed %1 existed candles!").arg(count);
     candles.erase(start_erase, candles.end());
-}
+}*/
 
 ///@todo !!после переделки candleData->data на std::map<int32_t, QDateTime> эту функцию нужно удалить!
 const QDateTime CandlesSeries::getDateByIndex(const int32_t index)

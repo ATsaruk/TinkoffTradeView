@@ -19,17 +19,18 @@ void StocksQuery::insertCandles(const Stock &stock)
     if (!db->isOpen())
         return;
 
-    QString interval = stock.key.intervalToString();
-    for (const auto &it: stock.candles) {
+    QString interval = stock.key().intervalToString();
+    const auto data = stock.getCandles();
+    for (const auto &it: data) {
         QString insert = QString("INSERT INTO stocks (figi, interval, time, open, close, high, low, volume) VALUES ('%1', '%2', '%3', %4, %5, %6, %7, %8)")
-                .arg(stock.key.figi(),
+                .arg(stock.key().figi(),
                      interval,
-                     it.dateTime.toString("yyyy-MM-dd hh:mm:ss"))
-                .arg(it.open)
-                .arg(it.close)
-                .arg(it.high)
-                .arg(it.low)
-                .arg(it.volume);
+                     it.dateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                .arg(it.open())
+                .arg(it.close())
+                .arg(it.high())
+                .arg(it.low())
+                .arg(it.volume());
 
         QSqlQuery query( db->get() );
         if (!query.exec(insert))
@@ -45,8 +46,8 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
     if (!db->isOpen())
         return ;
 
-    QString interval = stock.key.intervalToString();
-    QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(stock.key.figi(), interval);
+    QString interval = stock.key().intervalToString();
+    QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(stock.key().figi(), interval);
 
     if (begin.isValid())
         load += QString(" and time>='%1'").arg(begin.toString("dd.MM.yyyy hh:mm:ss"));
@@ -67,14 +68,15 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
                        .arg(query.lastError().databaseText(), query.lastError().driverText());
     }
 
-    stock.candles.reserve(stock.candles.size() + query.size());
+    auto data = stock.getCandles();
+    data.reserve(data.size() + query.size());
     while (query.next()) {
-        stock.candles.emplace_back( query.value(2).toDateTime(),   //dateTime
-                                    query.value(3).toReal(),       //open
-                                    query.value(4).toReal(),       //close
-                                    query.value(5).toReal(),       //high
-                                    query.value(6).toReal(),       //low
-                                    query.value(7).toLongLong() ); //volume
+        data.emplace_back( query.value(2).toDateTime(),   //dateTime
+                            query.value(3).toReal(),       //open
+                            query.value(4).toReal(),       //close
+                            query.value(5).toReal(),       //high
+                            query.value(6).toReal(),       //low
+                            query.value(7).toLongLong() ); //volume
     }
 }
 

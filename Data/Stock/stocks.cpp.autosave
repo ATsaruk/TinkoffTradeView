@@ -1,0 +1,64 @@
+#include "stocks.h"
+#include "Core/globals.h"
+
+namespace Data {
+
+Stocks::Stocks()
+{
+
+}
+
+Stocks::~Stocks()
+{
+
+}
+
+const Candles &Stocks::getCandles(const StockKey &key)
+{
+    return findStock(key).candles;
+}
+
+long Stocks::getCandlesCount(const StockKey &key)
+{
+    return findStock(key).candles.size();
+}
+
+Range Stocks::getRange(const StockKey &key)
+{
+    Candles &curCandles = findStock(key).candles;
+    if (curCandles.empty())
+        return Range();
+
+    return Range(curCandles.front().dateTime,
+                 curCandles.back().dateTime);
+}
+
+std::shared_ptr<Stock> Stocks::insertCandles(const Stock &stock)
+{
+    std::shared_ptr<Stock> &ownStock = findStock(stock.key);
+
+    auto newStock = ownStock->appendStock(stock);
+
+    if (!newStock.candles.empty()) {
+        emit dataChanged();
+        logInfo << QString("DataStocks;insertStockData();Append;%1;candles;%2;%3")
+                   .arg(newStock.candles.size()).arg(newStock.candles.front().dateTime.toString(), newStock.candles.back().dateTime.toString());
+    }
+    return newStock;
+}
+
+std::shared_ptr<Stock> &Stocks::findStock(const StockKey &key)
+{
+    auto stock = std::find_if(stocks.begin(),
+                              stocks.end(),
+                              [&key](const auto &it){
+        return key == it.key;
+    } );
+    if (stock == stocks.end()) {
+        stocks.emplace_front(key);
+        return stocks.front();
+    }
+    return *stock;
+}
+
+}

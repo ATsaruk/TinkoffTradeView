@@ -2,7 +2,8 @@
 #define STOCKSQUERY_H
 
 #include "Data/range.h"
-#include "Data/Stock/stocks.h"
+#include "Data/Stock/stock.h"
+#include "Data/Stock/stocklist.h"
 #include "DataBase/idatabase.h"
 
 namespace DB {

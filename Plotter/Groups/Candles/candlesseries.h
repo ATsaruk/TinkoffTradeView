@@ -34,7 +34,7 @@ public:
 
 public slots:
     void repaint() override;
-    void loadCandlesFinished();
+    //void loadCandlesFinished();
 
 signals:
     void requestData(const Data::Range &);
@@ -51,9 +51,9 @@ protected:
     void setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator);
 
     ///Добавляем загруженные свечи
-    void addCandles(Data::Candles &&candles);
+    /*void addCandles(Data::Candles &&candles);
     ///Удалям свечи, которые уже существуют
-    void removeExistedCandles(Data::Candles &candles);
+    void removeExistedCandles(Data::Candles &candles);*/
 
     const QDateTime getDateByIndex(const int32_t index);
 

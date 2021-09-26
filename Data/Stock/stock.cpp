@@ -8,6 +8,7 @@ namespace Data {
 
 
 Stock::Stock()
+    : mutex(QReadWriteLock::Recursive)
 {
 
 }

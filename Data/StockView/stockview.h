@@ -16,7 +16,12 @@ public:
 
     const Range getRange() const;
     size_t size() const;
+
+    std::pair<const Candle*, bool> operator [](size_t index);
     std::pair<const Candle&, bool> operator [](size_t index) const;
+
+    virtual std::vector<Candle>::const_iterator begin() = 0;
+    virtual std::vector<Candle>::const_iterator end() = 0;
 
     virtual const std::vector<Candle>::const_iterator begin() const = 0;
     virtual const std::vector<Candle>::const_iterator end() const = 0;

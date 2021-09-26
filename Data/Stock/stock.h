@@ -1,7 +1,8 @@
 #ifndef STOCK_H
 #define STOCK_H
 
-#include <deque>
+#include <vector>
+#include <QReadWriteLock>
 
 #include "stockkey.h"
 #include "candle.h"
@@ -12,6 +13,8 @@ namespace Data {
 class Stock
 {
 public:
+    QReadWriteLock mutex;
+
     explicit Stock();
     explicit Stock(const StockKey &stockKey);
 

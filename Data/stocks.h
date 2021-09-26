@@ -10,26 +10,26 @@
   * Доступ захватывается на чтение и производить чтение могут одновременно несколько потоков,
   * функция getStocks() гарантирует что до вызова releaseStocks() свечные данные изменены не будут. */
 
-#ifndef STOCKLIST_H
-#define STOCKLIST_H
+#ifndef STOCKS_H
+#define STOCKS_H
 
 #include <unordered_map>
 
 #include "istocks.h"
-#include "stock.h"
+#include "Stock/stock.h"
 
 namespace Data {
 
 class StockVew;
 
 /// Класс хранит свечные данные по акциям.
-class StockList : public IStocks
+class Stocks : public IStocks
 {
     Q_OBJECT
 
 public:
-    explicit StockList();
-    ~StockList();
+    explicit Stocks();
+    ~Stocks();
 
     /** @brief Возвращает запрашиваемую свечу
       * @param key - ключ акции
@@ -63,13 +63,12 @@ public slots:
     void candlesLoaded();
 
 protected:
-    std::shared_ptr<Data::StockViewReference> getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const override;
+    std::shared_ptr<Data::StockViewReference<QReadLocker>> getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const override;
 
 private:
-    /// Список акций
-    std::unordered_map<StockKey, Stock> stocks;
+    std::unordered_map<StockKey, Stock> stocks; /// Список акций
 };
 
 }
 
-#endif // STOCKLIST_H
+#endif // STOCKS_H

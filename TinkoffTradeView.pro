@@ -21,14 +21,13 @@ SOURCES += \
     Core/globals.cpp \
     Core/config.cpp \
     Core/loggerlist.cpp \
-    Data/Stock/StockView/stockview.cpp \
-    Data/Stock/StockView/stockviewglobal.cpp \
-    Data/Stock/StockView/stockviewreference.cpp \
     Data/Stock/candle.cpp \
     Data/Stock/stock.cpp \
     Data/Stock/stockkey.cpp \
-    Data/Stock/stocklist.cpp \
+    Data/StockView/stockview.cpp \
+    Data/StockView/stockviewglobal.cpp \
     Data/range.cpp \
+    Data/stocks.cpp \
     DataBase/Query/stocksquery.cpp \
     DataBase/idatabase.cpp \
     DataBase/postgresql.cpp \
@@ -63,15 +62,15 @@ HEADERS += \
     Core/config.h \
     Core/globals.h \
     Core/loggerlist.h \
-    Data/Stock/StockView/stockview.h \
-    Data/Stock/StockView/stockviewglobal.h \
-    Data/Stock/StockView/stockviewreference.h \
     Data/Stock/candle.h \
-    Data/Stock/istocks.h \
     Data/Stock/stock.h \
     Data/Stock/stockkey.h \
-    Data/Stock/stocklist.h \
+    Data/StockView/stockview.h \
+    Data/StockView/stockviewglobal.h \
+    Data/StockView/stockviewreference.h \
+    Data/istocks.h \
     Data/range.h \
+    Data/stocks.h \
     DataBase/Query/stocksquery.h \
     DataBase/idatabase.h \
     DataBase/postgresql.h \

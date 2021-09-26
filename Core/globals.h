@@ -10,7 +10,7 @@
 #include "loggerlist.h"
 #include "Broker/api.h"
 #include "DataBase/idatabase.h"
-#include "Data/Stock/stocklist.h"
+#include "Data/stocks.h"
 #include "Tasks/manager.h"
 
 namespace Core {

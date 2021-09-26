@@ -23,7 +23,7 @@
 #include "Tasks/Interfaces/interfase.h"
 
 #include "Data/range.h"
-#include "Data/Stock/stocklist.h"
+#include "Data/stocks.h"
 
 namespace Task {
 

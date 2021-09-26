@@ -33,6 +33,8 @@ SharedInterface &LoadStock::getResult()
 
 void LoadStock::exec()
 {
+    ///@todo !!!Переделать! сначала нужно брать данные из модуля Data, потом из БД, а только потом от брокера! Класс будет возвращать StockView
+
     if (!range->isValid()) {
         logCritical << "LoadStock::exec():;Invalid range!";
         emit finished();

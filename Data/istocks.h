@@ -2,9 +2,11 @@
 #define ISTOCKS_H
 
 #include <QObject>
+#include <QReadLocker>
 
-#include "stock.h"
-#include "../range.h"
+#include "range.h"
+#include "Stock/stock.h"
+#include "StockView/stockviewreference.h"
 
 namespace Data {
 
@@ -12,8 +14,6 @@ namespace Data {
   * @todo 1. при получении доступа к свечам должен блокироваться mutex и сам разблокироваться
   * @todo 2. определить механизм загрузки новых свечей
   */
-
-class StockViewReference;
 
 class IStocks : public QObject
 {
@@ -48,7 +48,7 @@ public:
 
 protected:
     //virtual CandlePtr getCandlesForWrite(const StockKey &key) = 0;
-    virtual std::shared_ptr<StockViewReference> getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const = 0;
+    virtual std::shared_ptr<StockViewReference<QReadLocker>> getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const = 0;
 
 signals:
     void newCandles(const StockKey &, const Range &);

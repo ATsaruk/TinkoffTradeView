@@ -4,7 +4,6 @@
 
 #include "istocks.h"
 #include "Core/globals.h"
-#include "Tasks/StockTasks/getstock.h"
 
 namespace Data {
 
@@ -18,37 +17,15 @@ Stocks::~Stocks()
 
 }
 
-std::optional<const Candle *> Stocks::getCandle(const StockKey &key, const QDateTime &time)
+std::pair<Range, size_t> Stocks::getRange(const StockKey &key) const
 {
-    if (const auto &candles = stocks.find(key); candles != stocks.end())
-        return candles->second.find(time);
-    return std::nullopt;
-}
-
-bool Stocks::checkCandles(const StockKey &key, const Range &range)
-{
-    //Проверяем наличие свечей в запрашиваемом диапазоне
-    Range existedRange;
-    if (const auto &candles = stocks.find(key); candles != stocks.end()) {
-        existedRange = candles->second.range();
-        if (existedRange.contains(range))
-            return true;
+    if (auto record = stocks.find(key); record != stocks.end()) {
+        auto mutex = const_cast<QReadWriteLock*>(&record->second.mutex);
+        QReadLocker locker(mutex);
+        return std::make_pair(record->second.range(), record->second.count());
     }
 
-    //Свечей недостаточно, инициализируем загрузку
-    Task::InterfaceWrapper<Range> loadRange = range.remove(existedRange);
-    auto *command = TaskManager->createTask<Task::GetStock>(&loadRange, key);
-    connect(command, &Task::GetStock::finished, this, &Stocks::candlesLoaded);
-
-    return false;
-}
-
-Range Stocks::insert(Stock &newCandles)
-{
-    if (auto stock = stocks.find(newCandles.key()); stock != stocks.end())
-        return stock->second.append(newCandles);
-
-    return Range();
+    return std::make_pair(Range(), 0);
 }
 
 void Stocks::candlesLoaded()
@@ -60,12 +37,16 @@ void Stocks::candlesLoaded()
 
 void Stocks::appedStock(Stock &stock)
 {
-    stocks[stock.key()].append(stock);
+    if (auto record = stocks.find(stock.key()); record != stocks.end()) {
+        auto mutex = const_cast<QReadWriteLock*>(&record->second.mutex);
+        QReadLocker locker(mutex);
+        record->second.append(stock);
+    } else
+        stocks[stock.key()] = std::move(stock);
 }
 
 std::shared_ptr<StockViewReference<QReadLocker>> Stocks::getCandlesForRead(const StockKey &key, const QDateTime &begin, const QDateTime &end) const
 {
-    ///@todo !!!блокировать mutex в конструкторе StockViewReference!
     if (auto record = stocks.find(key); record != stocks.end())
         return std::make_shared<StockViewReference<QReadLocker>>(record->second, begin, end);
 

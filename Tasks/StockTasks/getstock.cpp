@@ -43,16 +43,15 @@ void GetStock::exec()
     ///@todo проверить / отладить
     //Получаем доступные свечи из Data::Stocks
     subRange = Data::Range(range);
-    if (auto existed = Glo.stocks->getCandlesForRead(key); existed) {
-        if ( removeRange(existed->getRange(), std::size(*existed.get())) )
+
+    if (auto [existedRange, existedCount] = Glo.stocks->getRange(key); existedRange.isValid())
+        if ( removeRange(existedRange, existedCount) )
             return;
-    }
 
     //Загружаем доступные свечи из БД
-    if (auto [existedRange, count] = loadFromDb(); existedRange.isValid()) {
+    if (auto [existedRange, count] = loadFromDb(); existedRange.isValid())
         if (removeRange(existedRange, count))
             return;
-    }
 
     //Сохранить полученные свечи!
     createLoadingTasks();   //создаем задачи для загрузки оставшихся свечей от брокера
@@ -87,8 +86,7 @@ std::pair<Data::Range, size_t> GetStock::loadFromDb()
 
 void GetStock::createLoadingTasks()
 {
-    if (auto existed = Glo.stocks->getCandlesForRead(key); existed) {
-        auto existedRange = existed->getRange();
+    if (auto [existedRange, existedCount] = Glo.stocks->getRange(key); existedRange.isValid()) {
         bool isLeftLoading = subRange->getBegin() <= key.prevCandleTime(existedRange.getBegin());  //в начале есть незагруженный интервал
         if (isLeftLoading) {
             InterfaceWrapper<Data::Range> leftRange = Data::Range(subRange->getBegin(), existedRange.getBegin());
@@ -146,8 +144,8 @@ void GetStock::createExtraRangeTasks()
 
     //Подготавливам дополнительный 2 недельный интервал для загрузки
     QDateTime endTime;
-    if (auto existed = Glo.stocks->getCandlesForRead(key); existed)
-        endTime = existed->getRange().getBegin();
+    if (auto [existedRange, count] = Glo.stocks->getRange(key); existedRange.isValid())
+        endTime = existedRange.getBegin();
     else
         endTime = range->getBegin();
 

@@ -18,6 +18,20 @@ Stock::Stock(const StockKey &stockKey)
     this->stockKey = stockKey;
 }
 
+Stock::Stock(Stock &&other)
+{
+    this->stockKey = std::move(other.stockKey);
+    this->candles.swap(other.candles);
+}
+
+Stock &Stock::operator =(Stock &&other)
+{
+    this->stockKey = std::move(other.stockKey);
+    this->candles.swap(other.candles);
+
+    return *this;
+}
+
 void Stock::setStockKey(const StockKey &key)
 {
     stockKey = key;
@@ -25,7 +39,14 @@ void Stock::setStockKey(const StockKey &key)
 
 Range Stock::range() const
 {
+    if (candles.empty())
+        return Range();
     return Range(candles.begin()->dateTime(), candles.rbegin()->dateTime());
+}
+
+size_t Stock::count() const
+{
+    return candles.size();
 }
 
 std::optional<const Candle*> Stock::find(const QDateTime &time) const

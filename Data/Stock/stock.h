@@ -17,6 +17,7 @@ public:
 
     explicit Stock();
     explicit Stock(const StockKey &stockKey);
+    explicit Stock(Stock &other);
 
     ///Задать ключ акции
     void setStockKey(const StockKey &key);
@@ -27,6 +28,8 @@ public:
     ///Возвращает диапазон хранимых свечей
     Range range() const;
 
+    ///Возвращает количество хранимых свечей
+    size_t count() const;
 
     ///Ищет свечу с меткой времени равной time
     std::optional<const Candle*> find(const QDateTime &time) const;

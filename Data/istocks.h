@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QReadLocker>
 
-//#include "range.h"
-//#include "Stock/stock.h"
 #include "Tasks/StockTasks/getstock.h"
 #include "StockView/stockviewreference.h"
 
@@ -22,30 +20,9 @@ public:
     IStocks() {}
     virtual ~IStocks() {}
 
-    /** @brief Возвращает запрашиваемую свечу
-      * @param key - ключ акции
-      * @param time - время свечи
-      * @return Candle - запрашиваемая свеча
-      *
-      * Если свеча отсутсвует будет возвращен нулевой std::nullopt */
-    virtual std::optional<const Candle*> getCandle(const StockKey &key, const QDateTime &time) = 0;
-
-    /** @brief Проверяет начилие свечей из заданного диапазона
-      * @param key - ключ акции
-      * @param range - диапазон необходимых свечей
-      * @return true - если все свечи из запрашиваемого диапазона доступны, false - запущена загрузка недостающих свечей
-      *
-      * Если свечи из запрашиваемого диапазона не загружены, загружает их
-      * После загрузки будет сформирован сигнал newCandles(const Range &) */
-    virtual bool checkCandles(const StockKey &key, const Range &range) = 0;
-
-    /** @brief Сохраняет свечную информацию по акции
-      * @param candles - сохраняемая акция
-      * @return Возвращает диапазон вставленных свечей
-      *
-      *     Если данная акция отсутвует в списке акцй, сохраняет её целиком, если акция уже существует, то добавляет
-      * свечи которые отсутствовали, возвращает диапазон, которому принадлежат добавленные свечи */
-    virtual Range insert(Stock &candles) = 0;
+    /** @brief Возвращает доступный диапазон по акции
+     *  @param key - ключ акции */
+    virtual std::pair<Range, size_t> getRange(const StockKey &key) const = 0;
 
 protected:
     //virtual CandlePtr getCandlesForWrite(const StockKey &key) = 0;

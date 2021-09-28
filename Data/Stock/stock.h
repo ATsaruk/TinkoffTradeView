@@ -17,7 +17,8 @@ public:
 
     explicit Stock();
     explicit Stock(const StockKey &stockKey);
-    explicit Stock(Stock &other);
+    explicit Stock(Stock &&other);
+    Stock& operator =(Stock &&other);
 
     ///Задать ключ акции
     void setStockKey(const StockKey &key);

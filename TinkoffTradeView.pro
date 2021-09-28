@@ -41,8 +41,8 @@ SOURCES += \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
     Plotter/chartscene.cpp \
+    Tasks/StockTasks/getstock.cpp \
     Tasks/StockTasks/loadstockfrombroker.cpp \
-    Tasks/StockTasks/loadstock.cpp \
     Tasks/StockTasks/loadstockfromdbfunc.cpp \
     Tasks/ibasecommand.cpp \
     Tasks/ibasetask.cpp \
@@ -85,8 +85,8 @@ HEADERS += \
     Plotter/chartplotter.h \
     Plotter/chartscene.h \
     Tasks/Interfaces/interfase.h \
+    Tasks/StockTasks/getstock.h \
     Tasks/StockTasks/loadstockfrombroker.h \
-    Tasks/StockTasks/loadstock.h \
     Tasks/StockTasks/loadstockfromdbfunc.h \
     Tasks/ibasecommand.h \
     Tasks/ibasetask.h \

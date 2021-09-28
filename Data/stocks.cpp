@@ -4,7 +4,7 @@
 
 #include "istocks.h"
 #include "Core/globals.h"
-#include "Tasks/StockTasks/loadstock.h"
+#include "Tasks/StockTasks/getstock.h"
 
 namespace Data {
 
@@ -37,8 +37,8 @@ bool Stocks::checkCandles(const StockKey &key, const Range &range)
 
     //Свечей недостаточно, инициализируем загрузку
     Task::InterfaceWrapper<Range> loadRange = range.remove(existedRange);
-    auto *command = TaskManager->createTask<Task::LoadStock>(&loadRange, key);
-    connect(command, &Task::LoadStock::finished, this, &Stocks::candlesLoaded);
+    auto *command = TaskManager->createTask<Task::GetStock>(&loadRange, key);
+    connect(command, &Task::GetStock::finished, this, &Stocks::candlesLoaded);
 
     return false;
 }
@@ -55,8 +55,12 @@ void Stocks::candlesLoaded()
 {
     Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(const_cast<QObject*>(sender()));
     Task::InterfaceWrapper<Data::Stock> stock = task->getResult();
-    //addCandles( std::move(stock->candles) );
     emit newCandles(stock->key(), stock->range());
+}
+
+void Stocks::appedStock(Stock &stock)
+{
+    stocks[stock.key()].append(stock);
 }
 
 std::shared_ptr<StockViewReference<QReadLocker>> Stocks::getCandlesForRead(const StockKey &key, const QDateTime &begin, const QDateTime &end) const

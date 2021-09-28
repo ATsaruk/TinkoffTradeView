@@ -4,7 +4,7 @@
 #include "Tasks/ifunction.h"
 
 #include "Data/range.h"
-#include "Data/Stock/stocklist.h"
+#include "Data/Stock/stock.h"
 
 namespace Task {
 

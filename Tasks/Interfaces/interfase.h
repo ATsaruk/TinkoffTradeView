@@ -1,3 +1,6 @@
+///Убрать void operator= (InterfaceWrapper &other)!
+
+
 #ifndef INPUTINTERFASE_H
 #define INPUTINTERFASE_H
 
@@ -43,6 +46,7 @@ struct InterfaceData : public Interface
     InterfaceData(N &&init) noexcept : data(std::forward<N>(init)) { }
 };
 
+using SharedInterface = QSharedPointer<Task::Interface>;
 
 ///Обертка над QSharedPointer<Interface>
 template<class S, class T = std::remove_reference_t<std::remove_pointer_t<S>>>
@@ -51,11 +55,11 @@ public:
     explicit InterfaceWrapper() = default;
 
     //Дропает старую ссылку, и получает новую (если интерфейсы совместимы!)
-    InterfaceWrapper(QSharedPointer<Task::Interface> &inputData) {
+    InterfaceWrapper(SharedInterface &inputData) {
         assert(inputData->isCompatible<T>() && "DataWrapper constructor from Interface: Interfaces aren't compatible!");
         sharePtr = inputData;
     }
-    void operator= (QSharedPointer<Task::Interface> &inputData) {
+    void operator= (SharedInterface &inputData) {
         assert(inputData->isCompatible<T>() && "DataWrapper = Interface: Interfaces aren't compatible!");
         sharePtr = inputData;
     }
@@ -67,7 +71,7 @@ public:
     template<class N>
     void operator=(N &&data) noexcept {
         if (sharePtr.isNull())
-            sharePtr = QSharedPointer<Interface>( new InterfaceData<T>(std::forward<N>(data)) );
+            sharePtr = SharedInterface( new InterfaceData<T>(std::forward<N>(data)) );
         else
             sharePtr.data()->get<T>() = std::forward<N>(data);
     }
@@ -94,16 +98,14 @@ protected:
     //Отсроченная инициализация, инициализирует объект, если sharedPointer.isNull()
     void deferredInit() {
         if (sharePtr.isNull())
-            sharePtr = QSharedPointer<Interface>( new InterfaceData<T> );
+            sharePtr = SharedInterface( new InterfaceData<T> );
     }
 
 private:
-    QSharedPointer<Interface> sharePtr = nullptr;
+    SharedInterface sharePtr = nullptr;
 };
 
 }
-
-using SharedInterface = QSharedPointer<Task::Interface>;
 
 
 #endif // INPUTINTERFASE_H

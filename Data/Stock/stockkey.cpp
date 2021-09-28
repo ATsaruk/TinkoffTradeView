@@ -64,6 +64,16 @@ QString StockKey::intervalToString() const
     throw std::bad_exception();
 }
 
+QDateTime StockKey::prevCandleTime(const QDateTime &time) const
+{
+    return time.addSecs(-intervalToSec());
+}
+
+QDateTime StockKey::nextCandleTime(const QDateTime &time) const
+{
+    return time.addSecs(intervalToSec());
+}
+
 QString StockKey::keyToString() const
 {
     return QString("%1:%2").arg(_figi, intervalToString());

@@ -63,6 +63,7 @@ public slots:
     void candlesLoaded();
 
 protected:
+    void appedStock(Stock &stock) override;
     std::shared_ptr<Data::StockViewReference<QReadLocker>> getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const override;
 
 private:

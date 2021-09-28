@@ -4,8 +4,9 @@
 #include <QObject>
 #include <QReadLocker>
 
-#include "range.h"
-#include "Stock/stock.h"
+//#include "range.h"
+//#include "Stock/stock.h"
+#include "Tasks/StockTasks/getstock.h"
 #include "StockView/stockviewreference.h"
 
 namespace Data {
@@ -48,11 +49,15 @@ public:
 
 protected:
     //virtual CandlePtr getCandlesForWrite(const StockKey &key) = 0;
-    virtual std::shared_ptr<StockViewReference<QReadLocker>> getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const = 0;
+    using SharedStockVewRef = std::shared_ptr<Data::StockViewReference<QReadLocker>>;
+
+    virtual void appedStock(Stock &stock) = 0;
+    virtual SharedStockVewRef getCandlesForRead(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime()) const = 0;
 
 signals:
     void newCandles(const StockKey &, const Range &);
 
+    friend class Task::GetStock;
     friend class StockViewGlobal;
 };
 

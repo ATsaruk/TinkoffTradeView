@@ -20,7 +20,7 @@ public:
         //если !newRange.isValid() (диапазон не задан), то constrain не будет иметь эффекта и будет использоваться весь диапазон stock.range()
     }
 
-    StockViewReference(const Stock &baseStock, const Range &range = Range())
+    StockViewReference(const Stock &baseStock, const Range &range)
         : StockViewReference(baseStock, range.getBegin(), range.getEnd()) { }
 
     std::vector<Candle>::const_iterator begin()

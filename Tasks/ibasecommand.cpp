@@ -32,6 +32,10 @@ IBaseCommand::IBaseCommand(const QString commandName)
 IBaseCommand::~IBaseCommand()
 {
     emit stopAll();
+
+    //Если остались невыполненные задачи, удаляем их
+    for (auto *it : taskList)
+        delete it;
 }
 
 void IBaseCommand::setData(SharedInterface &inputData)

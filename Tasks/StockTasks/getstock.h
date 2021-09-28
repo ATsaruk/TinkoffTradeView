@@ -2,7 +2,7 @@
  * Загрузка производится сначала из БД
  * Затем недостающие данные догружаются от брокера
  * Пример использования:
- *   auto *command = new CommandLoadStock;
+ *   auto *command = new GetStock;
  *
  * далее 1 из 4 нужных вариантов:
  *   command->setData(curStockKey, beginTime, endTime, 100);    //минимум 100 свечей
@@ -16,45 +16,52 @@
  * Если в указанном временном интервале будет свечей будет меньше запрошенного количества (minCandleCount), то временной интервал
  * будет смещаться влево пока не будет полученно нужно числ свечей, но не более чем на 2 недели
  */
-#ifndef LOADSTOCK_H
-#define LOADSTOCK_H
+#ifndef GETSTOCK_H
+#define GETSTOCK_H
 
 #include "Tasks/ibasecommand.h"
 #include "Tasks/Interfaces/interfase.h"
 
 #include "Data/range.h"
-#include "Data/stocks.h"
+#include "Data/StockView/stockviewreference.h"
 
 namespace Task {
 
-
 ///Команда получения данных по акции
-class LoadStock : public IBaseCommand
+class GetStock : public IBaseCommand
 {
     Q_OBJECT
 
 public:
-    explicit LoadStock(const Data::StockKey &stockKey, const uint minCandleCount_ = 1);
+    using SharedStockVewRef = std::shared_ptr<Data::StockViewReference<QReadLocker>>;
+
+    explicit GetStock(const Data::StockKey &stockKey, const size_t minCandleCount_ = 1);
 
     void setData(SharedInterface &inputData) override;
     SharedInterface &getResult() override;
 
 protected:
     void exec() override;                   //запуск задачи
+    bool removeRange(const Data::Range &existed, const size_t count); //убирает существующий диапазон
+    std::pair<Data::Range, size_t> loadFromDb();               //загружет недостающие свечи из БД
     void createLoadingTasks();              //подготовка интервалов загрузки
     void startNextTask();                   //запрос свечей из подинтервала subRange
+    void createExtraRangeTasks();           //подготовка доп. 2 недельного интервала загрузки
+    void finishTask();                      //завершает задачу
 
 protected slots:
     virtual void taskFinished() override;   //обработка завершения задачи
 
 private:
-    bool extraRangeLoaded;          //производистся загрузка дополнительного 2х недельного интервала
-    uint minCandleCount;            //Минимальное число свечей, которое необходимо загрузить
-    Data::Range existedRange;       //интервал на котором данные уже существуют
-    InterfaceWrapper<Data::Range> range;            //исходный интервал загрузки
-    InterfaceWrapper<Data::Stock> stock;            //список загруженных акций (из БД + от брокера)
+    bool extraRangeLoaded;      //производистся загрузка дополнительного 2х недельного интервала
+    size_t candlesLeft;         //Число свечей, которое осталось загрузить
+    Data::StockKey key;
+
+    InterfaceWrapper<Data::Range> range;                //исходный интервал загрузки
+    InterfaceWrapper<Data::Range> subRange;             //подинтервал для загрузки
+    InterfaceWrapper<SharedStockVewRef> stock; //список загруженных акций (из БД + от брокера)
 };
 
 }
 
-#endif // LOADSTOCK_H
+#endif // GETSTOCK_H

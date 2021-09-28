@@ -5,7 +5,7 @@
 #include "Core/globals.h"
 #include "Axis/priceaxis.h"
 
-#include "Tasks/StockTasks/loadstock.h"
+#include "Tasks/StockTasks/getstock.h"
 
 namespace Plotter {
 
@@ -107,7 +107,7 @@ void ChartScene::loadData(const Data::Range &loadRange) const
 
     //Загружаем свечи
     if (auto [curSeries, ok] = getCurCandleSeries(); ok) {
-        auto *command = TaskManager->createTask<Task::LoadStock>(&range, stockKey, minCandles);
+        auto *command = TaskManager->createTask<Task::GetStock>(&range, stockKey, minCandles);
         command->connect(curSeries.get(), SLOT(loadCandlesFinished()));
     } else
         logCritical << "ChartScene::loadData(); can't get current candle series!";

@@ -78,8 +78,7 @@ bool LoadStockFromBroker::getNextLoadRange()
     if (minCandlesCount > 0 && stock->getCandles().size() >= minCandlesCount)
         return false;
 
-    long candleInterval = stock->key().intervalToSec();
-    if ( subRange.getBegin() < range->getBegin().addSecs(candleInterval) )
+    if ( subRange.getBegin() <= stock->key().prevCandleTime(range->getBegin()) )
         return false;
 
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(stock->key().interval());
@@ -160,10 +159,8 @@ void LoadStockFromBroker::removeIncompleteCandle()
     auto &candles = stock->getCandles();
     Data::Candle &lastCandle = candles.back();
 
-    long candleDuration = stock->key().intervalToSec();
-    QDateTime timeCandleComplite = lastCandle.dateTime().addSecs(candleDuration);
-
-    if (timeCandleComplite > range->getEnd())
+    QDateTime lastCompleteCandle = stock->key().prevCandleTime(QDateTime::currentDateTime());
+    if (lastCandle.dateTime() >= lastCompleteCandle)
         candles.pop_back();
 }
 

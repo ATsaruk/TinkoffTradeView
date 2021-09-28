@@ -32,7 +32,7 @@
 
 #include "Tasks/ibasetask.h"
 #include "Data/range.h"
-#include "Data/Stock/stocklist.h"
+#include "Data/stocks.h"
 
 namespace Task {
 

@@ -7,57 +7,84 @@
 namespace Data {
 
 
+/** @ingroup StockView
+  * @brief Обертка, предоставляющая доступ к свечам из Data::Stock
+  * @param Locker - скласс локера, для Stock.mutex;
+  *
+  * Предоставляет доступ на чтение/запись (в зависимости от локера) к интервалу акции stock, на время жизни обертки
+  * Stock.mutex блокируется по средством указанного локера. */
 template<class Locker = QReadLocker>    //QReadLocker / QWriteLocker
 class StockViewReference : public StockView
 {
+    const Stock &stock; //ссылка на акцию, к которой предоставляется доступ
+    Locker locker;      //локер, блокирующий доступ к акции
+
 public:
-    StockViewReference(const Stock &baseStock, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime())
+    /** @brief Формирует временной интервал range
+      * @param baseStock - акция, к которой предоставляется доступ
+      * @param begin - время первой доступной свечи (lower_bound(begin))
+      * @param end - время за последней доступной свечой (upper_bound(end))
+      * @param minCandlesCount - минимальное количество доступных свечей
+      * @warning правила формирования границ такие же, как у функции: @see Stocks::getCandlesForRead() */
+    StockViewReference(const Stock &baseStock, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime(), const size_t minCandlesCount = 0)
         : stock(baseStock), locker(const_cast<QReadWriteLock*>(&baseStock.mutex))
     {
         range = stock.range();
-        Range newRange = Range(begin, end);
-        range.constrain(newRange);  //обрезаем изначальный диапазон до не более чем заданного
-        //если !newRange.isValid() (диапазон не задан), то constrain не будет иметь эффекта и будет использоваться весь диапазон stock.range()
-    }
+        Range newRange = Range((begin.isValid() ? begin : range.getBegin()), (end.isValid() ? end : range.getEnd()));
+        range.constrain(newRange);  //обрезаем диапазон доступный в переданной акцие до не более чем заданного
 
-    StockViewReference(const Stock &baseStock, const Range &range)
-        : StockViewReference(baseStock, range.getBegin(), range.getEnd()) { }
-
-    std::vector<Candle>::const_iterator begin()
-    {
-        if constexpr (std::is_same_v<Locker, QWriteLocker>) {
-            auto notLessThanBegin = [&](const auto &it){ return it.dateTime() >= range.getBegin(); };
-            const auto &candles = stock.getCandles();
-            return std::find_if(candles.begin(), candles.end(), notLessThanBegin);
+        if (minCandlesCount  > 0) {
+            auto it = upper_bound(range.getEnd());
+            std::advance(it, -minCandlesCount);
+            if (it != stock.getCandles().begin())
+                range.setBegin(it->dateTime());
         }
-        return nullVector.end();
-    }
-    std::vector<Candle>::const_iterator end()
-    {
-        if constexpr (std::is_same_v<Locker, QWriteLocker>) {
-            const auto &candles = stock.getCandles();
-            auto notLessThanEnd = [&](const auto &it){ return it.dateTime() >= range.getEnd(); };
-            return std::find_if(candles.begin(), candles.end(), notLessThanEnd);
-        }
-        return nullVector.end();
     }
 
-    const std::vector<Candle>::const_iterator begin() const
-    {
-        auto notLessThanBegin = [&](const auto &it){ return it.dateTime() >= range.getBegin(); };
-        const auto &candles = stock.getCandles();
-        return std::find_if(candles.begin(), candles.end(), notLessThanBegin);
-    }
-    const std::vector<Candle>::const_iterator end() const
+    ///Возвращает const итератор на элемент, дата которого не меньше чем time
+    ConstDequeIt lower_bound(const QDateTime &time) const override
     {
         const auto &candles = stock.getCandles();
-        auto notLessThanEnd = [&](const auto &it){ return it.dateTime() >= range.getEnd(); };
-        return std::find_if(candles.begin(), candles.end(), notLessThanEnd);
+        auto isNotLessThanTime = [&time](const auto &it){ return it.dateTime() >= time; };
+        return std::find_if(candles.begin(), candles.end(), isNotLessThanTime);
     }
 
-private:
-    const Stock &stock;
-    Locker locker;
+    ///Возвращает const итератор на элемент, дата которого больше чем time
+    ConstDequeIt upper_bound(const QDateTime &time) const override
+    {
+        const auto &candles = stock.getCandles();
+        auto isGeaterThanTime = [&time](const auto &it){ return it.dateTime() > time; };
+        return std::find_if(candles.begin(), candles.end(), isGeaterThanTime);
+    }
+
+    ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
+    DequeIt begin() override
+    {
+        if constexpr (std::is_same_v<Locker, QWriteLocker>)
+            return lower_bound(range.getBegin());
+
+        //для QReadLocker доступен только ConstDequeIt (begin() const)
+        throw std::logic_error("StockViewReference::begin();try begin() with QReadLocker! use begin() const!");
+    }
+
+    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
+    DequeIt end() override
+    {
+        if constexpr (std::is_same_v<Locker, QWriteLocker>)
+            return lower_bound(range.getEnd());
+
+        //для QReadLocker доступен только ConstDequeIt (end() const)
+        throw std::logic_error("StockViewReference::end();try begin() with QReadLocker! use end() const!");
+    }
+
+    ConstDequeIt begin() const override
+    {
+        return lower_bound(range.getBegin());
+    }
+    ConstDequeIt end() const override
+    {
+        return upper_bound(range.getEnd());
+    }
 };
 
 

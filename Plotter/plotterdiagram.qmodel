@@ -509,43 +509,14 @@
                           </DElement>
                          </base-DElement>
                          <object>{f2ce17cb-ff53-471c-a295-4423f5857b60}</object>
-                         <name>CandlesData</name>
+                         <name>SeriesData</name>
                          <pos>x:430;y:-445</pos>
                          <rect>x:-40;y:-30;w:80;h:60</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
+                       <namespace>Plotter</namespace>
                       </DClass>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DAssociation">
-                      <DAssociation>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{0f3f1e6e-f275-433c-b1d0-e4e5d6c3e084}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{d81c1395-669e-4abd-bff8-fb1f4e9a308b}</object>
-                         <a>{eaa93bbf-6430-46b2-8ae6-37fdda9cbb39}</a>
-                         <b>{6f2cb4d2-5007-4aad-8329-b15b485500da}</b>
-                        </DRelation>
-                       </base-DRelation>
-                       <a>
-                        <DAssociationEnd>
-                         <cradinality>1</cradinality>
-                         <navigable>true</navigable>
-                         <kind>2</kind>
-                        </DAssociationEnd>
-                       </a>
-                       <b>
-                        <DAssociationEnd>
-                         <cradinality>*</cradinality>
-                        </DAssociationEnd>
-                       </b>
-                      </DAssociation>
                      </instance>
                     </item>
                     <item>
@@ -614,12 +585,12 @@
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{48e4539e-c8fe-41b4-b845-9d5b2ac83b94}</uid>
+                           <uid>{cacc3547-5856-412b-9b7a-26b2b9af6391}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{9640ae67-b5e1-41ec-a55b-09e2020c27d8}</object>
-                         <a>{6cc2950a-69eb-4429-b70e-341058cb39d2}</a>
-                         <b>{6f2cb4d2-5007-4aad-8329-b15b485500da}</b>
+                         <object>{57b3cb02-24aa-4f8a-96b6-c3b280cfc225}</object>
+                         <a>{6f2cb4d2-5007-4aad-8329-b15b485500da}</a>
+                         <b>{eaa93bbf-6430-46b2-8ae6-37fdda9cbb39}</b>
                         </DRelation>
                        </base-DRelation>
                       </DDependency>
@@ -627,7 +598,7 @@
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1631857001831</last-modified>
+                  <last-modified>1632889028788</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -1329,6 +1300,28 @@
                                                                     </target>
                                                                    </handle>
                                                                   </item>
+                                                                  <item>
+                                                                   <handle>
+                                                                    <uid>{57b3cb02-24aa-4f8a-96b6-c3b280cfc225}</uid>
+                                                                    <target>
+                                                                     <instance type="MDependency">
+                                                                      <MDependency>
+                                                                       <base-MRelation>
+                                                                        <MRelation>
+                                                                         <base-MElement>
+                                                                          <MElement>
+                                                                           <uid>{57b3cb02-24aa-4f8a-96b6-c3b280cfc225}</uid>
+                                                                          </MElement>
+                                                                         </base-MElement>
+                                                                         <a>{e5ed5626-4993-4986-88fe-dda39455a4e1}</a>
+                                                                         <b>{f2ce17cb-ff53-471c-a295-4423f5857b60}</b>
+                                                                        </MRelation>
+                                                                       </base-MRelation>
+                                                                      </MDependency>
+                                                                     </instance>
+                                                                    </target>
+                                                                   </handle>
+                                                                  </item>
                                                                  </qlist>
                                                                 </handles>
                                                                </handles>
@@ -1345,56 +1338,56 @@
                                                              <qlist>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{9fa019db-2df0-4c1a-97e3-39781c046851}</uid>
+                                                                <uid>{7092b277-b5c0-4977-8528-13bbe46a69b0}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-params : CandleParams*</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{962ded58-8bcf-402e-a3c5-ce03891aa7b5}</uid>
+                                                                <uid>{ba9633a7-4737-4049-b7a1-e828a2a36f0f}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-pen : QPen</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{f598ed19-7ef8-4e2a-be0f-4f2532b0006a}</uid>
+                                                                <uid>{4831917a-49cf-4a11-995f-5dcfcbe76b7b}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-brush : QBrush</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{a99ebc7e-6fe3-484e-8ad0-9a04b9e27fc2}</uid>
+                                                                <uid>{d80e373d-7a8e-4145-9b42-9bd454638930}</uid>
                                                                 <type>1</type>
                                                                 <declaration>-candle : Data::Candle</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{90a5fef3-730d-4125-b4db-b49e0de49600}</uid>
+                                                                <uid>{eb87626c-ed15-4736-ab55-bc4332332f14}</uid>
                                                                 <type>2</type>
                                                                 <declaration>+getData()</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{4e28aaa9-e1bd-4def-a544-a68200bbbfda}</uid>
+                                                                <uid>{7f8d7b46-4085-41a5-9e30-4bb173180101}</uid>
                                                                 <type>2</type>
                                                                 <declaration>+update()</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{21cdb0f1-94b3-4d93-8c98-8b539aa10744}</uid>
+                                                                <uid>{59a828e7-c4b9-4900-8949-80a592d07f27}</uid>
                                                                 <type>2</type>
                                                                 <declaration>-boundingRect()</declaration>
                                                                </MClassMember>
                                                               </item>
                                                               <item>
                                                                <MClassMember>
-                                                                <uid>{ce4cff8d-c991-439d-b143-6bf5a8ef2b93}</uid>
+                                                                <uid>{a3b6ee5b-f28c-4800-ab52-88daaf1cad41}</uid>
                                                                 <type>2</type>
                                                                 <declaration>-paint()</declaration>
                                                                </MClassMember>
@@ -1609,28 +1602,6 @@
                                                              </MRelation>
                                                             </base-MRelation>
                                                            </MInheritance>
-                                                          </instance>
-                                                         </target>
-                                                        </handle>
-                                                       </item>
-                                                       <item>
-                                                        <handle>
-                                                         <uid>{9640ae67-b5e1-41ec-a55b-09e2020c27d8}</uid>
-                                                         <target>
-                                                          <instance type="MDependency">
-                                                           <MDependency>
-                                                            <base-MRelation>
-                                                             <MRelation>
-                                                              <base-MElement>
-                                                               <MElement>
-                                                                <uid>{9640ae67-b5e1-41ec-a55b-09e2020c27d8}</uid>
-                                                               </MElement>
-                                                              </base-MElement>
-                                                              <a>{4018b507-c9d5-4c25-a352-47f5df3f6d71}</a>
-                                                              <b>{e5ed5626-4993-4986-88fe-dda39455a4e1}</b>
-                                                             </MRelation>
-                                                            </base-MRelation>
-                                                           </MDependency>
                                                           </instance>
                                                          </target>
                                                         </handle>
@@ -1895,51 +1866,10 @@
                     <uid>{f2ce17cb-ff53-471c-a295-4423f5857b60}</uid>
                    </MElement>
                   </base-MElement>
-                  <name>CandlesData</name>
-                  <relations>
-                   <handles>
-                    <handles>
-                     <qlist>
-                      <item>
-                       <handle>
-                        <uid>{d81c1395-669e-4abd-bff8-fb1f4e9a308b}</uid>
-                        <target>
-                         <instance type="MAssociation">
-                          <MAssociation>
-                           <base-MRelation>
-                            <MRelation>
-                             <base-MElement>
-                              <MElement>
-                               <uid>{d81c1395-669e-4abd-bff8-fb1f4e9a308b}</uid>
-                              </MElement>
-                             </base-MElement>
-                             <a>{f2ce17cb-ff53-471c-a295-4423f5857b60}</a>
-                             <b>{e5ed5626-4993-4986-88fe-dda39455a4e1}</b>
-                            </MRelation>
-                           </base-MRelation>
-                           <a>
-                            <MAssociationEnd>
-                             <cardinality>1</cardinality>
-                             <navigable>true</navigable>
-                             <kind>2</kind>
-                            </MAssociationEnd>
-                           </a>
-                           <b>
-                            <MAssociationEnd>
-                             <cardinality>*</cardinality>
-                            </MAssociationEnd>
-                           </b>
-                          </MAssociation>
-                         </instance>
-                        </target>
-                       </handle>
-                      </item>
-                     </qlist>
-                    </handles>
-                   </handles>
-                  </relations>
+                  <name>SeriesData</name>
                  </MObject>
                 </base-MObject>
+                <namespace>Plotter</namespace>
                </MClass>
               </instance>
              </target>

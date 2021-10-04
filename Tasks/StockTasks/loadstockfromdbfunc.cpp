@@ -1,4 +1,4 @@
-/** @todo !!написать комментарий для чего в LoadStockFromDbFunc::exec() в конце загружем 1 свечу
+/** @todo ! комментарий для чего в LoadStockFromDbFunc::exec() в конце загружем 1 свечу
   *
   */
 
@@ -9,15 +9,14 @@
 
 namespace Task {
 
-LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount_)
+LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount)
     : IFunction("LoadStockFromDbFunc")
 {
     stock->setStockKey(stockKey);
-    minCandlesCount = minCandlesCount_;
+    this->minCandlesCount = minCandlesCount;
 }
 
-/* Загружает данные из заданного диапазона, но не менее minCandlesCount,
- * и дата крайней левой свечи должна быть меньше или равно началу заданного диапазона */
+//Загружает данные из заданного диапазона, но не менее minCandlesCount
 void LoadStockFromDbFunc::exec()
 {
     if (!loadRange->isValid()) {
@@ -34,6 +33,9 @@ void LoadStockFromDbFunc::exec()
         //Загружаем одну свечу за диапазоном, это нужня для "неразрывности" данных
         DB::StocksQuery::loadCandles(stock, QDateTime(), loadRange->getBegin(), 1);
     }
+
+    //Свечи загружаются отсортированными по убыванию, и так нужно для loadByCount()
+    std::reverse(stock->getCandles().begin(), stock->getCandles().end());
 }
 
 void LoadStockFromDbFunc::setData(SharedInterface &inputData)
@@ -50,12 +52,11 @@ SharedInterface &LoadStockFromDbFunc::getResult()
 
 void LoadStockFromDbFunc::loadByCount()
 {
-    //Дату начала оставляем пустой, значит на неё не будет накладываться ограничения
-    QDateTime begin = QDateTime();
     QDateTime end = stock->count() == 0 ? loadRange->getBegin() : stock->range().getEnd();
     uint remainsCount = minCandlesCount - stock->count();
 
-    DB::StocksQuery::loadCandles(stock, begin, end, remainsCount);
+    //Дату начала оставляем пустой, значит на неё не будет накладываться ограничения
+    DB::StocksQuery::loadCandles(stock, QDateTime(), end, remainsCount);
 }
 
 }

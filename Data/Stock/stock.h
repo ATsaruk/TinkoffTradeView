@@ -1,7 +1,7 @@
 #ifndef STOCK_H
 #define STOCK_H
 
-#include <vector>
+#include <deque>
 #include <QReadWriteLock>
 
 #include "stockkey.h"
@@ -38,12 +38,12 @@ public:
     ///Добавляет свечи appendCandles в список candles
     Range append(Stock &stock);
 
-    std::vector<Candle>& getCandles();
-    const std::vector<Candle>& getCandles() const;
+    std::deque<Candle> &getCandles();
+    const std::deque<Candle> &getCandles() const;
 
 private:
     StockKey stockKey;
-    std::vector<Candle> candles;
+    std::deque<Candle> candles;
 };
 
 }

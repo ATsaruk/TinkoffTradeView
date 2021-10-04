@@ -1,5 +1,5 @@
-#ifndef CANDLESDATA_H
-#define CANDLESDATA_H
+#ifndef SERIESDATA_H
+#define SERIESDATA_H
 
 #include <QPen>
 #include <QBrush>
@@ -15,10 +15,10 @@ class ChartSeries;
 namespace Plotter {
 
 ///Класс содержащий данные для отрисовки свечной информации, а так же саму свечную информацию
-class CandlesData
+class SeriesData
 {
 public:
-    CandlesData();
+    SeriesData();
 
 private:
     long xScale = 0;                //Масштаб по оси Х
@@ -32,9 +32,10 @@ private:
     QBrush bearBrush, bullBrush;
 
     Data::StockKey stockKey;                //Ключи акции для которой предназначены данные
-    std::map<int32_t, QDateTime> data;      //Список позиция свечи + её дата
+    std::map<int32_t, QDateTime> timeMap;      //Список позиция свечи + её дата
 
     friend class Axis;
+    friend class CandlesList;
     friend class CandleItem;
     friend class ChartSeries;
     friend class CandlesSeries;
@@ -42,4 +43,4 @@ private:
 
 }
 
-#endif // CANDLESDATA_H
+#endif // SERIESDATA_H

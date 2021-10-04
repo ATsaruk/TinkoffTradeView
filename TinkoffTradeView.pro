@@ -29,15 +29,15 @@ SOURCES += \
     Data/range.cpp \
     Data/stocks.cpp \
     DataBase/Query/stocksquery.cpp \
-    DataBase/idatabase.cpp \
     DataBase/postgresql.cpp \
     Plotter/Axis/axis.cpp \
     Plotter/Axis/dateaxis.cpp \
     Plotter/Axis/numericaxis.cpp \
     Plotter/Axis/priceaxis.cpp \
     Plotter/Groups/Candles/candleitem.cpp \
-    Plotter/Groups/Candles/candlesdata.cpp \
+    Plotter/Groups/Candles/candleslist.cpp \
     Plotter/Groups/Candles/candlesseries.cpp \
+    Plotter/Groups/Candles/seriesdata.cpp \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
     Plotter/chartscene.cpp \
@@ -54,7 +54,7 @@ SOURCES += \
 HEADERS += \
     Broker/Tinkoff/request.h \
     Broker/Tinkoff/tinkoff.h \
-    Broker/api.h \
+    Broker/ibroker.h \
     Core/Logs/filelogger.h \
     Core/Logs/ilogger.h \
     Core/Logs/imultilogger.h \
@@ -68,7 +68,6 @@ HEADERS += \
     Data/StockView/stockview.h \
     Data/StockView/stockviewglobal.h \
     Data/StockView/stockviewreference.h \
-    Data/istocks.h \
     Data/range.h \
     Data/stocks.h \
     DataBase/Query/stocksquery.h \
@@ -79,8 +78,9 @@ HEADERS += \
     Plotter/Axis/numericaxis.h \
     Plotter/Axis/priceaxis.h \
     Plotter/Groups/Candles/candleitem.h \
-    Plotter/Groups/Candles/candlesdata.h \
+    Plotter/Groups/Candles/candleslist.h \
     Plotter/Groups/Candles/candlesseries.h \
+    Plotter/Groups/Candles/seriesdata.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
     Plotter/chartscene.h \

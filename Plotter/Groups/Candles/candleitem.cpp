@@ -8,15 +8,18 @@
 
 namespace Plotter {
 
-CandleItem::CandleItem(const int32_t &index, Data::Candle *candle, std::shared_ptr<CandlesData> candleParams) noexcept
-    : pos(index), data(candle), params(candleParams)
+CandleItem::CandleItem(std::shared_ptr<SeriesData> candleParams)
+    : params(candleParams)
 {
-    setToolTip(QString("%1").arg(data->dateTime().toString()));
+    data = nullptr;
+    params = nullptr;
 }
 
-void CandleItem::setCandle(Data::Candle *candle)
+void CandleItem::set(const int32_t &index, Data::Candle *candle)
 {
+    pos = index;
     data = candle;
+    setToolTip(QString("%1").arg(data->dateTime().toString()));
 }
 
 const int32_t &CandleItem::getIndex() const
@@ -24,8 +27,16 @@ const int32_t &CandleItem::getIndex() const
     return pos;
 }
 
+const Data::Candle& CandleItem::getCandle() const
+{
+    return *data;
+}
+
 void CandleItem::updatePos()
 {
+    if (params == nullptr)
+        return;
+
     setX(params->xScale * pos);
     setY(params->yScale * data->high() * -1.);
 }
@@ -33,6 +44,9 @@ void CandleItem::updatePos()
 QRectF CandleItem::boundingRect() const
 {
     QRectF rect;
+    if (params == nullptr || data == nullptr)
+        return rect;
+
     rect.setLeft(0);
     rect.setTop (0);
     rect.setWidth (params->xScale);
@@ -43,6 +57,9 @@ QRectF CandleItem::boundingRect() const
 
 void CandleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if (params == nullptr || data == nullptr)
+        return;
+
     //Устанавливаем инструменты для рисования
     bool isBearCandle = data->open() > data->close();
 

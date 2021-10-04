@@ -15,14 +15,10 @@
 #include <QObject>
 
 #include "../chartseries.h"
-#include "candleitem.h"
-
+#include "candleslist.h"
 #include "Data/range.h"
-#include "Data/Stock/candle.h"
 
 namespace Plotter {
-
-using CandleItems = std::map<int32_t, std::shared_ptr<CandleItem>>;
 
 class CandlesSeries : public ChartSeries
 {
@@ -34,28 +30,31 @@ public:
 
 public slots:
     void repaint() override;
-    //void loadCandlesFinished();
-
-signals:
-    void requestData(const Data::Range &);
 
 protected:
     void clear() override;
 
+    void updateVisibleCandles();
     void updateScaleByXAxis();
     void updateScaleByYAxis();
     void updatePriceRange();
     void updateCandlesPos();
 
-    void updateData();
-    void setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator);
+    void requestCandles(const Data::Range &range, const size_t requiredCount);
+    void popFrontCandles(const long long count);
+    void popBackCandles(const long long count);
+
+    //void setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator);
 
     ///Добавляем загруженные свечи
     /*void addCandles(Data::Candles &&candles);
     ///Удалям свечи, которые уже существуют
     void removeExistedCandles(Data::Candles &candles);*/
 
-    const QDateTime getDateByIndex(const int32_t index);
+    //const QDateTime getDateByIndex(const int32_t index);
+
+protected slots:
+    void loadCandlesFinished();
 
 private:
     uint drawWait;
@@ -63,9 +62,9 @@ private:
     bool isDataRequested = false;
     bool isUpdatePosRequered = false;
 
-    CandleItems candleItems;
-    CandleItems::iterator beginCandle;
-    CandleItems::iterator endCandle;
+    ItemType *unset = nullptr;
+    CandlesList candles;
+    CandlesList unused;
 };
 
 }

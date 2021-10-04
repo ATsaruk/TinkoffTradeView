@@ -2,23 +2,22 @@
  * Предварительно рекомендую ознакомиться с классами IBaseTask и CustomCommand
  *
  * Есть 2 пути регистрации задачи:
- * 1. Регистрация комманды/задачи для которой создан класс, тут будет реальный пример запуска задачи CommanLoadStock:
- *     auto *command = TaskManager::get()->addTask <CommanLoadStock> (stockKey, beginDate, endDate, minCandleCount);
+ * 1. Регистрация комманды/задачи для которой создан класс, тут будет реальный пример запуска задачи GetStock:
+ *     auto *command = TaskManager::get()->addTask <GetStock> (stockKey, beginDate, endDate, minCandleCount);
  *     или с учетом #define NEW_TASK TaskManager::get()->addTask
- *     auto *command = NEW_TASK <CommanLoadStock> (stockKey, beginDate, endDate, minCandleCount);
- *     connect(command, &CommandLoadStock::finished, this, &ChartCandlesGroup::addCandles);
+ *     auto *command = NEW_TASK <GetStock> (stockKey, beginDate, endDate, minCandleCount);
+ *     connect(command, &GetStock::finished, this, &ChartCandlesGroup::addCandles);
  *
  * 2. Если команда сформирована "находу", то первы вариант не подходит, то второй вариант:
  *     auto *command = new CustomCommand("LoadStock");
- *     command->addTask<TaskLoadStockFromDb>(stockKey, beginDate, endDate, minCandleCount);
- *     command->addTask<TaskLoadStocksFromBroker>(stockKey, beginDate, endDate, minCandleCount);
+ *     command->addTask<LoadStockFromDbFunc>(stockKey, beginDate, endDate, minCandleCount);
+ *     command->addTask<LoadStocksFromBroker>(stockKey, beginDate, endDate, minCandleCount);
  *     connect(command, &CommandLoadStock::finished, this, &ChartCandlesGroup::addCandles);
  *     TaskManager::get()->registerTask(command);
  *
- * TaskManager при получении задачи сразу пытается её запустить, исключением являются ресурсоемкие задачи heavyTasks
- * ресурсоемких задач одновременно может быть запущенно не более getMaxExecTask() (функция вернет количество ядер в системе)
- * При завершении ресурсоемкой задачи будет запущена следующая задача.
- */
+ * TaskManager при получении задачи сразу пытается её запустить, конечно если текущее количество задач не больше чем
+ * maxTaskCount, если больше, то запуск производится про принципу очереди FIFO. */
+
 #ifndef MANAGER_H
 #define MANAGER_H
 
@@ -29,27 +28,29 @@
 namespace Task {
 
 
-/** @brief Класс управляющий задачами
-  * @details Класс предназначен для запуска других задач/комманд. Что бы задачу можно было запустить с помощью
-  * addTask<TaskClass>(args...), у задачи должна быть реализована функция setData(...).
-  */
+/** @ingroup Task
+  * @brief Класс управляющий задачами
+  * @details Класс предназначен для запуска задач/комманд наследников IBaseTask.
+  * @see IBaseTask, IBaseCommand */
 class Manager : public QObject
 {
 public:
     explicit Manager(QObject *parent = nullptr);
     ~Manager();
 
-    //Регистрирует задачу
+    ///Регистрирует задачу/команду, и если возможно сразу её запускает
     void registerTask(IBaseTask *newTask);
 
-    /* Создаёт новую задачу
-    *  T - класс добавляемой задачи, наследник IFunction
-    *  inputData - входные данные необходимые для функции setData задачи
-    *  N...args - аргументы необходимые для функции конструктора задачи
-    *  Возвращает ссылку на созданную задачу (например для подключения к сигналу finished)
-    *  Пример:
-    *    Task::Manager::get()->createTask <LoadStock> (rangeInterface, stockKey, candleCount);
-    */
+    /** @brief Создаёт новую задачу
+      * @param T - класс добавляемой задачи, наследник IFunction
+      * @param inputData - входные данные необходимые для функции setData задачи
+      * @param args - аргументы необходимые для функции конструктора задачи
+      * @return Возвращает ссылку на созданную задачу (например для подключения к сигналу finished)
+      * Пример:
+      *  С учетом globals.h: #define TaskManager Core::Globals::get().taskManager
+      *    TaskManager->createTask <LoadStock> (rangeInterface, stockKey, candleCount);
+      *  или с учетом globals.h: #define NEW_TASK Core::Globals::get().taskManager->createTask
+      *    NEW_TASK <LoadStock> (rangeInterface, stockKey, candleCount); */
     template<class T, typename... N>
     std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
     createTask(SharedInterface &inputData, N ... args)
@@ -63,23 +64,25 @@ public:
     }
 
 signals:
+    ///Сигнал остановки всех задач
     void stopAll();
 
 protected:
+    ///запуск следующей задачи в очереди
     void runNextTask();
 
 protected slots:
-    //Обработывет завершение работы задачи
+    ///Обработывет завершение работы задачи
     virtual void taskFinished();
 
 private:
     Q_OBJECT
 
     QRecursiveMutex mutex;
-    QQueue<IBaseTask*> taskList;  //очередь задач на запуск
+    QQueue<IBaseTask*> taskList;    //очередь задач на запуск
 
-    const uint16_t maxTaskCount;
-    uint16_t taskCount = 0;   //общее кол-во запущенных задач
+    const uint16_t maxTaskCount;    //максимальное число одновременно работающих задач
+    uint16_t taskCount = 0;         //текущее кол-во запущенных задач
 };
 
 }

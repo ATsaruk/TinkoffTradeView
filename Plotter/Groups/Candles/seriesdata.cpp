@@ -1,11 +1,11 @@
-#include "candlesdata.h"
+#include "seriesdata.h"
 
 #include "Core/globals.h"
 
 namespace Plotter {
 
 
-CandlesData::CandlesData()
+SeriesData::SeriesData()
 {
     bearPen   = Glo.conf->getValue("ChartPlotter/CandleItem/bearPen", QColor(235, 77, 92));
     bearBrush = Glo.conf->getValue("ChartPlotter/CandleItem/bearBrush", QColor(235, 77, 92));

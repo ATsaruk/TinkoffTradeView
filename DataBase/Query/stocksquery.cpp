@@ -47,12 +47,12 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
         return ;
 
     QString interval = stock.key().intervalToString();
-    QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(stock.key().figi(), interval);
+    QString load = QString("SELECT * FROM stocks WHERE figi = '%1' and interval = '%2'").arg(stock.key().figi(), interval);
 
     if (begin.isValid())
-        load += QString(" and time>='%1'").arg(begin.toString("dd.MM.yyyy hh:mm:ss"));
+        load += QString(" and time >= '%1'").arg(begin.toString("dd.MM.yyyy hh:mm:ss"));
     if (end.isValid()) {
-        load += QString(" and time<'%1'").arg(end.toString("dd.MM.yyyy hh:mm:ss"));
+        load += QString(" and time < '%1'").arg(end.toString("dd.MM.yyyy hh:mm:ss"));
         /* time<'%1' потому что если мы загружаем например 15 минутные свечи с 9:00:00 до 10:00:00,
          * свеча на 10:00:00 она относится к диапазону 10:00:00 - 10:15:00 */
     }
@@ -68,15 +68,14 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
                        .arg(query.lastError().databaseText(), query.lastError().driverText());
     }
 
-    auto data = stock.getCandles();
-    data.reserve(data.size() + query.size());
+    auto &candles = stock.getCandles();
     while (query.next()) {
-        data.emplace_back( query.value(2).toDateTime(),   //dateTime
-                            query.value(3).toReal(),       //open
-                            query.value(4).toReal(),       //close
-                            query.value(5).toReal(),       //high
-                            query.value(6).toReal(),       //low
-                            query.value(7).toLongLong() ); //volume
+        candles.emplace_back( query.value(2).toDateTime(),   //dateTime
+                              query.value(3).toReal(),       //open
+                              query.value(4).toReal(),       //close
+                              query.value(5).toReal(),       //high
+                              query.value(6).toReal(),       //low
+                              query.value(7).toLongLong() ); //volume
     }
 }
 

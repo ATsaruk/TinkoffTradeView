@@ -2,8 +2,6 @@
 
 namespace Data {
 
-constexpr quint64 SECS_IN_ONE_DAY   = 24 * 3600;
-
 Range::Range()
 {
 
@@ -66,7 +64,7 @@ bool Range::isValid() const
 {
     if (!begin.isValid() || !end.isValid())
         return false;
-    else if (begin >= end)
+    else if (begin > end)
         return false;
 
     return true;
@@ -75,11 +73,6 @@ bool Range::isValid() const
 Data::Range::operator bool() const
 {
     return isValid();
-}
-
-bool Range::operator !() const
-{
-    return  !isValid();
 }
 
 qint64 Range::toSec() const
@@ -98,36 +91,36 @@ bool Range::contains(const QDateTime &date) const
     return begin <= date && date <= end;
 }
 
-bool Range::contains(const Range &range) const
+bool Range::contains(const Range &other) const
 {
-    if (!isValid() || !range.isValid())
+    if (!isValid() || !other.isValid())
         return false;
 
-    return contains(range.begin) && contains(range.end);
+    return contains(other.begin) && contains(other.end);
 }
 
-bool Range::isIntersected(const Range &range) const
+bool Range::isIntersected(const Range &other) const
 {
-    if (!isValid() || !range.isValid())
+    if (!isValid() || !other.isValid())
         return false;
 
-    return !(begin > range.end || end < range.begin);
+    return contains(other.begin) || contains(other.end);
 }
 
-bool Range::operator >(const Range &range) const
+bool Range::operator >(const Range &other) const
 {
-    if (!isValid() || !range.isValid())
+    if (!isValid() || !other.isValid())
         return false;
 
-    return begin > range.getEnd();
+    return begin > other.getEnd();
 }
 
-bool Range::operator <(const Range &range) const
+bool Range::operator <(const Range &other) const
 {
-    if (!isValid() || !range.isValid())
+    if (!isValid() || !other.isValid())
         return false;
 
-    return end < range.getBegin();
+    return end < other.getBegin();
 }
 
 void Range::setBegin(const QDateTime &begin_)
@@ -154,68 +147,57 @@ void Range::setRange(const QDateTime &date, const long &duration)
     }
 }
 
-void Range::addSecs(const long &secs)
-{
-    displace(secs, secs);
-}
-
-void Range::addDays(const long &days)
-{
-    long secs = days * SECS_IN_ONE_DAY;
-    displace(secs, secs);
-}
-
-void Range::displace(const long &beginSecs, const long &endSecs)
+void Range::addSecs(const long secs)
 {
     if (!isValid())
         return;
 
-    begin = begin.addSecs(beginSecs);
-    end = end.addSecs(endSecs);
+    begin = begin.addSecs(secs);
+    end = end.addSecs(secs);
 }
 
-void Range::constrain(const Range &range)
+void Range::constrain(const Range &other)
 {
-    if (!isValid() || !range.isValid())
+    if (!isValid() || !other.isValid())
         return;
 
-    if (begin < range.begin)
-        begin = range.begin;
+    if (begin < other.begin)
+        begin = other.begin;
 
-    if (end > range.end)
-        end = range.end;
+    if (end > other.end)
+        end = other.end;
 }
 
-void Range::remove(const Range &range)
+void Range::remove(const Range &other)
 {
-    if (!isIntersected(range))
+    if (!isIntersected(other))
         return; //диапазоны не пересекаются
 
-    if (begin < range.begin )
-        end = range.begin;
+    if (begin < other.begin )
+        end = other.begin;
     else
-        begin = range.end;
+        begin = other.end;
 }
 
-Range Range::remove(const Range &range) const
+Range Range::remove(const Range &other) const
 {
-    if (!isIntersected(range))
+    if (!isIntersected(other))
         return Range(); //диапазоны не пересекаются
 
     Range result = *this;
-    if (result.begin < range.begin )
-       result.end = range.begin;
+    if (result.begin < other.begin )
+       result.end = other.begin;
     else
-        result.begin = range.end;
+        result.begin = other.end;
 
     return result;
 }
 
-void Range::extend(const Range &range)
+void Range::extend(const Range &other)
 {
-    if (isValid() && range.isValid()) {
-        begin = std::min(begin, range.begin);
-        end = std::max(end, range.end);
+    if (isValid() && other.isValid()) {
+        begin = std::min(begin, other.begin);
+        end = std::max(end, other.end);
     }
 }
 

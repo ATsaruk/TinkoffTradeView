@@ -50,7 +50,7 @@
                          <object>{669fb42c-8435-46b6-9589-e56c9b74218c}</object>
                          <context>Stock</context>
                          <name>IStocks</name>
-                         <pos>x:160;y:-485</pos>
+                         <pos>x:160;y:-490</pos>
                          <rect>x:-80;y:-85;w:160;h:170</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -433,7 +433,7 @@
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1632638846374</last-modified>
+                  <last-modified>1633144497831</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -532,21 +532,21 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{231957be-8522-49a8-87b3-e0dbabdea211}</uid>
+                                          <uid>{2276c54a-0111-44e5-8cba-8608a78d0fd4}</uid>
                                           <type>1</type>
                                           <declaration>-friend class StockViewGlobal</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{a03ac539-f25f-4451-a90b-34c4c74cb772}</uid>
+                                          <uid>{c0026e3e-978c-458f-b499-6eacdd3f9ab1}</uid>
                                           <type>1</type>
                                           <declaration>+signal: newCandles</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{8aba4bcd-5d82-4507-8b12-1e6f41111399}</uid>
+                                          <uid>{d2129543-eb7a-47ff-b6fa-47f438fa49d2}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>+getCandle()</declaration>
@@ -554,7 +554,7 @@
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{27a142e3-1ca7-47fd-868f-2145848f4a94}</uid>
+                                          <uid>{29c0f99b-0ae6-4f72-b12d-4327df1e360f}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>+checkCandles()</declaration>
@@ -562,7 +562,7 @@
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{bc9a9544-d72a-48b6-8b06-b0de671e3ffd}</uid>
+                                          <uid>{a52a1578-ba60-41e6-9de6-5009e4e1c2cf}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>+insert()</declaration>
@@ -570,7 +570,7 @@
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{334a02ee-4db9-492d-b4a5-83d898244ced}</uid>
+                                          <uid>{ab5137bb-ba5e-44bf-8557-e5dae34d657e}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>-getCandlesForRead()</declaration>

@@ -5,29 +5,31 @@
 namespace Data {
 
 
-StockViewGlobal::StockViewGlobal(const StockKey &key, const QDateTime &begin, const QDateTime &end)
+StockViewGlobal::StockViewGlobal(const StockKey &key, const QDateTime &begin, const QDateTime &end, const size_t minCandlesCount)
 {
-    stock = Glo.stocks->getCandlesForRead(key, begin, end);
+    stock = Glo.stocks->getCandlesForRead(key, begin, end, minCandlesCount);
     range = stock->getRange();
 }
 
-StockViewGlobal::StockViewGlobal(const StockKey &key, const Range &range)
-    : StockViewGlobal(key, range.getBegin(), range.getEnd())
+StockView::ConstDequeIt StockViewGlobal::lower_bound(const QDateTime &time) const
 {
+    if (!range.isValid())
+        return nullVector.end();
 
+    auto isNotLessThanTime = [&time](const auto &it){ return it.dateTime() >= time; };
+    return std::find_if(stock->begin(), stock->end(), isNotLessThanTime);
 }
 
-std::vector<Candle>::const_iterator StockViewGlobal::begin()
+StockView::ConstDequeIt StockViewGlobal::upper_bound(const QDateTime &time) const
 {
-    return nullVector.end();
+    if (!range.isValid())
+        return nullVector.end();
+
+    auto isGreaterThanTime = [&time](const auto &it){ return it.dateTime() > time; };
+    return std::find_if(stock->begin(), stock->end(), isGreaterThanTime);
 }
 
-std::vector<Candle>::const_iterator StockViewGlobal::end()
-{
-    return nullVector.end();
-}
-
-const std::vector<Candle>::const_iterator StockViewGlobal::begin() const
+std::deque<Candle>::iterator StockViewGlobal::begin()
 {
     if (!range.isValid())
         return nullVector.end();
@@ -36,12 +38,30 @@ const std::vector<Candle>::const_iterator StockViewGlobal::begin() const
     return std::find_if(stock->begin(), stock->end(), notLessThanBegin);
 }
 
-const std::vector<Candle>::const_iterator StockViewGlobal::end() const
+std::deque<Candle>::iterator StockViewGlobal::end()
 {
     if (!range.isValid())
         return nullVector.end();
 
-    auto notLessThanEnd = [&](const auto &it){ return it.dateTime() >= range.getEnd(); };
+    auto notLessThanEnd = [&](const auto &it){ return it.dateTime() > range.getEnd(); };
+    return std::find_if(stock->begin(), stock->end(), notLessThanEnd);
+}
+
+StockView::ConstDequeIt StockViewGlobal::begin() const
+{
+    if (!range.isValid())
+        return nullVector.end();
+
+    auto notLessThanBegin = [&](const auto &it){ return it.dateTime() >= range.getBegin(); };
+    return std::find_if(stock->begin(), stock->end(), notLessThanBegin);
+}
+
+StockView::ConstDequeIt StockViewGlobal::end() const
+{
+    if (!range.isValid())
+        return nullVector.end();
+
+    auto notLessThanEnd = [&](const auto &it){ return it.dateTime() > range.getEnd(); };
     return std::find_if(stock->begin(), stock->end(), notLessThanEnd);
 }
 

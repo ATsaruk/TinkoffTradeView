@@ -37,6 +37,11 @@ void Stock::setStockKey(const StockKey &key)
     stockKey = key;
 }
 
+const StockKey &Stock::key() const
+{
+    return stockKey;
+}
+
 Range Stock::range() const
 {
     if (candles.empty())
@@ -59,7 +64,7 @@ std::optional<const Candle*> Stock::find(const QDateTime &time) const
 
 Range Stock::append(Stock &stock)
 {
-    if (stock.candles.empty())    ///@todo !отладить
+    if (stock.candles.empty())
         return Range();
 
     Range newRange(stock.candles.begin()->dateTime(), stock.candles.rbegin()->dateTime());
@@ -74,36 +79,29 @@ Range Stock::append(Stock &stock)
 
     //Удаляем свечи, которые находятся вне диапазона newRange
     const auto &outOfRange = [&newRange](const auto &it) {
-        return newRange.contains(it.dateTime());
+        return !newRange.contains(it.dateTime());
     };
     auto begin = std::remove_if(stock.candles.begin(), stock.candles.end(), outOfRange);
     stock.candles.erase(begin, stock.candles.end());
 
-    if (newRange > existedRange) {
-        ///@todo !!сравнить производительность с std::merge
-        candles.reserve(candles.size() + stock.candles.size());
-        std::move(stock.candles.begin(), stock.candles.end(), candles.end());
-    } else if (newRange < existedRange) {
-        stock.candles.reserve(candles.size() + stock.candles.size());
-        std::move(candles.begin(), candles.end(), stock.candles.end());
-        candles.swap(stock.candles);
-    } else {
-        //На всякий случай, такого быть не должно!
+    if (newRange > existedRange)    ///@todo !сравнить производительность с std::merge
+        std::move(stock.candles.begin(), stock.candles.end(), std::back_inserter(candles));
+     else if (newRange < existedRange)
+        std::move(stock.candles.rbegin(), stock.candles.rend(), std::front_inserter(candles));
+     else   //На всякий случай, такого быть не должно!
         logCritical << QString("Stock::appendCandles();%1;%2;%3;%4")
                        .arg(newRange.getBegin().toString()).arg(newRange.getEnd().toString())
                        .arg(existedRange.getBegin().toString()).arg(existedRange.getEnd().toString());
-    }
 
     return newRange;
 }
 
-std::vector<Candle> &Stock::getCandles()
+std::deque<Candle> &Stock::getCandles()
 {
-    ///@todo !!паттерн visitor?
     return candles;
 }
 
-const std::vector<Candle> &Stock::getCandles() const
+const std::deque<Candle> &Stock::getCandles() const
 {
     return candles;
 }

@@ -45,6 +45,9 @@ public:
     ///Преобразует значение interval в строку
     QString intervalToString() const;
 
+    ///Возвращает количество секунд в отрезке времени interval
+    long candleLenght() const;
+
     QDateTime prevCandleTime(const QDateTime &time) const;
     QDateTime nextCandleTime(const QDateTime &time) const;
 
@@ -64,9 +67,6 @@ public:
     friend bool operator== (const StockKey &c1, const StockKey &c2) { return ( (c1._figi == c2._figi) && (c1._interval == c2._interval) ); }
     friend bool operator!= (const StockKey &c1, const StockKey &c2) { return !(c1 == c2); }
 
-protected:
-    ///Возвращает количество секунд в отрезке времени interval
-    long intervalToSec() const;
 
 private:
     QString _figi;             //ID для запроса свечи через OpenAPI Tinkoff

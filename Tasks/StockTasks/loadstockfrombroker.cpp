@@ -10,8 +10,8 @@
 
 namespace Task {
 
-LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey, const uint minCandlesCount_)
-    : IBaseTask("LoadStockFromBroker"), minCandlesCount(minCandlesCount_)
+LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey)
+    : IBaseTask("LoadStockFromBroker")
 {
     stock->setStockKey(stockKey);
 }
@@ -48,7 +48,7 @@ void LoadStockFromBroker::exec()
     subRange.setRange(range->getEnd(), -maxLoadRange);
     subRange.constrain(range);
 
-    connect(Glo.broker.data(), &Broker::Api::getResopnse, this, &LoadStockFromBroker::onResponse);
+    connect(Glo.broker.data(), &Broker::IBroker::getResopnse, this, &LoadStockFromBroker::onResponse);
 
     if (!sendRequest())
         finishTask();
@@ -56,7 +56,7 @@ void LoadStockFromBroker::exec()
 
 bool LoadStockFromBroker::sendRequest()
 {
-    if (isStopRequested)
+    if (isStopRequested || !subRange.isValid())
         return false;
 
     if (!Glo.broker->loadCandles(stock->key(), subRange))
@@ -75,9 +75,6 @@ void LoadStockFromBroker::onResponse(QByteArray answer)
 
 bool LoadStockFromBroker::getNextLoadRange()
 {
-    if (minCandlesCount > 0 && stock->getCandles().size() >= minCandlesCount)
-        return false;
-
     if ( subRange.getBegin() <= stock->key().prevCandleTime(range->getBegin()) )
         return false;
 
@@ -122,9 +119,8 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
     QJsonArray candlesArray = payload.value("candles").toArray();
 
     auto &candles = stock->getCandles();
-    candles.reserve(candles.size() + candlesArray.size());
     for (const auto &it: candlesArray)
-        candles.emplace_back( Data::Candle::fromJson(it.toObject()) );
+        candles.push_back( Data::Candle::fromJson(it.toObject()) );
 
     return true;
 }

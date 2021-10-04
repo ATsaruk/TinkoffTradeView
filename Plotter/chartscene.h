@@ -36,10 +36,6 @@ protected:
     ///Возвращает ось даты (ось Х)
     DateAxis* getDateAxis() const;
 
-protected slots:
-    ///Создает задачу на загрузку данных из диапазона loadRange
-    void loadData(const Data::Range &loadRange) const;
-
 private:
     Data::StockKey stockKey;
     std::vector<std::shared_ptr<CandlesSeries>> series;

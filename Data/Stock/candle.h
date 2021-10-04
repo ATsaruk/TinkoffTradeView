@@ -14,7 +14,7 @@ namespace Data {
 class Candle
 {
 public:
-    Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const uint volume_)
+    Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const long long volume_)
         : _dateTime(date_), _open(open_), _close(close_), _high(high_), _low(low_), _volume(volume_) { }
     Candle(Candle &&) noexcept = default;
     Candle(const Candle &) = default;
@@ -26,7 +26,7 @@ public:
     const float& close() const;
     const float& high() const;
     const float& low() const;
-    const long& volume() const;
+    const long long& volume() const;
 
     /** @brief Заполняет данные по свечи из Json объекта
       * @param[OUT] candle структура свечной информации, в которую будет помещен результат
@@ -47,7 +47,7 @@ private:
     float _close;        ///<цена закрытия
     float _high;         ///<максимальная цена
     float _low;          ///<минимальная цена
-    long _volume;        ///<объем торгов
+    long long _volume;        ///<объем торгов
 };
 
 }

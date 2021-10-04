@@ -20,24 +20,24 @@ const Range StockView::getRange() const
 
 size_t StockView::size() const
 {
-    return std::size(*this);    //число элементов от [this->begin...this->end)
+    return std::count_if(begin(), end(), [](const auto &it){return true;Q_UNUSED(it)});
 }
 
 std::pair<const Candle*, bool> StockView::operator [](size_t index)
 {
-    for (auto &it : *this)    //перебираем все свечи от [this->begin...this->end) (не включая end)
-        if (index-- == 0)           //можно было создать переменную и инкрементировать её, это тоже самое
-            return std::make_pair(&it, true);
-
+    if (index < size()) {
+        auto &candle = *(begin() + index);
+        return std::make_pair(&candle, true);
+    }
     return std::make_pair(&nullVector.front(), false);
 }
 
 std::pair<const Candle&, bool> StockView::operator [](size_t index) const
 {
-    for (const auto &it : *this)    //перебираем все свечи от [this->begin...this->end) (не включая end)
-        if (index-- == 0)           //можно было создать переменную и инкрементировать её, это тоже самое
-            return std::make_pair(it, true);
-
+    if (index < size()) {
+        const auto &candle = *(begin() + index);
+        return std::make_pair(candle, true);
+    }
     return std::make_pair(nullVector.front(), false);
 }
 

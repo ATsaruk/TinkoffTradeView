@@ -57,11 +57,6 @@ void IBaseCommand::registerTask(IFunction *newTask)
     taskList.enqueue(newTask);
 }
 
-void IBaseCommand::connect(QObject *receiver, const char *method)
-{
-    QObject::connect(this, SIGNAL(finished()), receiver, method, Qt::BlockingQueuedConnection);
-}
-
 void IBaseCommand::runNextTask(IFunction *previousTask)
 {
     lastCompleteTask.reset(previousTask);

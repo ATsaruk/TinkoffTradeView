@@ -29,7 +29,7 @@ const float &Candle::low() const
     return _low;
 }
 
-const long &Candle::volume() const
+const long long &Candle::volume() const
 {
     return _volume;
 }

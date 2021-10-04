@@ -1,6 +1,3 @@
-///Убрать void operator= (InterfaceWrapper &other)!
-
-
 #ifndef INPUTINTERFASE_H
 #define INPUTINTERFASE_H
 

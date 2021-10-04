@@ -12,11 +12,9 @@
 namespace Plotter {
 
 CandlesSeries::CandlesSeries(const Data::StockKey &stockKey)
+    : candles(data), unused(data)
 {
-    candlesData->stockKey = stockKey;
-
-    beginCandle = candleItems.end();
-    endCandle = candleItems.end();
+    data->stockKey = stockKey;
 
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
     drawWait = plotInterval * 3 / 4;
@@ -24,14 +22,13 @@ CandlesSeries::CandlesSeries(const Data::StockKey &stockKey)
 
 CandlesSeries::~CandlesSeries()
 {
-
 }
 
 void CandlesSeries::repaint()
 {
-    updateData();
+    updateVisibleCandles();
 
-    if (!isRepaintRequired || candleItems.empty() || !drawMutex.tryLock(drawWait))
+    if (!isRepaintRequired || candles.empty() || !drawMutex.tryLock(drawWait))
         return;
 
     updateScaleByXAxis();
@@ -56,16 +53,60 @@ void CandlesSeries::clear()
         QThread::msleep(1);  ///@note QThread::msleep(1) может привести к зависанию при очистке CandlesSeries
 
     //Удаляем свечи
-    for (auto &it : candleItems)
-        if (it.second->isVisible())
-            this->removeFromGroup(it.second.get());
+    for (auto &it : candles)
+        if (it.isVisible())
+            this->removeFromGroup(&it);
 
     //Очищаем список свечей
-    candleItems.clear();
+    unused.push_back( candles.pop_front(candles.size()) );  ///@todo !Проверить pop_front(candles.size())
+}
 
-    //Сбрасываем отображаемый интервал
-    beginCandle = candleItems.end();
-    endCandle = candleItems.end();
+void CandlesSeries::updateVisibleCandles()
+{
+    if (isDataRequested)
+        return;     //Данные уже запрошены, ждем!
+
+    long candleLenght = data->stockKey.candleLenght();
+    size_t candlesCount = std::ceil(xAxis->getRange()) + 0.5;   //число свечей, которое должны быть на экране
+    if (candles.empty()) {      //если список свечей пуст, запрашиваем весь интервал
+        requestCandles(Data::Range(QDateTime::currentDateTime(), -candlesCount * candleLenght), candlesCount);
+        return;
+    }
+
+    ///@todo !Возможно стоит тут же выделять помять под новые элементы
+
+    //Вычисляем смещение отображаемого индекса свечи и число свечей, которые нужно будет запросить
+    long long indexOffset = static_cast<long long>(xAxis->getOffset()) - candles.begin()->getIndex();
+    long long requiredCount = abs(indexOffset) + candlesCount - candles.size();
+    if (indexOffset == 0 && requiredCount == 0)
+        return; //все ок, действий не требуется
+
+    if (indexOffset == 0) {             //Первая отображаемая свеча остается на месте
+        if (requiredCount < 0) {
+            popBackCandles(-requiredCount);
+        } else {    //requiredCount > 0
+            auto lastCandleTime = candles.last()->getCandle().dateTime();
+            Data::Range requiredRange(data->stockKey.nextCandleTime(lastCandleTime), requiredCount * candleLenght);
+            requestCandles(requiredRange, requiredCount);
+        }
+    } else if (indexOffset < 0) {       //Первая отображаемая свеча смещается влево
+        /* Возможен вариант firstCandle < firstDisplayedCandle && firstCandle + candlesCount > firstDisplayedCandle + displayedCandlesCount
+         * Этот вариант означает, что свечи нужно добавить в начало и в конец, дабы не усложнять логику, этот вариант будет проигнорирован
+         * И свечи добавим только в начале, после добавления повторный вызов CandlesSeries::updateData(),
+         * приведет в ветку if (firstCandle == firstDisplayedCandle) && difCount > 0, и недостающие свечи будут догружены */
+        requiredCount = -indexOffset;
+        Data::Range requiredRange(candles.begin()->getCandle().dateTime(), -requiredCount * candleLenght);
+        requestCandles(requiredRange, requiredCount);
+    } else { //if (firstCandle > firstDisplayedCandle)
+        if (requiredCount <= 0) {       //Первая отображаемая свеча смещается вправо
+            //этот вариант возможен при приближении скролом, интекс смещается вправо, но и количество свечей уменьшается
+            popFrontCandles(indexOffset);
+        } else {
+            auto lastCandleTime = candles.last()->getCandle().dateTime();
+            Data::Range requiredRange(data->stockKey.nextCandleTime(lastCandleTime), requiredCount * candleLenght);
+            requestCandles(requiredRange, requiredCount);
+        }
+    }
 }
 
 /* Функция мастабирования оси Х
@@ -74,30 +115,13 @@ void CandlesSeries::clear()
  */
 void CandlesSeries::updateScaleByXAxis()
 {
-    //Определяем новый индекс начали интервала отображения свечей
-    int32_t firstDisplayedIntex = xAxis->getOffset();
-    auto &&newBeginCandle = candleItems.find(firstDisplayedIntex);
-    //Если элемент с индексом firstDisplayedIntex не найден, то будем отображать с первого элемента
-    if (newBeginCandle == candleItems.end())
-        newBeginCandle = candleItems.begin();
-
-    //Определяем новый индекс конца интервала отображения свечей
-    int32_t lastDisplayedIndex = firstDisplayedIntex + xAxis->getRange();
-    auto &&newEndCandle = candleItems.find(lastDisplayedIndex);
-
-    setCandleVisible(newBeginCandle, beginCandle);
-    beginCandle = newBeginCandle;
-
-    setCandleVisible(endCandle, newEndCandle);
-    endCandle = newEndCandle;
-
     //Обновляем масштаб по оси oX
     qreal xScale = xAxis->getScale();
-    if (candlesData->xScale != xScale) {
-        candlesData->clearance = xScale * 0.34;
-        if (candlesData->clearance > 2.)
-            candlesData->clearance = 2.;
-        candlesData->xScale = xScale;
+    if (data->xScale != xScale) {
+        data->clearance = xScale * 0.34;
+        if (data->clearance > 2.)
+            data->clearance = 2.;
+        data->xScale = xScale;
 
         isUpdatePosRequered = true;
     }
@@ -105,27 +129,27 @@ void CandlesSeries::updateScaleByXAxis()
 
 void CandlesSeries::updateScaleByYAxis()
 {
-    if (candlesData->autoPriceRange)
+    if (data->autoPriceRange)
         updatePriceRange();
 
     qreal yScale = yAxis->getScale();
-    if (candlesData->yScale != yScale) {
-        candlesData->yScale = yScale;
+    if (data->yScale != yScale) {
+        data->yScale = yScale;
         isUpdatePosRequered = true;
     }
 }
 
 void CandlesSeries::updatePriceRange()
 {
-    qreal minPrice = candlesData->data[beginCandle->first].low;
-    qreal maxPrice = candlesData->data[beginCandle->first].high;
+    qreal minPrice = candles.begin()->getCandle().low();
+    qreal maxPrice = candles.begin()->getCandle().high();
 
-    for (auto it = beginCandle; it != endCandle; ++it) {   //проверяем только свечи на экране!
-        const Data::Candle& data = candlesData->data[it->first];
-        if (minPrice > data.low)
-            minPrice = data.low;
-        if (maxPrice < data.high)
-            maxPrice = data.high;
+    for (const auto &it : candles) {   //проверяем только свечи на экране!
+        const auto &candle = it.getCandle();
+        if (minPrice > candle.low())
+            minPrice = candle.low();
+        if (maxPrice < candle.high())
+            maxPrice = candle.high();
     }
 
     qreal priceRange = maxPrice - minPrice;
@@ -145,37 +169,34 @@ void CandlesSeries::updateCandlesPos()
         return;
 
     //Задаем положение на экране всей QGraphicsItemGroup
-    setX(-1 * xAxis->getOffset() * candlesData->xScale);
-    this->setY(yAxis->getOffset() * candlesData->yScale);
+    setX(-1 * xAxis->getOffset() * data->xScale);
+    this->setY(yAxis->getOffset() * data->yScale);
 
     //Обновляем положение всех видимых свечей
-    for (auto it = beginCandle; it != endCandle; ++it)
-        it->second->updatePos();
+    for (auto &it : candles)
+        it.updatePos();
 
     isUpdatePosRequered = false;
 }
 
-void CandlesSeries::updateData()
+void CandlesSeries::requestCandles(const Data::Range &range, const size_t requiredCount)
 {
-    if (isDataRequested)
-        return;     //Данные уже запрошены, ждем!
-
-    long intervalSec = candlesData->stockKey.intervalToSec();
-
-    int32_t displayedCandlesCount = xAxis->getRange();
-    if (candleItems.empty()) {
-        Data::Range range(QDateTime::currentDateTime(), -displayedCandlesCount * intervalSec * 2);
-        emit requestData(range);
-        isDataRequested = true;
-    } else {
-        int32_t offset = xAxis->getOffset();
-        if (offset < candleItems.begin()->first) {
-            Data::Range range(candlesData->data.begin()->second.dateTime, -displayedCandlesCount * intervalSec);
-            emit requestData(range);
-            isDataRequested = true;
-        }
-    }
+    Task::InterfaceWrapper<Data::Range> inData = range;
+    auto *command = NEW_TASK <Task::GetStock> (&inData, data->stockKey, requiredCount);
+    connect(command, &Task::GetStock::finished, this, &CandlesSeries::loadCandlesFinished);
+    isDataRequested = true;
 }
+
+void CandlesSeries::popFrontCandles(const long long count)
+{
+    unused.push_back( candles.pop_front(count) );
+}
+
+void CandlesSeries::popBackCandles(const long long count)
+{
+    unused.push_back( candles.pop_back(count) );
+}
+
 
 /* Функция, которая скрывает или отображает свечи, в зависимости от переданного интервала
  * Если первичный ключ first_iterator'а МЕНЬШЕ чем первичный ключ second_iterator'а, это означает,
@@ -183,7 +204,7 @@ void CandlesSeries::updateData()
  * Если первичный ключ first_iterator'а БОЛЬШЕ чем первичный ключ second_iterator'а, это означает,
  * что мы будем скрывать свечи из интервала [second_iterator..first_iterator] (т.к. у нас не reverse_iterator)
  */
-void CandlesSeries::setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator)
+/*void CandlesSeries::setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator)
 {
     //Принцип определения параметра visible описан выше
     bool visible  = first_iterator->first < second_iterator->first;
@@ -201,7 +222,7 @@ void CandlesSeries::setCandleVisible(const CandleItems::iterator &first_iterator
         else
             this->removeFromGroup(it->second.get());
     }
-}
+}*/
 
 //Слот загружает свечи после получения сигнала finished от CommandLoadStock
 /*void CandlesSeries::addCandles(Data::Candles &&candles)
@@ -256,12 +277,16 @@ void CandlesSeries::removeExistedCandles(Data::Candles &candles)
     candles.erase(start_erase, candles.end());
 }*/
 
-///@todo !!после переделки candleData->data на std::map<int32_t, QDateTime> эту функцию нужно удалить!
-const QDateTime CandlesSeries::getDateByIndex(const int32_t index)
+/*const QDateTime CandlesSeries::getDateByIndex(const int32_t index)
 {
-    if (candlesData->data.find(index) != candlesData->data.end())
-        return candlesData->data[index].dateTime;
+    if (data->timeMap.find(index) != data->timeMap.end())
+        return data->timeMap[index];
     return QDateTime();
+}*/
+
+void CandlesSeries::loadCandlesFinished()
+{
+
 }
 
 }

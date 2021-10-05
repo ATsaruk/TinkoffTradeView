@@ -12,6 +12,7 @@ namespace Task {
 LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount)
     : IFunction("LoadStockFromDbFunc")
 {
+    stock.create();
     stock->setStockKey(stockKey);
     this->minCandlesCount = minCandlesCount;
 }

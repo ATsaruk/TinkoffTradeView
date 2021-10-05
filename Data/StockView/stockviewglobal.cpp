@@ -29,24 +29,6 @@ StockView::ConstDequeIt StockViewGlobal::upper_bound(const QDateTime &time) cons
     return std::find_if(stock->begin(), stock->end(), isGreaterThanTime);
 }
 
-std::deque<Candle>::iterator StockViewGlobal::begin()
-{
-    if (!range.isValid())
-        return nullVector.end();
-
-    auto notLessThanBegin = [&](const auto &it){ return it.dateTime() >= range.getBegin(); };
-    return std::find_if(stock->begin(), stock->end(), notLessThanBegin);
-}
-
-std::deque<Candle>::iterator StockViewGlobal::end()
-{
-    if (!range.isValid())
-        return nullVector.end();
-
-    auto notLessThanEnd = [&](const auto &it){ return it.dateTime() > range.getEnd(); };
-    return std::find_if(stock->begin(), stock->end(), notLessThanEnd);
-}
-
 StockView::ConstDequeIt StockViewGlobal::begin() const
 {
     if (!range.isValid())

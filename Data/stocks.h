@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 #include "Stock/stock.h"
-#include "StockView/stockviewreference.h"
+#include "StockView/stockreference.h"
 #include "Tasks/StockTasks/getstock.h"
 
 namespace Data {
@@ -24,7 +24,7 @@ class Stocks
 {
 public:
     //virtual CandlePtr getCandlesForWrite(const StockKey &key) = 0;
-    using SharedStockVewRef = std::shared_ptr<Data::StockViewReference<QReadLocker>>;
+    using SharedStockVewRef = QSharedPointer<const Data::StockReference<QReadLocker>>;
 
     explicit Stocks();
     ~Stocks();
@@ -66,7 +66,7 @@ protected:
                                         const size_t minCandlesCount = 0) const;
 
 private:
-    std::unordered_map<StockKey, Stock> stocks; /// Список акций
+    std::unordered_map<StockKey, QSharedPointer<Stock>> stocks; /// Список акций
 
     friend class Task::GetStock;
     friend class StockViewGlobal;

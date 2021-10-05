@@ -168,7 +168,9 @@ void GetStock::createExtraRangeTasks()
 
 void GetStock::finishTask()
 {
-    stock = Glo.stocks->getCandlesForRead(key, range->getBegin(), range->getEnd(), minCandleCount);
+    //Преобразование QSharedPointer<Data::StockViewReference<QReadLocker>> в InterfaceWrapper<Data::StockViewReference<QReadLocker>>
+    auto sharedStockVewRef = Glo.stocks->getCandlesForRead(key, range->getBegin(), range->getEnd(), minCandleCount);
+    stock = InterfaceWrapper<SharedStockVewRef>(sharedStockVewRef);
     emit finished();
 }
 

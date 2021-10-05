@@ -2,7 +2,7 @@
 #define STOCKVIEWGLOBAL_H
 
 #include "stockview.h"
-#include "stockviewreference.h"
+#include "stockreference.h"
 
 #include "Data/Stock/stockkey.h"
 
@@ -33,15 +33,12 @@ public:
     ConstDequeIt upper_bound(const QDateTime &time) const override;
 
     ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
-    DequeIt begin() override;
-    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
-    DequeIt end() override;
-
     ConstDequeIt begin() const override;
+    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
     ConstDequeIt end() const override;
 
 private:
-    std::shared_ptr<StockViewReference<QReadLocker>> stock;     //указатель на StockViewReference(Glo.stocks[key])
+    QSharedPointer<const StockReference<QReadLocker>> stock;     //указатель на StockViewReference(Glo.stocks[key])
 };
 
 }

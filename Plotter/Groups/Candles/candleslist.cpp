@@ -1,7 +1,7 @@
 #include "candleslist.h"
 
 #include "Core/globals.h"
-#include "Data/StockView/stockviewreference.h"
+#include "Data/StockView/stockreference.h"
 
 namespace Plotter {
 

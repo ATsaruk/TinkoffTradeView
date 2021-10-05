@@ -13,6 +13,7 @@ namespace Task {
 LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey)
     : IBaseTask("LoadStockFromBroker")
 {
+    stock.create();
     stock->setStockKey(stockKey);
 }
 

@@ -8,7 +8,7 @@
 #include "Tasks/Interfaces/interfase.h"
 
 #include "Data/range.h"
-#include "Data/StockView/stockviewreference.h"
+#include "Data/StockView/stockreference.h"
 
 namespace Task {
 
@@ -29,8 +29,7 @@ class GetStock : public IBaseCommand
     Q_OBJECT
 
 public:
-    ///@todo !!InterfaceWrapper и SharedStockVewRef сделать shared_ptr одного типа
-    using SharedStockVewRef = std::shared_ptr<Data::StockViewReference<QReadLocker>>;
+    using SharedStockVewRef = const Data::StockReference<QReadLocker>;
 
     /** @brief Конструктор, сохраняет начальные данные
       * @param stockKey - ключ акции для загрузки

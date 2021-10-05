@@ -65,9 +65,9 @@ HEADERS += \
     Data/Stock/candle.h \
     Data/Stock/stock.h \
     Data/Stock/stockkey.h \
+    Data/StockView/stockreference.h \
     Data/StockView/stockview.h \
     Data/StockView/stockviewglobal.h \
-    Data/StockView/stockviewreference.h \
     Data/range.h \
     Data/stocks.h \
     DataBase/Query/stocksquery.h \

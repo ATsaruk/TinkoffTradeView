@@ -37,10 +37,10 @@ public:
 
         if (minCandlesCount  > 0) {
             auto it = upper_bound(range.getEnd());
-            auto distance = std::distance(stock->getCandles().begin(), it);
-            if (distance > minCandlesCount)
-                distance = minCandlesCount;
-            std::advance(it, -distance);
+            size_t availableCandlesCount = std::distance(static_cast<ConstDequeIt>(stock->getCandles().begin()), it);
+            if (availableCandlesCount > minCandlesCount)
+                availableCandlesCount = minCandlesCount;
+            std::advance(it, -availableCandlesCount);
             if (it != stock->getCandles().begin())
                 range.setBegin(it->dateTime());
         }

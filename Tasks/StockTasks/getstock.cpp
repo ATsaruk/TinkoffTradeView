@@ -57,22 +57,38 @@ void GetStock::exec()
 }
 
 /* Функция проверяет достаточно ли свечей в Glo.stocks, условия при которых загрузка считается НЕ завершенной:
- * 1. existedCandles->size() < minCandleCount
- * 2. если existedCandles->getRange().getEnd() == existedRange.getEnd() это означает, что запрашиваемый интервал
+ * 1. candlesInTargetRange->size() < minCandleCount
+ * 2. если candlesInTargetRange->getRange().getEnd() == totalRange.getEnd() это означает, что запрашиваемый интервал
  * находится правее существующих данных и загрузки от брокера ещё не было,
- * где existedCandles это свечи в Glo.stocks, дата конца которых <= subRange->getEnd()
- */
+ * где loadedCount это свечи в Glo.stocks, дата конца которых <= subRange->getEnd()
+ *
+ * Поясню по поводу isTargetNotOnRightBorder
+ * 1. Случай когда isTargetNotOnRightBorder = false:
+ *    Это означает, что запрашиваемый интервал находится "на правой границе" (totalRange.getEnd() == candlesInTargetRange->getRange().getEnd())
+ *    допустим в базе свечи загружены до 17:00:00 05.10.2021, а сейчас 09:00:00 06.10.2021 и мы запрашиваем свечи до
+ *    до текущего времени, в этом случае isTargetIsNotOnRightBorder = false, и данные находятся на правой границе
+ *    времени поэтому обязательно нужно провести загрузку от брокера для получения новых свечей от брокера! после чего
+ *    loadFromBrockerComplete будет равен true.
+ *    И loadFromBrockerComplete так же нужно учитывать, т.к. например в базе есть все свечи за пятницу, а сейчас
+ *    воскресенье и да isTargetNotOnRightBorder = false, т.к. мы запрашиваем диапазон в котором ещё нет свечей, но даже
+ *    после загрузки таких свечей не появится, т.к. в выходные биржа не работает! поэтому нужно учитывать, что мы уже
+ *    попытались загрузить свечи в данном диапазоне! и если после попытки у нас достаточно свечей, то все ок! finishTask();
+ * 2. Случай когда isTargetNotOnRightBorder = true:
+ *    Допустим так же в базе свечи загружены до 17:00:00 05.10.2021, а мы просим свези в диапазоне до 15:00:00 05.10.2021,
+ *    и свечей до этого времени уже достаточно (&& loadedCount >= minCandleCount), то нет смысла дальше продолжать
+ *    загрузку, все данные уже и так есть!  */
 bool GetStock::isEnoughCandles(const bool loadFromBrockerComplete)
 {
-    if (auto [existedRange, existedCount] = Glo.stocks->getRange(key); existedRange.isValid()) {
-        auto existedCandles = Glo.stocks->getCandlesForRead(key, QDateTime(), subRange->getEnd(), minCandleCount);
-        loadedCount = existedCandles->size();
-        if ((existedRange.getEnd() > existedCandles->getRange().getEnd() || loadFromBrockerComplete)
-                && loadedCount >= minCandleCount) {
+    if (auto [totalRange, totalCount] = Glo.stocks->getRange(key); totalRange.isValid()) {
+        auto candlesInTargetRange = Glo.stocks->getCandlesForRead(key, QDateTime(), subRange->getEnd(), minCandleCount);
+        loadedCount = candlesInTargetRange->size();
+
+        bool isTargetNotOnRightBorder = totalRange.getEnd() > candlesInTargetRange->getRange().getEnd();
+        if ((isTargetNotOnRightBorder || loadFromBrockerComplete) && loadedCount >= minCandleCount) {
             finishTask();
             return true;
         }
-        subRange->remove(existedRange); //продолжаем загрузку без существующего поддиапазона
+        subRange->remove(totalRange); //продолжаем загрузку без существующего поддиапазона
     }
     return false;
 }

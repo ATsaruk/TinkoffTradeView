@@ -37,7 +37,10 @@ public:
 
         if (minCandlesCount  > 0) {
             auto it = upper_bound(range.getEnd());
-            std::advance(it, -minCandlesCount);
+            auto distance = std::distance(stock->getCandles().begin(), it);
+            if (distance > minCandlesCount)
+                distance = minCandlesCount;
+            std::advance(it, -distance);
             if (it != stock->getCandles().begin())
                 range.setBegin(it->dateTime());
         }

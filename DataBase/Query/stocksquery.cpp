@@ -19,17 +19,18 @@ void StocksQuery::insertCandles(const Stock &stock)
     if (!db->isOpen())
         return;
 
-    QString interval = stock.key.intervalToString();
-    for (const auto &it: stock.candles) {
+    QString interval = stock.key().intervalToString();
+    const auto data = stock.getCandles();
+    for (const auto &it: data) {
         QString insert = QString("INSERT INTO stocks (figi, interval, time, open, close, high, low, volume) VALUES ('%1', '%2', '%3', %4, %5, %6, %7, %8)")
-                .arg(stock.key.figi(),
+                .arg(stock.key().figi(),
                      interval,
-                     it.dateTime.toString("yyyy-MM-dd hh:mm:ss"))
-                .arg(it.open)
-                .arg(it.close)
-                .arg(it.high)
-                .arg(it.low)
-                .arg(it.volume);
+                     it.dateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                .arg(it.open())
+                .arg(it.close())
+                .arg(it.high())
+                .arg(it.low())
+                .arg(it.volume());
 
         QSqlQuery query( db->get() );
         if (!query.exec(insert))
@@ -45,13 +46,13 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
     if (!db->isOpen())
         return ;
 
-    QString interval = stock.key.intervalToString();
-    QString load = QString("SELECT * FROM stocks WHERE figi='%1' and interval='%2'").arg(stock.key.figi(), interval);
+    QString interval = stock.key().intervalToString();
+    QString load = QString("SELECT * FROM stocks WHERE figi = '%1' and interval = '%2'").arg(stock.key().figi(), interval);
 
     if (begin.isValid())
-        load += QString(" and time>='%1'").arg(begin.toString("dd.MM.yyyy hh:mm:ss"));
+        load += QString(" and time >= '%1'").arg(begin.toString("dd.MM.yyyy hh:mm:ss"));
     if (end.isValid()) {
-        load += QString(" and time<'%1'").arg(end.toString("dd.MM.yyyy hh:mm:ss"));
+        load += QString(" and time < '%1'").arg(end.toString("dd.MM.yyyy hh:mm:ss"));
         /* time<'%1' потому что если мы загружаем например 15 минутные свечи с 9:00:00 до 10:00:00,
          * свеча на 10:00:00 она относится к диапазону 10:00:00 - 10:15:00 */
     }
@@ -67,14 +68,14 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
                        .arg(query.lastError().databaseText(), query.lastError().driverText());
     }
 
-    stock.candles.reserve(stock.candles.size() + query.size());
+    auto &candles = stock.getCandles();
     while (query.next()) {
-        stock.candles.emplace_back( query.value(2).toDateTime(),   //dateTime
-                                    query.value(3).toReal(),       //open
-                                    query.value(4).toReal(),       //close
-                                    query.value(5).toReal(),       //high
-                                    query.value(6).toReal(),       //low
-                                    query.value(7).toLongLong() ); //volume
+        candles.emplace_back( query.value(2).toDateTime(),   //dateTime
+                              query.value(3).toReal(),       //open
+                              query.value(4).toReal(),       //close
+                              query.value(5).toReal(),       //high
+                              query.value(6).toReal(),       //low
+                              query.value(7).toLongLong() ); //volume
     }
 }
 

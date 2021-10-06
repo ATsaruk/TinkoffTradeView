@@ -5,7 +5,7 @@
 #include "Core/globals.h"
 #include "Axis/priceaxis.h"
 
-#include "Tasks/StockTasks/loadstock.h"
+#include "Tasks/StockTasks/getstock.h"
 
 namespace Plotter {
 
@@ -71,7 +71,6 @@ void ChartScene::setRect(const QRectF &rect)
 void ChartScene::createCandleSeries(const Data::StockKey &key)
 {
     auto *newSeries = new CandlesSeries(key);
-    connect(newSeries, &CandlesSeries::requestData, this, &ChartScene::loadData);
 
     if (auto [curSeries, ok] = getCurCandleSeries(); ok) {
         //Если существует основная серия свечей, то прикрепляемся к её оси Х
@@ -98,21 +97,6 @@ std::pair<std::shared_ptr<CandlesSeries>, bool> ChartScene::getCurCandleSeries()
             return std::make_pair(it, true);
 
     return std::make_pair(nullptr, false);
-}
-
-void ChartScene::loadData(const Data::Range &loadRange) const
-{
-    uint minCandles = getDateAxis()->getRange() / 3.;
-    Task::InterfaceWrapper<Data::Range> range = loadRange;
-
-    //Загружаем свечи
-    if (auto [curSeries, ok] = getCurCandleSeries(); ok) {
-        auto *command = TaskManager->createTask<Task::LoadStock>(&range, stockKey, minCandles);
-        command->connect(curSeries.get(), SLOT(loadCandlesFinished()));
-    } else
-        logCritical << "ChartScene::loadData(); can't get current candle series!";
-
-    ///@todo Сделать загрузку остальных данных относящихся к данной акции
 }
 
 DateAxis* ChartScene::getDateAxis() const

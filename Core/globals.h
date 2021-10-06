@@ -8,9 +8,9 @@
 
 #include "config.h"
 #include "loggerlist.h"
-#include "Broker/api.h"
+#include "Broker/ibroker.h"
 #include "DataBase/idatabase.h"
-#include "Data/Stock/stocks.h"
+#include "Data/stocks.h"
 #include "Tasks/manager.h"
 
 namespace Core {
@@ -32,6 +32,7 @@ namespace Core {
 
 ///Основная функция для запуска задач
 #define TaskManager Core::Globals::get().taskManager
+#define NEW_TASK Core::Globals::get().taskManager->createTask
 ///@}
 
 /** @ingroup Core
@@ -52,7 +53,7 @@ public:
     //Вспомогательные
     QScopedPointer<Data::Stocks> stocks;
     QScopedPointer<DB::IDataBase> dataBase;
-    QScopedPointer<Broker::Api> broker;
+    QScopedPointer<Broker::IBroker> broker;
 
     //Singleton
     static Globals &get();

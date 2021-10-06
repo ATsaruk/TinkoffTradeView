@@ -95,6 +95,7 @@ void ChartPlotter::mouseReleaseEvent(QMouseEvent *event)
 
 void ChartPlotter::resizeEvent(QResizeEvent *event)
 {
+    ///@bug при масштабировашии окна справа некорректно обновляется граница, где рисуются свечи!
     QRectF rec(0, -event->size().height(), event->size().width(), event->size().height());
 
     setSceneRect(rec);

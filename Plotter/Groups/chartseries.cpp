@@ -5,7 +5,7 @@
 namespace Plotter {
 
 ChartSeries::ChartSeries()
-    : xAxis(nullptr), yAxis(nullptr), candlesData(new CandlesData)
+    : xAxis(nullptr), yAxis(nullptr), data(new SeriesData)
 {
 
 }
@@ -34,7 +34,7 @@ void ChartSeries::attachAxis(std::shared_ptr<Axis> axis)
 
 const Data::StockKey &ChartSeries::getStockKey()
 {
-    return candlesData->stockKey;
+    return data->stockKey;
 }
 
 void ChartSeries::update()

@@ -6,15 +6,17 @@
 namespace DB {
 
 
+/** @ingroup DataBase
+  * @brief Класс для работы с БД PostgreSql */
 class PostgreSql : public IDataBase
 {
 public:
     explicit PostgreSql();
 
-    //Получение QSqlDatabase
+    ///Получение QSqlDatabase
     QSqlDatabase& get() override;
 
-    //Состояние базы данных, true - база данных открыта
+    ///Состояние базы данных, true - база данных открыта
     bool isOpen() const override;
 private:
     //База данных

@@ -7,7 +7,7 @@
 #ifndef TINKOFFAPI_H
 #define TINKOFFAPI_H
 
-#include "Broker/api.h"
+#include "Broker/ibroker.h"
 #include "request.h"
 
 namespace Broker {
@@ -19,7 +19,7 @@ namespace Broker {
   * @details Ознакомиться с документацией по Тинькофф Open API можно тут:
   * - https://tinkoffcreditsystems.github.io/invest-openapi/
   * - https://tinkoffcreditsystems.github.io/invest-openapi/swagger-ui/#/ */
-class TinkoffApi : public Api
+class TinkoffApi : public IBroker
 {
 public:
     explicit TinkoffApi();

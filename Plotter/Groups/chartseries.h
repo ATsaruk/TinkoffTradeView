@@ -5,7 +5,7 @@
 
 #include "Plotter/Axis/axis.h"
 #include "Data/Stock/stockkey.h"
-#include "Candles/candlesdata.h"
+#include "Candles/seriesdata.h"
 
 namespace Plotter {
 
@@ -33,7 +33,7 @@ protected:
     std::shared_ptr<Axis> xAxis;  //horizontal axis
     std::shared_ptr<Axis> yAxis = nullptr;  //vertical axis
 
-    std::shared_ptr<CandlesData> candlesData;
+    std::shared_ptr<SeriesData> data;
 
     virtual void clear() = 0;
 

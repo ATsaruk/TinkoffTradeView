@@ -2,7 +2,7 @@ QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17 # c++2a C++20 unused
+CONFIG += c++2a # c++11 c++14 c++17 c++2a C++20 unused
 
 #uncomment to disable std::assert warnings!
 #DEFINES += NDEBUG
@@ -22,24 +22,27 @@ SOURCES += \
     Core/config.cpp \
     Core/loggerlist.cpp \
     Data/Stock/candle.cpp \
+    Data/Stock/stock.cpp \
     Data/Stock/stockkey.cpp \
-    Data/Stock/stocks.cpp \
+    Data/StockView/stockview.cpp \
+    Data/StockView/stockviewglobal.cpp \
     Data/range.cpp \
+    Data/stocks.cpp \
     DataBase/Query/stocksquery.cpp \
-    DataBase/idatabase.cpp \
     DataBase/postgresql.cpp \
     Plotter/Axis/axis.cpp \
     Plotter/Axis/dateaxis.cpp \
     Plotter/Axis/numericaxis.cpp \
     Plotter/Axis/priceaxis.cpp \
     Plotter/Groups/Candles/candleitem.cpp \
-    Plotter/Groups/Candles/candlesdata.cpp \
+    Plotter/Groups/Candles/candleslist.cpp \
     Plotter/Groups/Candles/candlesseries.cpp \
+    Plotter/Groups/Candles/seriesdata.cpp \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
     Plotter/chartscene.cpp \
+    Tasks/StockTasks/getstock.cpp \
     Tasks/StockTasks/loadstockfrombroker.cpp \
-    Tasks/StockTasks/loadstock.cpp \
     Tasks/StockTasks/loadstockfromdbfunc.cpp \
     Tasks/ibasecommand.cpp \
     Tasks/ibasetask.cpp \
@@ -51,7 +54,7 @@ SOURCES += \
 HEADERS += \
     Broker/Tinkoff/request.h \
     Broker/Tinkoff/tinkoff.h \
-    Broker/api.h \
+    Broker/ibroker.h \
     Core/Logs/filelogger.h \
     Core/Logs/ilogger.h \
     Core/Logs/imultilogger.h \
@@ -60,9 +63,13 @@ HEADERS += \
     Core/globals.h \
     Core/loggerlist.h \
     Data/Stock/candle.h \
+    Data/Stock/stock.h \
     Data/Stock/stockkey.h \
-    Data/Stock/stocks.h \
+    Data/StockView/stockreference.h \
+    Data/StockView/stockview.h \
+    Data/StockView/stockviewglobal.h \
     Data/range.h \
+    Data/stocks.h \
     DataBase/Query/stocksquery.h \
     DataBase/idatabase.h \
     DataBase/postgresql.h \
@@ -71,14 +78,15 @@ HEADERS += \
     Plotter/Axis/numericaxis.h \
     Plotter/Axis/priceaxis.h \
     Plotter/Groups/Candles/candleitem.h \
-    Plotter/Groups/Candles/candlesdata.h \
+    Plotter/Groups/Candles/candleslist.h \
     Plotter/Groups/Candles/candlesseries.h \
+    Plotter/Groups/Candles/seriesdata.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
     Plotter/chartscene.h \
     Tasks/Interfaces/interfase.h \
+    Tasks/StockTasks/getstock.h \
     Tasks/StockTasks/loadstockfrombroker.h \
-    Tasks/StockTasks/loadstock.h \
     Tasks/StockTasks/loadstockfromdbfunc.h \
     Tasks/ibasecommand.h \
     Tasks/ibasetask.h \

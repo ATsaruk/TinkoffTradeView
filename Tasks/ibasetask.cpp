@@ -13,6 +13,11 @@ IBaseTask::IBaseTask(QString taskName)
     isFunc = false;
 }
 
+IBaseTask::~IBaseTask()
+{
+
+}
+
 QThread *IBaseTask::getThread()
 {
     return taskThread;
@@ -20,7 +25,7 @@ QThread *IBaseTask::getThread()
 
 void IBaseTask::setThread(QThread *parent)
 {
-    isRootTask = parent == nullptr;
+    isRootTask = parent == nullptr;     //parent == nullptr означает, что это корневая задача!
 
     if (isRootTask) {    //Это корневая задача, создаем поток, и перемещаемся в него
         taskThread = new QThread;
@@ -44,10 +49,7 @@ void IBaseTask::start()
 
 void IBaseTask::stop()
 {
-    if (isRootTask)
-        taskThread->terminate();
-    else
-        isStopRequested = true;
+    isStopRequested = true;
 }
 
 }

@@ -4,8 +4,8 @@
   * @date Апрель 2021 года
   */
 
-#ifndef API_H
-#define API_H
+#ifndef IBROKER_H
+#define IBROKER_H
 
 #include <QMutex>
 
@@ -19,13 +19,13 @@ namespace Broker {
   * @brief Интерфейс для запроса информации у брокера
   * @details Для добавления API для нового брокера, нужно наследоваться от данного класса.
   * @warning Перед началом работы с классом блокируем mutex, после окончания освобождаем. */
-class Api : public QObject
+class IBroker : public QObject
 {
 public:
     QMutex mutex;
 
-    explicit Api() { }
-    virtual ~Api() { }
+    explicit IBroker() { }
+    virtual ~IBroker() { }
 
 
     /** @brief Запроса на получение списка всех акций
@@ -53,4 +53,4 @@ private:
 
 }
 
-#endif // API_H
+#endif // IBROKER_H

@@ -34,7 +34,7 @@ const StockKey::INTERVAL &StockKey::interval() const
     return _interval;
 }
 
-long StockKey::intervalToSec() const
+long StockKey::candleLenght() const
 {
     switch (_interval) {
       case INTERVAL::MIN1  : return 60;           break;
@@ -64,12 +64,22 @@ QString StockKey::intervalToString() const
     throw std::bad_exception();
 }
 
-const QString StockKey::keyToString() const
+QDateTime StockKey::prevCandleTime(const QDateTime &time) const
+{
+    return time.addSecs(-candleLenght());
+}
+
+QDateTime StockKey::nextCandleTime(const QDateTime &time) const
+{
+    return time.addSecs(candleLenght());
+}
+
+QString StockKey::keyToString() const
 {
     return QString("%1:%2").arg(_figi, intervalToString());
 }
 
-StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval)
+StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval) const
 {
     stringInterval = stringInterval.toLower();
     if (stringInterval == QString("1min"))       return INTERVAL::MIN1;

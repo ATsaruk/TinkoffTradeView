@@ -4,8 +4,8 @@
 
 namespace Plotter {
 
-ChartSeries::ChartSeries()
-    : xAxis(nullptr), yAxis(nullptr), data(new SeriesData)
+ChartSeries::ChartSeries(CandlesData *candlesData)
+    : xAxis(nullptr), yAxis(nullptr), candlesData(candlesData)
 {
 
 }
@@ -34,12 +34,52 @@ void ChartSeries::attachAxis(std::shared_ptr<Axis> axis)
 
 const Data::StockKey &ChartSeries::getStockKey()
 {
-    return data->stockKey;
+    return candlesData->getStockKey();
 }
 
 void ChartSeries::update()
 {
+    auto axis = dynamic_cast<Axis*>(sender());
+    if (axis->getAxisType() == Axis::HORIZONTAL)
+        updateScaleByXAxis();
+    else
+        updateScaleByYAxis();
     isRepaintRequired = true;
+}
+
+/* Функция мастабирования оси Х
+ * Определяет новые индексы начала и конца интервала отображения свечей
+ * Скрывает свечи, которые стали невидны, а новые свечи отображает
+ */
+void ChartSeries::updateScaleByXAxis()
+{
+    //Обновляем масштаб по оси oX
+    qreal xScale = xAxis->getScale();
+    if (candlesData->xScale != xScale) {
+        candlesData->clearance = xScale * 0.34;
+        if (candlesData->clearance > 2.)
+            candlesData->clearance = 2.;
+        candlesData->xScale = xScale;
+
+        isUpdatePosRequered = true;
+    }
+
+    long long offset = xAxis->getOffset();
+    if (candlesData->offsetIndex != offset) {
+        candlesData->offsetIndex = offset;
+        isUpdatePosRequered = true;
+    }
+
+    candlesData->candlesCount = xAxis->getRange();
+}
+
+void ChartSeries::updateScaleByYAxis()
+{
+    qreal yScale = yAxis->getScale();
+    if (candlesData->yScale != yScale) {
+        candlesData->yScale = yScale;
+        isUpdatePosRequered = true;
+    }
 }
 
 }

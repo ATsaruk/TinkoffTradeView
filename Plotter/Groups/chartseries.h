@@ -5,7 +5,7 @@
 
 #include "Plotter/Axis/axis.h"
 #include "Data/Stock/stockkey.h"
-#include "Candles/seriesdata.h"
+#include "ChartData/candlesdata.h"
 
 namespace Plotter {
 
@@ -16,7 +16,7 @@ class ChartSeries : public QObject, public QGraphicsItemGroup
     Q_INTERFACES(QGraphicsItem)
 
 public:
-    explicit ChartSeries();
+    explicit ChartSeries(CandlesData *candlesData);
     virtual ~ChartSeries();
 
     virtual std::shared_ptr<Axis>& getAxis(const Axis::AXIS_TYPE &type);
@@ -29,13 +29,16 @@ public slots:
 
 protected:
     bool isRepaintRequired = false;
+    bool isUpdatePosRequered = false;
 
     std::shared_ptr<Axis> xAxis;  //horizontal axis
     std::shared_ptr<Axis> yAxis = nullptr;  //vertical axis
 
-    std::shared_ptr<SeriesData> data;
+    CandlesData *candlesData;
 
     virtual void clear() = 0;
+    void updateScaleByXAxis();
+    void updateScaleByYAxis();
 
 protected slots:
     virtual void update();

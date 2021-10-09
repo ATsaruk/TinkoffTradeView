@@ -11,7 +11,37 @@ StockViewGlobal::StockViewGlobal(const StockKey &key, const QDateTime &begin, co
     range = stock->getRange();
 }
 
-StockView::ConstDequeIt StockViewGlobal::lower_bound(const QDateTime &time) const
+StockView::DequeIt StockViewGlobal::begin() const
+{
+    return lower_bound(range.getBegin());
+}
+
+StockView::DequeIt StockViewGlobal::end() const
+{
+    return upper_bound(range.getEnd());
+}
+
+StockView::ReverseDequeIt StockViewGlobal::rbegin() const
+{
+    if (!range.isValid())
+        return nullVector.rend();
+
+    auto time = range.getEnd();
+    auto isNotGreateThanTime = [&time](const auto &it){ return it.dateTime() <= time; };
+    return std::find_if(stock->rbegin(), stock->rend(), isNotGreateThanTime);
+}
+
+StockView::ReverseDequeIt StockViewGlobal::rend() const
+{
+    if (!range.isValid())
+        return nullVector.rend();
+
+    auto time = range.getBegin();
+    auto isLessThanTime = [&time](const auto &it){ return it.dateTime() < time; };
+    return std::find_if(stock->rbegin(), stock->rend(), isLessThanTime);
+}
+
+StockView::DequeIt StockViewGlobal::lower_bound(const QDateTime &time) const
 {
     if (!range.isValid())
         return nullVector.end();
@@ -20,31 +50,13 @@ StockView::ConstDequeIt StockViewGlobal::lower_bound(const QDateTime &time) cons
     return std::find_if(stock->begin(), stock->end(), isNotLessThanTime);
 }
 
-StockView::ConstDequeIt StockViewGlobal::upper_bound(const QDateTime &time) const
+StockView::DequeIt StockViewGlobal::upper_bound(const QDateTime &time) const
 {
     if (!range.isValid())
         return nullVector.end();
 
     auto isGreaterThanTime = [&time](const auto &it){ return it.dateTime() > time; };
     return std::find_if(stock->begin(), stock->end(), isGreaterThanTime);
-}
-
-StockView::ConstDequeIt StockViewGlobal::begin() const
-{
-    if (!range.isValid())
-        return nullVector.end();
-
-    auto notLessThanBegin = [&](const auto &it){ return it.dateTime() >= range.getBegin(); };
-    return std::find_if(stock->begin(), stock->end(), notLessThanBegin);
-}
-
-StockView::ConstDequeIt StockViewGlobal::end() const
-{
-    if (!range.isValid())
-        return nullVector.end();
-
-    auto notLessThanEnd = [&](const auto &it){ return it.dateTime() > range.getEnd(); };
-    return std::find_if(stock->begin(), stock->end(), notLessThanEnd);
 }
 
 }

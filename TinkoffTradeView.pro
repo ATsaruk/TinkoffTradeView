@@ -34,10 +34,10 @@ SOURCES += \
     Plotter/Axis/dateaxis.cpp \
     Plotter/Axis/numericaxis.cpp \
     Plotter/Axis/priceaxis.cpp \
-    Plotter/Groups/Candles/candleitem.cpp \
-    Plotter/Groups/Candles/candleslist.cpp \
-    Plotter/Groups/Candles/candlesseries.cpp \
-    Plotter/Groups/Candles/seriesdata.cpp \
+    Plotter/Groups/CandlesSeries/candleitem.cpp \
+    Plotter/Groups/CandlesSeries/candlesseries.cpp \
+    Plotter/Groups/ChartData/candlesdata.cpp \
+    Plotter/Groups/ChartData/candlespool.cpp \
     Plotter/Groups/chartseries.cpp \
     Plotter/chartplotter.cpp \
     Plotter/chartscene.cpp \
@@ -77,10 +77,10 @@ HEADERS += \
     Plotter/Axis/dateaxis.h \
     Plotter/Axis/numericaxis.h \
     Plotter/Axis/priceaxis.h \
-    Plotter/Groups/Candles/candleitem.h \
-    Plotter/Groups/Candles/candleslist.h \
-    Plotter/Groups/Candles/candlesseries.h \
-    Plotter/Groups/Candles/seriesdata.h \
+    Plotter/Groups/CandlesSeries/candleitem.h \
+    Plotter/Groups/CandlesSeries/candlesseries.h \
+    Plotter/Groups/ChartData/candlesdata.h \
+    Plotter/Groups/ChartData/candlespool.h \
     Plotter/Groups/chartseries.h \
     Plotter/chartplotter.h \
     Plotter/chartscene.h \

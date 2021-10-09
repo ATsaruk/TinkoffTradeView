@@ -5,8 +5,7 @@
 #include <QGraphicsScene>
 
 #include "Axis/dateaxis.h"
-#include "Data/Stock/stockkey.h"
-#include "Groups/Candles/candlesseries.h"
+#include "Groups/CandlesSeries/candlesseries.h"
 
 namespace Plotter {
 
@@ -28,17 +27,14 @@ public slots:
 
 protected:
     ///Создает новую серию свечей с ключем key
-    void createCandleSeries(const Data::StockKey &key);
-
-    ///Возвращает серию свечей с ключем this->stockKey
-    std::pair<std::shared_ptr<CandlesSeries>, bool> getCurCandleSeries() const;
+    void createCandleSeries();
 
     ///Возвращает ось даты (ось Х)
     DateAxis* getDateAxis() const;
 
 private:
-    Data::StockKey stockKey;
-    std::vector<std::shared_ptr<CandlesSeries>> series;
+    CandlesData candlesData;
+    std::shared_ptr<CandlesSeries> candles;
 };
 
 }

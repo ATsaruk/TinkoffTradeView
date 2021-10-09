@@ -15,8 +15,6 @@
 #include <QObject>
 
 #include "../chartseries.h"
-#include "candleslist.h"
-#include "Data/range.h"
 
 namespace Plotter {
 
@@ -25,7 +23,7 @@ class CandlesSeries : public ChartSeries
     Q_OBJECT
 
 public:
-    explicit CandlesSeries(const Data::StockKey &stockKey);
+    explicit CandlesSeries(CandlesData *candlesData);
     ~CandlesSeries();
 
 public slots:
@@ -35,36 +33,16 @@ protected:
     void clear() override;
 
     void updateVisibleCandles();
-    void updateScaleByXAxis();
-    void updateScaleByYAxis();
     void updatePriceRange();
     void updateCandlesPos();
 
-    void requestCandles(const Data::Range &range, const size_t requiredCount);
-    void popFrontCandles(const long long count);
-    void popBackCandles(const long long count);
-
-    //void setCandleVisible(const CandleItems::iterator &first_iterator, const CandleItems::iterator &second_iterator);
-
-    ///Добавляем загруженные свечи
-    /*void addCandles(Data::Candles &&candles);
-    ///Удалям свечи, которые уже существуют
-    void removeExistedCandles(Data::Candles &candles);*/
-
-    //const QDateTime getDateByIndex(const int32_t index);
-
 protected slots:
-    void loadCandlesFinished();
+    void askForRepaint();
+    void appendCandles(CandlesPool::PairRange range);
 
 private:
     uint drawWait;
     QMutex drawMutex;
-    bool isDataRequested = false;
-    bool isUpdatePosRequered = false;
-
-    ItemType *unset = nullptr;
-    CandlesList candles;
-    CandlesList unused;
 };
 
 }

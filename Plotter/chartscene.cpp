@@ -5,15 +5,13 @@
 #include "Core/globals.h"
 #include "Axis/priceaxis.h"
 
-#include "Tasks/StockTasks/getstock.h"
-
 namespace Plotter {
 
 
 ChartScene::ChartScene(const Data::StockKey &stockKey)
 {
-    this->stockKey = stockKey;
-    createCandleSeries(stockKey);
+    candlesData.setStockKey(stockKey);
+    createCandleSeries();
 
     setItemIndexMethod(QGraphicsScene::NoIndex); //NoIndex меньше лаг отрисовки при перемещении по экрану большого кол-ва свечей
 }
@@ -25,13 +23,13 @@ ChartScene::~ChartScene()
 
 const Data::StockKey &ChartScene::getStockKey() const
 {
-    return stockKey;
+    return candlesData.getStockKey();
 }
 
 void ChartScene::setScale(const qreal dx, const qreal xAnchor, const qreal dy, const qreal yAnchor)
 {
     for (const auto &it : items()) {
-        if (Axis *axis = dynamic_cast<Axis*>(it); axis != nullptr) {
+        if (auto *axis = dynamic_cast<Axis*>(it); axis) {
             if (axis->getAxisType() == Axis::HORIZONTAL)
                 axis->setScale(dx, xAnchor);
             if (axis->getAxisType() == Axis::VERTICAL)
@@ -43,7 +41,7 @@ void ChartScene::setScale(const qreal dx, const qreal xAnchor, const qreal dy, c
 void ChartScene::setMove(const qreal dx, const qreal dy)
 {
     for (const auto &it : items()) {
-        if (Axis *axis = dynamic_cast<Axis*>(it); axis != nullptr) {
+        if (auto *axis = dynamic_cast<Axis*>(it); axis) {
             if (axis->getAxisType() == Axis::HORIZONTAL)
                 axis->setMove(dx);
             if (axis->getAxisType() == Axis::VERTICAL)
@@ -54,55 +52,36 @@ void ChartScene::setMove(const qreal dx, const qreal dy)
 
 void ChartScene::drawScene() const
 {
-    for (const auto &it : items()) {
-        if (ChartSeries *series = dynamic_cast<ChartSeries*>(it) )
+    for (const auto &it : items())
+        if (auto *series = dynamic_cast<ChartSeries*>(it); series)
             series->repaint();
-    }
 }
 
 void ChartScene::setRect(const QRectF &rect)
 {
-    setSceneRect(rect);
     for (const auto &it : items())
-        if (Axis *axis = dynamic_cast<Axis*>(it); axis != nullptr)
+        if (auto *axis = dynamic_cast<Axis*>(it); axis)
             axis->setSceneRect(rect);
+    setSceneRect(rect);
 }
 
-void ChartScene::createCandleSeries(const Data::StockKey &key)
+void ChartScene::createCandleSeries()
 {
-    auto *newSeries = new CandlesSeries(key);
+    candles = std::make_shared<CandlesSeries>(&candlesData);
 
-    if (auto [curSeries, ok] = getCurCandleSeries(); ok) {
-        //Если существует основная серия свечей, то прикрепляемся к её оси Х
-        newSeries->attachAxis(curSeries->getAxis(Axis::HORIZONTAL));
-    } else {
-        //Создаем новую ось Х
-        newSeries->attachAxis(std::make_shared<DateAxis>(100, -75));
-    }
-
+    candles->attachAxis(std::make_shared<DateAxis>(100, -99));  //[-99 ... 0] = 100 candles
     //Создаем новую ось Y (для каждой серии свечей будет своя ось цены, что бы их можно было масштабировать независимо друг от друга)
-    newSeries->attachAxis(std::make_shared<PriceAxis>());
+    candles->attachAxis(std::make_shared<PriceAxis>());
 
-    addItem(newSeries);
-    addItem(newSeries->getAxis(Axis::HORIZONTAL).get());
-    addItem(newSeries->getAxis(Axis::VERTICAL).get());
-
-    series.emplace_back(newSeries);
-}
-
-std::pair<std::shared_ptr<CandlesSeries>, bool> ChartScene::getCurCandleSeries() const
-{
-    for (auto &it : series)
-        if (it->getStockKey() == stockKey)
-            return std::make_pair(it, true);
-
-    return std::make_pair(nullptr, false);
+    addItem(candles.get());
+    addItem(candles->getAxis(Axis::HORIZONTAL).get());
+    addItem(candles->getAxis(Axis::VERTICAL).get());
 }
 
 DateAxis* ChartScene::getDateAxis() const
 {
     for (const auto &it : items())
-        if (DateAxis *axis = dynamic_cast<DateAxis*>(it); axis != nullptr)
+        if (auto *axis = dynamic_cast<DateAxis*>(it); axis)
             return axis;
 
     logCritical << "ChartScene::getDateAxis(); Can't find DateAxis!";

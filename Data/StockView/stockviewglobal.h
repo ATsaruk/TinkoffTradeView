@@ -26,16 +26,23 @@ public:
       * @see Data::Stocks::getCandlesForRead */
     StockViewGlobal(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime(), const size_t minCandlesCount = 0);
 
+    ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
+    DequeIt begin() const override;
+    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
+    DequeIt end() const override;
+
+    ///реверс итератор на первую свечу
+    ReverseDequeIt rbegin() const override;
+
+    ///реверс итератор на последнюю свечу
+    ReverseDequeIt rend() const override;
+
+protected:
     ///Возвращает const итератор на элемент, дата которого не меньше чем time
-    ConstDequeIt lower_bound(const QDateTime &time) const override;
+    DequeIt lower_bound(const QDateTime &time) const;
 
     ///Возвращает const итератор на элемент, дата которого больше чем time
-    ConstDequeIt upper_bound(const QDateTime &time) const override;
-
-    ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
-    ConstDequeIt begin() const override;
-    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
-    ConstDequeIt end() const override;
+    DequeIt upper_bound(const QDateTime &time) const;
 
 private:
     QSharedPointer<const StockReference<QReadLocker>> stock;     //указатель на StockViewReference(Glo.stocks[key])

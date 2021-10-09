@@ -83,11 +83,14 @@ bool GetStock::isEnoughCandles(const bool loadFromBrockerComplete)
         auto candlesInTargetRange = Glo.stocks->getCandlesForRead(key, QDateTime(), subRange->getEnd(), minCandleCount);
         loadedCount = candlesInTargetRange->size();
 
-        bool isTargetNotOnRightBorder = totalRange.getEnd() > candlesInTargetRange->getRange().getEnd();
-        if ((isTargetNotOnRightBorder || loadFromBrockerComplete) && loadedCount >= minCandleCount) {
-            finishTask();
-            return true;
+        if (totalRange.getBegin() <= range->getBegin() && loadedCount >= minCandleCount) {
+            bool isTargetNotOnRightBorder = totalRange.getEnd() > candlesInTargetRange->getRange().getEnd();
+            if (isTargetNotOnRightBorder || loadFromBrockerComplete) {
+                finishTask();
+                return true;
+            }
         }
+
         subRange->remove(totalRange); //продолжаем загрузку без существующего поддиапазона
     }
     return false;

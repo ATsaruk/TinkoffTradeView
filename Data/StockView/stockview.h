@@ -33,8 +33,8 @@ namespace Data {
 class StockView
 {
 public:
-    using DequeIt = std::_Deque_iterator<Data::Candle, Data::Candle&, Data::Candle*>;
-    using ConstDequeIt = const std::_Deque_iterator<Data::Candle, const Data::Candle&, const Data::Candle*>;
+    using DequeIt = std::_Deque_iterator<Data::Candle, const Data::Candle&, const Data::Candle*>;
+    using ReverseDequeIt = std::reverse_iterator<DequeIt>;
 
     StockView();
     virtual ~StockView();
@@ -42,29 +42,31 @@ public:
     ///Возвращает диапазон дат, в котором доступны свечи (между итераторами begin() и end())
     const Range getRange() const;
 
+    [[nodiscard]] bool empty() const;
+
     ///Возвращает число свечей в диапазоне range
     size_t size() const;
 
-    ///Возвращает пару указатель на свечу с индексом index и признак что такая свеча существует
-    std::pair<const Candle*, bool> operator [](size_t index);
-
     ///Возвращает пару const ссылку на свечу с индексом index и признак что такая свеча существует
-    std::pair<const Candle&, bool> operator [](size_t index) const;
+    std::pair<const Candle*, bool> at(size_t index) const;
 
-    ///Возвращает const итератор на элемент, дата которого не меньше чем time
-    virtual ConstDequeIt lower_bound(const QDateTime &time) const = 0;
+    ///изменить дату начала просматриваемого интервала
+    void setBegin(const QDateTime &time);
 
-    ///Возвращает const итератор на элемент, дата которого больше чем time
-    virtual ConstDequeIt upper_bound(const QDateTime &time) const = 0;
+    ///изменить дату конца просматриваемого интервала
+    void setEnd(const QDateTime &time);
 
     ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
-    virtual DequeIt begin() = 0;
+    virtual DequeIt begin() const = 0;
 
     ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
-    virtual DequeIt end() = 0;
+    virtual DequeIt end() const = 0;
 
-    virtual ConstDequeIt begin() const = 0;
-    virtual ConstDequeIt end() const = 0;
+    ///реверс итератор на первую свечу
+    virtual ReverseDequeIt rbegin() const = 0;
+
+    ///реверс итератор на последнюю свечу
+    virtual ReverseDequeIt rend() const = 0;
 
 protected:
     Range range;                    //хранит ограничивающий интервал, т.е. интервал, в которым доступны свечи через данную обертку

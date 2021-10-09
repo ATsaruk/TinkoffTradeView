@@ -35,22 +35,57 @@ public:
         Range newRange = Range((begin.isValid() ? begin : range.getBegin()), (end.isValid() ? end : range.getEnd()));
         range.constrain(newRange);  //обрезаем диапазон доступный в переданной акцие до не более чем заданного
 
-        if (minCandlesCount  > 0) {
-            auto it = upper_bound(range.getEnd());
-            size_t availableCandlesCount = std::distance(static_cast<ConstDequeIt>(stock->getCandles().begin()), it);
+        if (minCandlesCount == 0)
+            return;
+
+        if (size() < minCandlesCount) {
+            auto stockBeginIt = static_cast<DequeIt>(stock->getCandles().begin());
+            auto curEndIt = upper_bound(range.getEnd());
+            size_t availableCandlesCount = std::distance(stockBeginIt, curEndIt);
             if (availableCandlesCount > minCandlesCount)
                 availableCandlesCount = minCandlesCount;
-            std::advance(it, -availableCandlesCount);
-            if (it != stock->getCandles().begin())
-                range.setBegin(it->dateTime());
+
+            std::advance(curEndIt, -availableCandlesCount); //+1 т.к. curEndIt указывает на элемент за необходимым
+            range.setBegin(curEndIt->dateTime());
         }
     }
 
     StockReference(const StockReference &other) noexcept
         : StockReference(other.stock, other.range.getBegin(), other.range.getEnd()) {}
 
+    ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
+    DequeIt begin() const override
+    {
+        return lower_bound(range.getBegin());
+    }
+
+    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
+    DequeIt end() const override
+    {
+        return upper_bound(range.getEnd());
+    }
+
+    ///реверс итератор на первую свечу
+    ReverseDequeIt rbegin() const override
+    {
+        auto time = range.getEnd();
+        const auto &candles = stock->getCandles();
+        auto isNotGreateThanTime = [&time](const auto &it){ return it.dateTime() <= time; };
+        return std::find_if(candles.rbegin(), candles.rend(), isNotGreateThanTime);
+    }
+
+    ///реверс итератор на последнюю свечу
+    ReverseDequeIt rend() const override
+    {
+        auto time = range.getBegin();
+        const auto &candles = stock->getCandles();
+        auto isLessThanTime = [&time](const auto &it){ return it.dateTime() < time; };
+        return std::find_if(candles.rbegin(), candles.rend(), isLessThanTime);
+    }
+
+protected:
     ///Возвращает const итератор на элемент, дата которого не меньше чем time
-    ConstDequeIt lower_bound(const QDateTime &time) const override
+    DequeIt lower_bound(const QDateTime &time) const
     {
         const auto &candles = stock->getCandles();
         auto isNotLessThanTime = [&time](const auto &it){ return it.dateTime() >= time; };
@@ -58,42 +93,11 @@ public:
     }
 
     ///Возвращает const итератор на элемент, дата которого больше чем time
-    ConstDequeIt upper_bound(const QDateTime &time) const override
+    DequeIt upper_bound(const QDateTime &time) const
     {
         const auto &candles = stock->getCandles();
         auto isGeaterThanTime = [&time](const auto &it){ return it.dateTime() > time; };
         return std::find_if(candles.begin(), candles.end(), isGeaterThanTime);
-    }
-
-    ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
-    DequeIt begin() override
-    {
-        if constexpr (std::is_same_v<Locker, QReadLocker>) {
-            //для QReadLocker доступен только ConstDequeIt (begin() const)
-            throw std::logic_error("StockViewReference::begin();try begin() with QReadLocker! use begin() const!");
-        } else {
-            return lower_bound(range.getBegin());
-        }
-    }
-
-    ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
-    DequeIt end() override
-    {
-        if constexpr (std::is_same_v<Locker, QReadLocker>) {
-            //для QReadLocker доступен только ConstDequeIt (end() const)
-            throw std::logic_error("StockViewReference::end();try begin() with QReadLocker! use end() const!");
-        } else {
-            return lower_bound(range.getEnd());
-        }
-    }
-
-    ConstDequeIt begin() const override
-    {
-        return lower_bound(range.getBegin());
-    }
-    ConstDequeIt end() const override
-    {
-        return upper_bound(range.getEnd());
     }
 };
 

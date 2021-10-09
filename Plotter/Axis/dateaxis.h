@@ -5,6 +5,7 @@
 
 namespace Plotter {
 
+///@todo !DateAxis должна хранить candlesCount и offsetIndex прям в CandlesData
 
 class DateAxis : public Axis
 {

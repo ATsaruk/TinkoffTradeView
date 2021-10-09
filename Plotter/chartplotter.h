@@ -4,9 +4,6 @@
 #include <QTimer>
 #include <QGraphicsView>
 
-#include "Axis/dateaxis.h"
-#include "Axis/numericaxis.h"
-#include "Groups/chartseries.h"
 #include "chartscene.h"
 
 class QWheelEvent;

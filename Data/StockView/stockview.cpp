@@ -18,27 +18,33 @@ const Range StockView::getRange() const
     return range;
 }
 
-size_t StockView::size() const
+bool StockView::empty() const
 {
-    return std::count_if(begin(), end(), [](const auto &it){return true;Q_UNUSED(it)});
+    return !range.isValid();
 }
 
-std::pair<const Candle*, bool> StockView::operator [](size_t index)
+size_t StockView::size() const
+{
+    return std::distance(begin(), end());
+}
+
+std::pair<const Candle*, bool> StockView::at(size_t index) const
 {
     if (index < size()) {
-        auto &candle = *(begin() + index);
+        const auto &candle = *(begin() + index);
         return std::make_pair(&candle, true);
     }
     return std::make_pair(&nullVector.front(), false);
 }
 
-std::pair<const Candle&, bool> StockView::operator [](size_t index) const
+void StockView::setBegin(const QDateTime &time)
 {
-    if (index < size()) {
-        const auto &candle = *(begin() + index);
-        return std::make_pair(candle, true);
-    }
-    return std::make_pair(nullVector.front(), false);
+    range.setBegin(time);
+}
+
+void StockView::setEnd(const QDateTime &time)
+{
+    range.setEnd(time);
 }
 
 }

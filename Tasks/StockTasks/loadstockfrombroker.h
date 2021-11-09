@@ -62,13 +62,13 @@ protected:
 
 protected slots:
     ///Обработка отвера с сервера брокера
-    void onResponse(QByteArray answer);
+    void onResponse(const QByteArray &answer);
 
 private:
-    Data::Range subRange;     //Текущий подинтервал загрузки
+    Data::Range _subRange;     //Текущий подинтервал загрузки
 
-    InterfaceWrapper<Data::Range> range;    //интервал для загрузки
-    InterfaceWrapper<Data::Stock> stock;    //загруженные свечи
+    InterfaceWrapper<Data::Range> _range;    //интервал для загрузки
+    InterfaceWrapper<Data::Stock> _stock;    //загруженные свечи
 };
 
 }

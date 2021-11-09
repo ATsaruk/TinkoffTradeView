@@ -10,7 +10,7 @@ namespace Plotter {
 
 ChartScene::ChartScene(const Data::StockKey &stockKey)
 {
-    candlesData.setStockKey(stockKey);
+    _candlesData.setStockKey(stockKey);
     createCandleSeries();
 
     setItemIndexMethod(QGraphicsScene::NoIndex); //NoIndex меньше лаг отрисовки при перемещении по экрану большого кол-ва свечей
@@ -23,7 +23,7 @@ ChartScene::~ChartScene()
 
 const Data::StockKey &ChartScene::getStockKey() const
 {
-    return candlesData.getStockKey();
+    return _candlesData.getStockKey();
 }
 
 void ChartScene::setScale(const qreal dx, const qreal xAnchor, const qreal dy, const qreal yAnchor)
@@ -67,15 +67,15 @@ void ChartScene::setRect(const QRectF &rect)
 
 void ChartScene::createCandleSeries()
 {
-    candles = std::make_shared<CandlesSeries>(&candlesData);
+    _candles = std::make_shared<CandlesSeries>(&_candlesData);
 
-    candles->attachAxis(std::make_shared<DateAxis>(100, -99));  //[-99 ... 0] = 100 candles
+    _candles->attachAxis(std::make_shared<DateAxis>(100, -99));  //[-99 ... 0] = 100 candles
     //Создаем новую ось Y (для каждой серии свечей будет своя ось цены, что бы их можно было масштабировать независимо друг от друга)
-    candles->attachAxis(std::make_shared<PriceAxis>());
+    _candles->attachAxis(std::make_shared<PriceAxis>());
 
-    addItem(candles.get());
-    addItem(candles->getAxis(Axis::HORIZONTAL).get());
-    addItem(candles->getAxis(Axis::VERTICAL).get());
+    addItem(_candles.get());
+    addItem(_candles->getAxis(Axis::HORIZONTAL).get());
+    addItem(_candles->getAxis(Axis::VERTICAL).get());
 }
 
 DateAxis* ChartScene::getDateAxis() const

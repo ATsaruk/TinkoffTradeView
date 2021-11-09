@@ -34,9 +34,9 @@ protected:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-    qreal axisHeight;
-    qreal candlesCount;
-    qreal offsetIndex;
+    qreal _axisHeight;
+    qreal _candlesCount;
+    qreal _offsetIndex;
 };
 
 }

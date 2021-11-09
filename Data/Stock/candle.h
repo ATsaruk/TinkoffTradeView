@@ -14,10 +14,10 @@ namespace Data {
 class Candle
 {
 public:
-    Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const long long volume_)
+    explicit Candle(const QDateTime &date_, const float &open_, const float &close_, const float &high_, const float &low_, const long long volume_)
         : _dateTime(date_), _open(open_), _close(close_), _high(high_), _low(low_), _volume(volume_) { }
-    Candle(Candle &&) noexcept = default;
-    Candle(const Candle &) = default;
+    explicit Candle(Candle &&) noexcept = default;
+    explicit Candle(const Candle &) = default;
     Candle& operator =(Candle&&) noexcept = default;
     Candle& operator =(const Candle&) = default;
 

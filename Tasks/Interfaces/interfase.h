@@ -26,8 +26,8 @@ struct Interface
 
     //Проверяет может ли интерфейс кастануться к типу T
     template<class T>
-    bool isCompatible() {
-        InterfaceData<T> *upClass = dynamic_cast<InterfaceData<T> *>(this);
+    bool isCompatible() const {
+        const InterfaceData<T> *upClass = dynamic_cast<const InterfaceData<T> *>(this);
         return upClass != nullptr;
     }
 };
@@ -39,10 +39,15 @@ struct InterfaceData : public Interface
     T *data = nullptr;
     explicit InterfaceData() { data = new T; }
 
-    InterfaceData(T *other) { data = new T(*other); }
+    explicit InterfaceData(T *other) { data = new T(*other); }
+
 
     template<class N>
-    InterfaceData(N &&init) noexcept : data( new T(std::forward<N>(init)) ) { }
+    explicit InterfaceData(N &&init) noexcept : data( new T(std::forward<N>(init)) ) { }
+
+    InterfaceData(const InterfaceData&) = delete;
+    InterfaceData& operator = (const InterfaceData&) = delete;
+    InterfaceData& operator = (InterfaceData&&) = delete;
 
     ~InterfaceData() { delete data; }
 };
@@ -56,36 +61,36 @@ public:
     explicit InterfaceWrapper() = default;
 
     //Дропает старую ссылку, и получает новую (если интерфейсы совместимы!)
-    InterfaceWrapper(SharedInterface &inputData) {
+    explicit InterfaceWrapper(SharedInterface &inputData) {
         assert(inputData->isCompatible<T>() && "DataWrapper constructor from Interface: Interfaces aren't compatible!");
-        sharePtr = inputData;
+        _sharePtr = inputData;
     }
     void operator= (SharedInterface &inputData) {
         assert(inputData->isCompatible<T>() && "DataWrapper = Interface: Interfaces aren't compatible!");
-        sharePtr = inputData;
+        _sharePtr = inputData;
     }
 
     //Конструирует sharedPtr из forwarding reference или из QSharedPointer<T>
     template<class N>
-    InterfaceWrapper(N &&data) noexcept {
+    InterfaceWrapper(N &&data) {
         if constexpr (std::is_constructible_v<T, N>) {
-            sharePtr = QSharedPointer<InterfaceData<T>>::create( std::forward<N>(data) );
+            _sharePtr = QSharedPointer<InterfaceData<T>>::create( std::forward<N>(data) );
         } else if constexpr (std::is_same_v<QSharedPointer<T>, std::remove_reference_t<N>>) {
-            sharePtr = QSharedPointer<InterfaceData<T>>::create( data.data() );     //Создаем SharedInterface из QSharedPointer
+            _sharePtr = QSharedPointer<InterfaceData<T>>::create( data.data() );     //Создаем SharedInterface из QSharedPointer
         } else {
             throw std::logic_error("InterfaceWrapper::constructor InterfaceWrapper(N &&data) error input data");
         }
     }
 
     template<class N>
-    void operator=(N &&data) noexcept {
+    void operator=(N &&data) {
         if constexpr (std::is_constructible_v<T, N>) {
-            if (sharePtr.isNull())
-                sharePtr = QSharedPointer<InterfaceData<T>>::create( std::forward<N>(data) );
+            if (_sharePtr.isNull())
+                _sharePtr = QSharedPointer<InterfaceData<T>>::create( std::forward<N>(data) );
             else
-                sharePtr.data()->get<T>() = std::forward<N>(data);
+                _sharePtr.data()->get<T>() = std::forward<N>(data);
         } else if constexpr (std::is_same_v<QSharedPointer<T>, std::remove_reference_t<N>>) {
-            sharePtr = QSharedPointer<InterfaceData<T>>::create( data.data() );     //Создаем SharedInterface из QSharedPointer
+            _sharePtr = QSharedPointer<InterfaceData<T>>::create( data.data() );     //Создаем SharedInterface из QSharedPointer
         } else {
             throw std::logic_error("InterfaceWrapper::operator=(N &&data) error input data");
         }
@@ -94,26 +99,26 @@ public:
 
     //Каст к ссылке
     operator T& () {
-        return sharePtr.data()->get<T>();
+        return _sharePtr.data()->get<T>();
     }
 
     //Обращение к элементам хранимого объекта
     T* operator->() {
-        return &(sharePtr.data()->get<T>());
+        return &(_sharePtr.data()->get<T>());
     }
 
     //Оператор & возвращает ссылку на sharedPoint
     SharedInterface& operator & () {
-        return sharePtr;
+        return _sharePtr;
     }
 
     void create() {
-        if (sharePtr.isNull())
-            sharePtr = SharedInterface( new InterfaceData<T>() );
+        if (_sharePtr.isNull())
+            _sharePtr = SharedInterface( new InterfaceData<T>() );
     }
 
 private:
-    SharedInterface sharePtr;
+    SharedInterface _sharePtr;
 };
 
 }

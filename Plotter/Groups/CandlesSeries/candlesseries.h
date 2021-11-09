@@ -41,8 +41,8 @@ protected slots:
     void appendCandles(CandlesPool::PairRange range);
 
 private:
-    uint drawWait;
-    QMutex drawMutex;
+    uint _drawWait;
+    QMutex _drawMutex;
 };
 
 }

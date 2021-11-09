@@ -21,7 +21,7 @@ class IBaseCommand : public IBaseTask
     Q_OBJECT
 
 public:
-    explicit IBaseCommand(const QString commandName);
+    explicit IBaseCommand(const QString &commandName);
     ~IBaseCommand();
 
     void setData(SharedInterface &inputData) override;
@@ -91,7 +91,7 @@ protected:
     QQueue<IFunction*> taskList;  //очередь задач на запуск
 
 private:
-    QScopedPointer<IFunction> lastCompleteTask;
+    QScopedPointer<IFunction> _lastCompleteTask;
 };
 
 }

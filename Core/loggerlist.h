@@ -51,7 +51,7 @@ public:
       * @return Указатель на ILogger, да именно ILogger, а не IMultiLogger, "клиент" будет работать с
       * интерфейсом ILogger, метод appendLogger ему не нужен.
       * @details Если логгер не был создан до этого, то создает defaultLogger (#define defaultLogger FileLogger) */
-    std::shared_ptr<ILogger> get(QString tag);
+    std::shared_ptr<ILogger> get(const QString &tag);
 
     /** @brief Создает логгер заданного типа с заданным тэгом
       * @param[IN] tag - тэг лог (debug, info, warning, ... )

@@ -41,9 +41,9 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-    int32_t pos;
-    Data::Candle *candle = nullptr;
-    CandlesData *params = nullptr;    //структура с параметрами для рисования
+    int32_t _pos = 0;
+    Data::Candle *_candle = nullptr;
+    CandlesData *_params = nullptr;    //структура с параметрами для рисования
 };
 
 }

@@ -20,7 +20,7 @@ public:
     bool isOpen() const override;
 private:
     //База данных
-    QSqlDatabase db;
+    QSqlDatabase _db;
 };
 
 }

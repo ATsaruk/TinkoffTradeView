@@ -24,7 +24,7 @@ public:
       *
       * Подробнее про правила формирования range, смотри:
       * @see Data::Stocks::getCandlesForRead */
-    StockViewGlobal(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime(), const size_t minCandlesCount = 0);
+    explicit StockViewGlobal(const StockKey &key, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime(), const size_t minCandlesCount = 0);
 
     ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
     DequeIt begin() const override;
@@ -45,7 +45,7 @@ protected:
     DequeIt upper_bound(const QDateTime &time) const;
 
 private:
-    QSharedPointer<const StockReference<QReadLocker>> stock;     //указатель на StockViewReference(Glo.stocks[key])
+    QSharedPointer<const StockReference<QReadLocker>> _stock;     //указатель на StockViewReference(Glo.stocks[key])
 };
 
 }

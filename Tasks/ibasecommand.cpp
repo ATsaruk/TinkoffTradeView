@@ -23,7 +23,7 @@
 namespace Task {
 
 
-IBaseCommand::IBaseCommand(const QString commandName)
+IBaseCommand::IBaseCommand(const QString &commandName)
     : IBaseTask(commandName)
 {
 
@@ -46,8 +46,8 @@ void IBaseCommand::setData(SharedInterface &inputData)
 
 SharedInterface &IBaseCommand::getResult()
 {
-    assert(lastCompleteTask && "IBaseCommand::getResult(): logical error");
-    return lastCompleteTask->getResult();
+    assert(_lastCompleteTask && "IBaseCommand::getResult(): logical error");
+    return _lastCompleteTask->getResult();
 }
 
 void IBaseCommand::registerTask(IFunction *newTask)
@@ -59,7 +59,7 @@ void IBaseCommand::registerTask(IFunction *newTask)
 
 void IBaseCommand::runNextTask(IFunction *previousTask)
 {
-    lastCompleteTask.reset(previousTask);
+    _lastCompleteTask.reset(previousTask);
 
     if (taskList.isEmpty() || isStopRequested) {
         emit finished();
@@ -68,7 +68,7 @@ void IBaseCommand::runNextTask(IFunction *previousTask)
 
     IFunction *currentTask = taskList.dequeue();
 
-    if (lastCompleteTask)
+    if (_lastCompleteTask)
         currentTask->setData(previousTask->getResult());
 
     if (currentTask->isFunction()) {
@@ -91,10 +91,11 @@ void IBaseCommand::startTask(IBaseTask *task)
 
 void IBaseCommand::taskFinished()
 {
-    auto *finishedTask = dynamic_cast<IBaseTask*>(sender());
+    auto finishedTask = dynamic_cast<IBaseTask*>(sender());
 
-    assert(finishedTask != nullptr && QString("%1;taskFinished();can't get task!;tasksLeft: %2")
-            .arg(getName()).arg(taskList.size()).toStdString().data());
+    if (finishedTask == nullptr)
+        throw std::logic_error(QString("%1;taskFinished();can't get task!;tasksLeft: %2")
+                               .arg(getName()).arg(taskList.size()).toStdString().data());
 
     logDebug << QString("%1;taskFinished();finished: %2;tasksLeft: %3")
                 .arg(getName(), finishedTask->getName()).arg(taskList.size());

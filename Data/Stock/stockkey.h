@@ -55,7 +55,7 @@ public:
     QString keyToString() const;
 
     ///Преобразует строку QString в interval
-    INTERVAL stringToInterval(QString stringInterval) const;
+    static INTERVAL stringToInterval(QString stringInterval);
 
     /** @brief Взвращает поля первичного ключа акции (StockKey) из json объекта
       * @param[IN] json объект в котором содержится первичный ключ

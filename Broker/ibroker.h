@@ -45,7 +45,7 @@ signals:
     /** @brief Cигнал о получении ответа от сервера брокера
       * @details При получении ответа с сервера брокера отправляется сигнал getResopnse, в качестве параметра QByteArray
       * передаются полученные данные, для дальнейшей обработки. */
-    void getResopnse(QByteArray);
+    void getResopnse(const QByteArray &);
 
 private:
     Q_OBJECT

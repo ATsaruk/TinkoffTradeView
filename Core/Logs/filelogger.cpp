@@ -8,7 +8,7 @@
 namespace Core {
 
 FileLogger::FileLogger(const QString &tag)
-    : IMultiLogger(tag), logFile(new QFile)
+    : IMultiLogger(tag), _logFile(new QFile)
 {
     isWriteLog =      Glo.conf->getValue(QString("Log/%1").arg(tag), true);
     QString dirName = Glo.conf->getValue("Log/dir", QString("Logs"));
@@ -21,7 +21,7 @@ FileLogger::FileLogger(const QString &tag)
             + QTime::currentTime().toString("/hh_mm_ss")
             + QString("_%1.csv").arg(tag);
 
-    logFile->setFileName(fileName);
+    _logFile->setFileName(fileName);
 }
 
 QString FileLogger::getClassName() const
@@ -32,9 +32,9 @@ QString FileLogger::getClassName() const
 //При выключении лога закрывает файл
 void FileLogger::enableLog(bool value)
 {
-    if (value == false && logFile->isOpen()) {
+    if (value == false && _logFile->isOpen()) {
         QMutexLocker locker(&mutex);
-        logFile->close();
+        _logFile->close();
     }
 }
 
@@ -46,17 +46,17 @@ void FileLogger::showMessage(const QString &text)
     QMutexLocker locker(&mutex);
 
     //Если файл не открыт, открываем его
-    if (!logFile->isOpen()) {
-        logFile->open(QIODevice::WriteOnly);
-        if (!logFile->isOpen()) {
-            qDebug() << QString("Can't create file: %1, stop logging %2 messages to file...").arg(logFile->fileName(), tag);
+    if (!_logFile->isOpen()) {
+        _logFile->open(QIODevice::WriteOnly);
+        if (!_logFile->isOpen()) {
+            qDebug() << QString("Can't create file: %1, stop logging %2 messages to file...").arg(_logFile->fileName(), tag);
             isWriteLog = false;
             return;
         }
     }
 
     //Сохраняем сообщение
-    QTextStream stream(logFile.get());
+    QTextStream stream(_logFile.get());
     stream << QDateTime::currentDateTime().toString("yyyy.MM.dd;hh:mm:ss;%1;\n").arg(text);
     stream.flush();
 }

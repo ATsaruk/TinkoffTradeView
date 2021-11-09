@@ -37,9 +37,9 @@ protected:
     void loadByCount();
 
 private:
-    uint minCandlesCount;                       //минимальное число свечей, которое нужно загрузить
-    InterfaceWrapper<Data::Range> loadRange;    //интервал для загрузки
-    InterfaceWrapper<Data::Stock> stock;        //загруженные свечи
+    uint _minCandlesCount;                       //минимальное число свечей, которое нужно загрузить
+    InterfaceWrapper<Data::Range> _loadRange;    //интервал для загрузки
+    InterfaceWrapper<Data::Stock> _stock;        //загруженные свечи
 };
 
 }

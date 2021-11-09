@@ -3,7 +3,7 @@
 namespace Core {
 
 ILogger::ILogger(const QString &tag_)
-    : tag(tag_)
+    : tag(tag_), isWriteLog(true)
 {
 
 }

@@ -7,47 +7,46 @@
 namespace Plotter {
 
 NumericAxis::NumericAxis(qreal range, qreal offset)
-    : Axis(AXIS_TYPE::VERTICAL)
+    : Axis(AXIS_TYPE::VERTICAL),
+      _axisWidth(Glo.conf->getValue("ChartPlotter/Axis/width", 50)),
+      _dataRange(range), _dataOffset(offset)
 {
-    axisWidth = Glo.conf->getValue("ChartPlotter/Axis/width", 50);
-    setDataRange(range);
-    setDataOffset(offset);
 }
 
 qreal NumericAxis::getScale()
 {
     qreal scale = sceneRect.height();
-    return scale / dataRange;
+    return scale / _dataRange;
 }
 
 qreal NumericAxis::getRange()
 {
-    return dataRange;
+    return _dataRange;
 }
 
 qreal NumericAxis::getOffset()
 {
-    return dataOffset;
+    return _dataOffset;
 }
 
 void NumericAxis::setDataRange(const qreal range)
 {
-    dataRange = range;
+    _dataRange = range;
 }
 
 void NumericAxis::setDataOffset(const qreal offset)
 {
-    dataOffset = offset;
+    _dataOffset = offset;
 }
 
 QRectF NumericAxis::boundingRect() const
 {
-    return QRectF(sceneRect.width() - axisWidth, 0, sceneRect.width(), sceneRect.height());
+    return QRectF(sceneRect.width() - _axisWidth, 0, sceneRect.width(), sceneRect.height());
 }
 
 void NumericAxis::setMove(const qreal delta)
 {
-    dataOffset += delta / getScale();
+    _dataOffset += delta / getScale();
     emit scaled();
 }
 
@@ -59,10 +58,10 @@ void NumericAxis::setScale(const qreal scale, const qreal anchor)
     else
         newScale = pow(0.998, -1. * scale);
 
-    qreal dataAnchor = dataRange * anchor;
-    qreal fixedPoint = dataAnchor + dataOffset;
-    dataOffset = fixedPoint - dataAnchor * newScale;
-    dataRange *= newScale;
+    qreal dataAnchor = _dataRange * anchor;
+    qreal fixedPoint = dataAnchor + _dataOffset;
+    _dataOffset = fixedPoint - dataAnchor * newScale;
+    _dataRange *= newScale;
 
     emit scaled();
 }

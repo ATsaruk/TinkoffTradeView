@@ -55,29 +55,29 @@ void ChartSeries::updateScaleByXAxis()
 {
     //Обновляем масштаб по оси oX
     qreal xScale = xAxis->getScale();
-    if (candlesData->xScale != xScale) {
-        candlesData->clearance = xScale * 0.34;
-        if (candlesData->clearance > 2.)
-            candlesData->clearance = 2.;
-        candlesData->xScale = xScale;
+    if (candlesData->_xScale != xScale) {
+        candlesData->_clearance = xScale * 0.34;
+        if (candlesData->_clearance > 2.)
+            candlesData->_clearance = 2.;
+        candlesData->_xScale = xScale;
 
         isUpdatePosRequered = true;
     }
 
     long long offset = xAxis->getOffset();
-    if (candlesData->offsetIndex != offset) {
-        candlesData->offsetIndex = offset;
+    if (candlesData->_offsetIndex != offset) {
+        candlesData->_offsetIndex = offset;
         isUpdatePosRequered = true;
     }
 
-    candlesData->candlesCount = xAxis->getRange();
+    candlesData->_candlesCount = xAxis->getRange();
 }
 
 void ChartSeries::updateScaleByYAxis()
 {
     qreal yScale = yAxis->getScale();
-    if (candlesData->yScale != yScale) {
-        candlesData->yScale = yScale;
+    if (candlesData->_yScale != yScale) {
+        candlesData->_yScale = yScale;
         isUpdatePosRequered = true;
     }
 }

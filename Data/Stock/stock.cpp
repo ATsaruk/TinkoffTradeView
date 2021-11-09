@@ -15,59 +15,60 @@ Stock::Stock()
 
 Stock::Stock(const StockKey &stockKey)
 {
-    this->stockKey = stockKey;
+    this->_key = stockKey;
 }
 
 Stock::Stock(Stock &&other)
 {
-    this->stockKey = std::move(other.stockKey);
-    this->candles.swap(other.candles);
+    this->_key = std::move(other._key);
+    this->_candles.swap(other._candles);
 }
 
 Stock &Stock::operator =(Stock &&other)
 {
-    this->stockKey = std::move(other.stockKey);
-    this->candles.swap(other.candles);
+    this->_key = std::move(other._key);
+    this->_candles.swap(other._candles);
 
     return *this;
 }
 
 void Stock::setStockKey(const StockKey &key)
 {
-    stockKey = key;
+    _key = key;
 }
 
 const StockKey &Stock::key() const
 {
-    return stockKey;
+    return _key;
 }
 
 Range Stock::range() const
 {
-    if (candles.empty())
+    if (_candles.empty())
         return Range();
-    return Range(candles.begin()->dateTime(), candles.rbegin()->dateTime());
+    return Range(_candles.begin()->dateTime(), _candles.rbegin()->dateTime());
 }
 
 size_t Stock::count() const
 {
-    return candles.size();
+    return _candles.size();
 }
 
-std::optional<const Candle*> Stock::find(const QDateTime &time) const
+const Candle* Stock::find(const QDateTime &time) const
 {
-    for (const auto &it : candles)
-        if (it.dateTime() == time)
-            return &it;
-    return std::nullopt;
+    auto isEqual = [&time](const auto &it) { return it.dateTime() == time; };
+    const auto &item = std::find_if(_candles.begin(), _candles.end(), isEqual);
+    if (item == _candles.end())
+        throw std::logic_error("Stock::find;can't find item!;");
+    return &(*item);
 }
 
 Range Stock::append(Stock &stock)
 {
-    if (stock.candles.empty())
+    if (stock._candles.empty())
         return Range();
 
-    Range newRange(stock.candles.begin()->dateTime(), stock.candles.rbegin()->dateTime());
+    Range newRange(stock._candles.begin()->dateTime(), stock._candles.rbegin()->dateTime());
     if (!newRange.isValid())
         return Range();
 
@@ -81,29 +82,29 @@ Range Stock::append(Stock &stock)
     const auto &outOfRange = [&newRange](const auto &it) {
         return !newRange.contains(it.dateTime());
     };
-    auto begin = std::remove_if(stock.candles.begin(), stock.candles.end(), outOfRange);
-    stock.candles.erase(begin, stock.candles.end());
+    auto begin = std::remove_if(stock._candles.begin(), stock._candles.end(), outOfRange);
+    stock._candles.erase(begin, stock._candles.end());
 
     if (newRange > existedRange)    ///@todo !сравнить производительность с std::merge
-        std::move(stock.candles.begin(), stock.candles.end(), std::back_inserter(candles));
+        std::move(stock._candles.begin(), stock._candles.end(), std::back_inserter(_candles));
      else if (newRange < existedRange)
-        std::move(stock.candles.rbegin(), stock.candles.rend(), std::front_inserter(candles));
+        std::move(stock._candles.rbegin(), stock._candles.rend(), std::front_inserter(_candles));
      else   //На всякий случай, такого быть не должно!
         logCritical << QString("Stock::appendCandles();%1;%2;%3;%4")
-                       .arg(newRange.getBegin().toString()).arg(newRange.getEnd().toString())
-                       .arg(existedRange.getBegin().toString()).arg(existedRange.getEnd().toString());
+                       .arg(newRange.begin().toString()).arg(newRange.end().toString())
+                       .arg(existedRange.begin().toString()).arg(existedRange.end().toString());
 
     return newRange;
 }
 
 std::deque<Candle> &Stock::getCandles()
 {
-    return candles;
+    return _candles;
 }
 
 const std::deque<Candle> &Stock::getCandles() const
 {
-    return candles;
+    return _candles;
 }
 
 }

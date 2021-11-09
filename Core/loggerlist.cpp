@@ -14,7 +14,7 @@ LoggerList::~LoggerList()
 
 }
 
-std::shared_ptr<ILogger> LoggerList::get(QString tag)
+std::shared_ptr<ILogger> LoggerList::get(const QString &tag)
 {
     return get<defaultLogger>(tag);
 }

@@ -41,12 +41,12 @@ private:
     Q_OBJECT
 
     //Переменные для обработки событий мыши
-    QPoint prevMousePos;                //Предыдущее положение мыши
-    QPointF mouseAnchorPos;             //Предыдущее положение мыши
-    Qt::MouseButtons pressedButton;     //Идентефикаторы нажатых кнопок
+    QPoint _prevMousePos;                //Предыдущее положение мыши
+    QPointF _mouseAnchorPos;             //Предыдущее положение мыши
+    Qt::MouseButtons _pressedButton;     //Идентефикаторы нажатых кнопок
 
-    QTimer plotTimer;                   //Таймер для перерисовки сцены
-    std::vector<std::shared_ptr<ChartScene>> scenes;    //список сцен для отрисовки
+    QTimer _plotTimer;                   //Таймер для перерисовки сцены
+    std::vector<std::shared_ptr<ChartScene>> _scenes;    //список сцен для отрисовки
 };
 
 }

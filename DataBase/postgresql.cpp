@@ -6,27 +6,27 @@
 namespace DB {
 
 PostgreSql::PostgreSql()
+    : _db (QSqlDatabase::addDatabase( Glo.conf->getValue("DataBase/type", QString("QPSQL")) ))
 {
-    db = QSqlDatabase::addDatabase( Glo.conf->getValue("DataBase/type", QString("QPSQL")) );
-    db.setHostName     ( Glo.conf->getValue("DataBase/ip",       QString("127.0.0.1")) );
-    db.setDatabaseName ( Glo.conf->getValue("DataBase/dbName",   QString("Tinkoff"))   );
-    db.setUserName     ( Glo.conf->getValue("DataBase/userName", QString("postgres"))  );
-    db.setPassword     ( Glo.conf->getValue("DataBase/password", QString("password"))  );
+    _db.setHostName     ( Glo.conf->getValue("DataBase/ip",       QString("127.0.0.1")) );
+    _db.setDatabaseName ( Glo.conf->getValue("DataBase/dbName",   QString("Tinkoff"))   );
+    _db.setUserName     ( Glo.conf->getValue("DataBase/userName", QString("postgres"))  );
+    _db.setPassword     ( Glo.conf->getValue("DataBase/password", QString("password"))  );
 
-    if (!db.open())
-        logWarning << QString("DataBase;DataBase();Can't open DataBase, check config file; error text=%1").arg(db.lastError().text());
+    if (!_db.open())
+        logWarning << QString("DataBase;DataBase();Can't open DataBase, check config file; error text=%1").arg(_db.lastError().text());
     else
         logInfo << "DataBase;DataBase();DB connected!";
 }
 
 QSqlDatabase &PostgreSql::get()
 {
-    return db;
+    return _db;
 }
 
 bool PostgreSql::isOpen() const
 {
-    return db.isOpen();
+    return _db.isOpen();
 }
 
 }

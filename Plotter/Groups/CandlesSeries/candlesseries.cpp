@@ -16,7 +16,7 @@ CandlesSeries::CandlesSeries(CandlesData *candlesData)
     connect(candlesData, &CandlesData::newItems, this, &CandlesSeries::appendCandles);
 
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
-    drawWait = plotInterval * 3 / 4;
+    _drawWait = plotInterval * 3 / 4;
 }
 
 CandlesSeries::~CandlesSeries()
@@ -26,7 +26,7 @@ CandlesSeries::~CandlesSeries()
         removeFromGroup(&it);
 
     //Отвязываем незадействованные в данный момент свечи candlesPool от ChartSeries, по той же причине
-    for (auto &it : candlesData->candlesPool)
+    for (auto &it : candlesData->_candlesPool)
         removeFromGroup(&it);
 }
 
@@ -34,13 +34,13 @@ void CandlesSeries::repaint()
 {
     updateVisibleCandles();
 
-    if (!isRepaintRequired || candlesData->empty() || !drawMutex.tryLock(drawWait))
+    if (!isRepaintRequired || candlesData->empty() || !_drawMutex.tryLock(_drawWait))
         return;
 
     updatePriceRange();
     updateCandlesPos();
 
-    drawMutex.unlock();
+    _drawMutex.unlock();
     isRepaintRequired = false;
 }
 
@@ -66,7 +66,7 @@ void CandlesSeries::updateVisibleCandles()
 
 void CandlesSeries::updatePriceRange()
 {
-    if (!candlesData->autoPriceRange)
+    if (!candlesData->_autoPriceRange)
         return;
 
     qreal minPrice = candlesData->begin()->getCandle()->low();
@@ -87,7 +87,7 @@ void CandlesSeries::updatePriceRange()
 
     yAxis->setDataRange(newRange);
     yAxis->setDataOffset(newOffset);
-    candlesData->yScale = yAxis->getScale();
+    candlesData->_yScale = yAxis->getScale();
 
     //autoPriceRange = false;   //while settings autoPriceRange off is absent
 }
@@ -98,8 +98,8 @@ void CandlesSeries::updateCandlesPos()
         return;
 
     //Задаем положение на экране всей QGraphicsItemGroup
-    setX(-1 * xAxis->getOffset() * candlesData->xScale);
-    this->setY(yAxis->getOffset() * candlesData->yScale);
+    setX(-1 * xAxis->getOffset() * candlesData->_xScale);
+    this->setY(yAxis->getOffset() * candlesData->_yScale);
 
     //Обновляем положение всех видимых свечей
     for (auto &it : *candlesData)
@@ -116,9 +116,8 @@ void CandlesSeries::askForRepaint()
 
 void CandlesSeries::appendCandles(CandlesPool::PairRange range)
 {
-    auto& [firstIt, lastIt] = range;
     auto appendNewCandles = [&](auto &it) mutable { this->addToGroup(&it); };
-    std::for_each(firstIt, lastIt, appendNewCandles);
+    std::for_each(range.first, range.second, appendNewCandles);
 }
 
 }

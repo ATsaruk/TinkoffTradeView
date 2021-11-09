@@ -7,9 +7,9 @@
 namespace Task {
 
 
-IFunction::IFunction(QString name)
+IFunction::IFunction(const QString &name)
+    : functionName(name)
 {
-    functionName = name;
     logDebug << QString("%1;%1();created!").arg(functionName);
 }
 

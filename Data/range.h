@@ -13,21 +13,38 @@ class Range
 public:
     explicit Range();
 
-    Range(const Range &range);
-    Range(const QDateTime &begin_, const QDateTime &end_);
-    Range(const QDateTime &date, const long &duration);  //см. фунцию setRange(date, duration)
-    Range& operator= (const Range &range);
+    explicit Range(const Range &other);
+    explicit Range(const QDateTime &begin, const QDateTime &end);
+    explicit Range(const QDateTime &date, const long &duration);  //см. фунцию setRange(date, duration)
+    explicit Range(Range &&other) noexcept;
+    explicit Range(QDateTime &&begin, QDateTime &&end) noexcept;
 
-    Range(Range &&range) noexcept;
-    Range(QDateTime &&begin_, QDateTime &&end_) noexcept;
-    Range& operator= (Range &&range) noexcept;
+    Range& operator= (const Range &other);
+    Range& operator= (Range &&other) noexcept;
 
     ///@return начало диапазона
-    const QDateTime& getBegin() const;
+    QDateTime& begin();
     ///@return конец диапазона
-    const QDateTime& getEnd() const;
-    ///@return FALSE - если одна из дат !isValid или если begin > end
+    QDateTime& end();
+
+    ///@return начало диапазона
+    const QDateTime& begin() const;
+    ///@return конец диапазона
+    const QDateTime& end() const;
+
+    ///@return TRUE - если begin().isValid()
+    bool isBeginValid() const;
+    ///@return TRUE - если end().isValid()
+    bool isEndValid() const;
+    ///@return TRUE - если being() и end() isValid и если begin <= end
     bool isValid() const;
+
+    ///@return TRUE - если begin().isNull()
+    bool isBeginNull() const;
+    ///@return TRUE - если end().isNull()
+    bool isEndNull() const;
+    ///@return TRUE - если begin().isNull() и end().isNull()
+    bool isNull() const;
 
     ///@return TRUE - если isValid();
     operator bool() const;
@@ -44,16 +61,6 @@ public:
       * @return TRUE - если между диапазонами нет "зазора" */
     bool isIntersected(const Range &other) const;
 
-    ///@return TRUE - если начале текущего диапазона находится правее конца диапазона other
-    bool operator >(const Range &other) const;
-    ///@return TRUE - если конец текущего диапазона находится левее начала диапазона other
-    bool operator <(const Range &other) const;
-
-    ///Задает начало диапазона
-    void setBegin(const QDateTime &begin_);
-    ///Задает конец диапазона
-    void setEnd(const QDateTime &end_);
-
     /** @brief Формирует начало и конец диапазона
       * @param[IN] date - начало/конец диапазона
       * @param[IN] duration - длительность диапазона
@@ -63,8 +70,8 @@ public:
       *   отрицательное значение и по факту оно будет вычтено из date. */
     void setRange(const QDateTime &date, const long &duration);
 
-    ///Добавляет заданное число секунд к дате начала и дате конца (может быть отрицательным)
-    void addSecs(const long secs);
+    ///Сдигает текущий интервал на заданное число секунд (может быть отрицательным)
+    void shift(const long &secs);
 
     ///Ограничивает диапазон, делает не больше чем other
     void constrain(const Range &other);
@@ -81,28 +88,9 @@ public:
       * 4. Если диапазоны пересекаются, и other находится слева, то this->begin = other.end  */
     void remove(const Range &other);
 
-    /** @brief Возвращает результат вычитация из текущего диапазона
-      * @param[IN] other диапазон, который необходимо удалить
-      * @warning Есть одно НО в работе функции:  если диапазон other находится внутри нашего диапазона (*this), по идее нужно разбивать
-      * текущий диапазон на 2 диапазона "до" other и "после" other. Данная же функция обрежет текущий диапазон (*this) до начала other.begin
-      *
-      * Результат выполнения:
-      * 1. Если диапазоны не пересекаются, вернет пустой диапазон
-      * 2. Если диапазоны пересекаются, и other находится справа, то this->end = other.begin
-      * 3. Если диапазоны пересекаются, и other находится слева, то this->begin = other.end
-      * 4. Если range находится внутри текущего диапазона(*this) этот случай описан в warning
-      *
-      * В отличии от предыдущей функции, она не изменяет текущий диапазон, а лишь возвращает результат вычитания */
-    [[nodiscard]] Range remove(const Range &other) const;
-
-    /** @brief Расширяет текущий диапазон
-      * @param[IN] other - диапазон с которым будет сложен текущий диапазон
-      * @return диапазон начало которого соответствует min(begin, other.begin), а конеч соответсует max(end, other.end). */
-    void extend(const Range &other);
-
 private:
-    QDateTime begin;
-    QDateTime end;
+    QDateTime _begin;
+    QDateTime _end;
 };
 
 }

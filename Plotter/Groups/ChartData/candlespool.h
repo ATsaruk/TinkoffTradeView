@@ -57,9 +57,9 @@ protected:
     Iterator at(const size_t pos);
 
 private:
-    std::list<CandleItem> items;
+    std::list<CandleItem> _items;
 
-    CandlesData *seriesData;
+    CandlesData *_seriesData;
 };
 
 }

@@ -14,9 +14,9 @@ ChartPlotter::ChartPlotter(QWidget *parent) : QGraphicsView(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    connect(&plotTimer, &QTimer::timeout, this, &ChartPlotter::drawScene);
+    connect(&_plotTimer, &QTimer::timeout, this, &ChartPlotter::drawScene);
     uint plotInterval = Glo.conf->getValue("ChartPlotter/plotInterval", 5);
-    plotTimer.start(plotInterval);
+    _plotTimer.start(plotInterval);
 }
 
 ChartPlotter::~ChartPlotter()
@@ -32,12 +32,12 @@ ChartPlotter::~ChartPlotter()
 void ChartPlotter::showStock(const Data::StockKey &stockKey)
 {
     auto isSameStockKey = [&stockKey](const auto &it){ return it->getStockKey().figi() == stockKey.figi(); };
-    auto findedIterator = std::find_if(scenes.begin(), scenes.end(), isSameStockKey);
+    auto findedIterator = std::find_if(_scenes.begin(), _scenes.end(), isSameStockKey);
 
-    if (findedIterator == scenes.end()) {
+    if (findedIterator == _scenes.end()) {
         //сцены для акции с ключом stockKey не найдено
-        scenes.emplace_back(new ChartScene(stockKey));
-        setScene( scenes.back().get()     );
+        _scenes.emplace_back(new ChartScene(stockKey));
+        setScene( _scenes.back().get()     );
     } else
         setScene( (*findedIterator).get() );
 }
@@ -59,37 +59,37 @@ void ChartPlotter::wheelEvent(QWheelEvent *event)
 
 void ChartPlotter::mouseMoveEvent(QMouseEvent *event)
 {
-    qreal dx = prevMousePos.x() - event->pos().x();
-    qreal dy = event->pos().y() - prevMousePos.y();
+    qreal dx = _prevMousePos.x() - event->pos().x();
+    qreal dy = event->pos().y() - _prevMousePos.y();
 
     if (auto [curScene, ok] = getCurScene(); ok) {
-        if (pressedButton == Qt::LeftButton)
+        if (_pressedButton == Qt::LeftButton)
             curScene->setMove(dx, dy);
-        else if (pressedButton == Qt::MiddleButton)
-            curScene->setScale(dx, mouseAnchorPos.x(), dy, mouseAnchorPos.y());
+        else if (_pressedButton == Qt::MiddleButton)
+            curScene->setScale(dx, _mouseAnchorPos.x(), dy, _mouseAnchorPos.y());
         // else if (pressedButton == Qt::RightButton)
     }
 
-    prevMousePos = event->pos();
+    _prevMousePos = event->pos();
     event->accept();
 }
 
 void ChartPlotter::mousePressEvent(QMouseEvent *event)
 {
-    pressedButton = event->buttons();
-    prevMousePos = event->pos();
+    _pressedButton = event->buttons();
+    _prevMousePos = event->pos();
 
     qreal wdth = width();
     qreal hght = height();
-    qreal anchorX = prevMousePos.x() / wdth;
-    qreal anchorY = (hght - prevMousePos.y()) / hght;
-    mouseAnchorPos.setX(anchorX);
-    mouseAnchorPos.setY(anchorY);
+    qreal anchorX = _prevMousePos.x() / wdth;
+    qreal anchorY = (hght - _prevMousePos.y()) / hght;
+    _mouseAnchorPos.setX(anchorX);
+    _mouseAnchorPos.setY(anchorY);
 }
 
 void ChartPlotter::mouseReleaseEvent(QMouseEvent *event)
 {
-    pressedButton = event->buttons();
+    _pressedButton = event->buttons();
 }
 
 void ChartPlotter::resizeEvent(QResizeEvent *event)

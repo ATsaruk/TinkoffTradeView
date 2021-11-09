@@ -17,12 +17,10 @@ IMultiLogger::~IMultiLogger()
 
 void IMultiLogger::setWriteLog(bool on)
 {
-    enableLog(on);
-
     for (auto &it : loggers)
         it->setWriteLog(on);
 
-    ILogger::setWriteLog(on);
+    enableLog(on);
 }
 
 
@@ -36,7 +34,7 @@ void IMultiLogger::message(const QString &text)
 
 void IMultiLogger::enableLog(bool on)
 {
-    Q_UNUSED(on);
+    ILogger::setWriteLog(on);
 }
 
 }

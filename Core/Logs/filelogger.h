@@ -30,7 +30,7 @@ protected:
     void showMessage(const QString &text) override;
 
 private:
-    std::unique_ptr<QFile> logFile;
+    std::unique_ptr<QFile> _logFile;
 };
 
 }

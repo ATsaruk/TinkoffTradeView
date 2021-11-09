@@ -13,7 +13,7 @@ StockView::~StockView()
 
 }
 
-const Range StockView::getRange() const
+const Range& StockView::getRange() const
 {
     return range;
 }
@@ -39,12 +39,12 @@ std::pair<const Candle*, bool> StockView::at(size_t index) const
 
 void StockView::setBegin(const QDateTime &time)
 {
-    range.setBegin(time);
+    range.begin() = time;
 }
 
 void StockView::setEnd(const QDateTime &time)
 {
-    range.setEnd(time);
+    range.end() = time;
 }
 
 }

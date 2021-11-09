@@ -7,16 +7,14 @@ Range::Range()
 
 }
 
-Range::Range(const Range &range)
+Range::Range(const Range &other)
+    : _begin(other._begin), _end(other._end)
 {
-    begin = range.begin;
-    end = range.end;
 }
 
-Range::Range(const QDateTime &begin_, const QDateTime &end_)
+Range::Range(const QDateTime &begin, const QDateTime &end)
+    : _begin(begin), _end(end)
 {
-    begin = begin_;
-    end = end_;
 }
 
 Range::Range(const QDateTime &date, const long &duration)
@@ -24,50 +22,78 @@ Range::Range(const QDateTime &date, const long &duration)
     setRange(date, duration);
 }
 
-Range &Range::operator =(const Range &range)
+Range &Range::operator =(const Range &other)
 {
-    begin = range.begin;
-    end = range.end;
+    _begin = other._begin;
+    _end = other._end;
     return *this;
 }
 
-Range::Range(Range &&range) noexcept
+QDateTime &Range::begin()
 {
-    begin = std::move(range.begin);
-    end = std::move(range.end);
+    return _begin;
 }
 
-Range::Range(QDateTime &&begin_, QDateTime &&end_) noexcept
+QDateTime &Range::end()
 {
-    begin = std::move(begin_);
-    end = std::move(end_);
+    return _end;
 }
 
-Range &Range::operator =(Range &&range) noexcept
+Range::Range(Range &&other) noexcept
+    : _begin(std::move(other._begin)), _end(std::move(other._end))
 {
-    begin = std::move(range.begin);
-    end = std::move(range.end);
+}
+
+Range::Range(QDateTime &&begin, QDateTime &&end) noexcept
+    : _begin(std::move(begin)), _end(std::move(end))
+{
+}
+
+Range &Range::operator =(Range &&other) noexcept
+{
+    _begin = std::move(other._begin);
+    _end = std::move(other._end);
     return *this;
 }
 
-const QDateTime &Range::getBegin() const
+const QDateTime &Range::begin() const
 {
-    return begin;
+    return _begin;
 }
 
-const QDateTime &Range::getEnd() const
+const QDateTime &Range::end() const
 {
-    return end;
+    return _end;
+}
+
+bool Range::isBeginValid() const
+{
+    return _begin.isValid();
+}
+
+bool Range::isEndValid() const
+{
+    return _end.isValid();
 }
 
 bool Range::isValid() const
 {
-    if (!begin.isValid() || !end.isValid())
-        return false;
-    else if (begin > end)
-        return false;
+    return _begin.isValid() && !_end.isValid() && _begin <= _end;
+}
 
-    return true;
+bool Range::isBeginNull() const
+{
+    return _begin.isNull();
+}
+
+bool Range::isEndNull() const
+{
+    return _end.isNull();
+}
+
+bool Range::isNull() const
+{
+    return _begin.isNull() && _end.isNull();
 }
 
 Data::Range::operator bool() const
@@ -80,57 +106,54 @@ qint64 Range::toSec() const
     if (!isValid())
         return 0;
 
-    return begin.secsTo(end);
+    return _begin.secsTo(_end);
 }
 
 bool Range::contains(const QDateTime &date) const
 {
-    if (!isValid() || !date.isValid())
+    if (isNull())
         return false;
 
-    return begin <= date && date <= end;
+    if (isBeginValid() && date < _begin)
+        return false;
+
+    if (isEndValid() && date > _end)
+        return false;
+
+    return true;
 }
 
 bool Range::contains(const Range &other) const
 {
-    if (!isValid() || !other.isValid())
-        return false;
+    bool valid = false;
+    if (isBeginValid() && other.isBeginValid()) {
+        if (_begin <= other._begin)
+            valid = true;
+        else
+            return false;
+    }
 
-    return contains(other.begin) && contains(other.end);
+    if (isEndValid() && other.isEndValid()) {
+        if (_end >= other._end)
+            valid = true;
+        else
+            return false;
+    }
+
+    return valid;
 }
 
 bool Range::isIntersected(const Range &other) const
 {
-    if (!isValid() || !other.isValid())
+    if (isNull())
         return false;
 
-    return contains(other.begin) || contains(other.end);
-}
+    if (other.isBeginValid() && contains(other._begin))
+        return true;
+    if (other.isEndValid() && contains(other._end))
+        return true;
 
-bool Range::operator >(const Range &other) const
-{
-    if (!isValid() || !other.isValid())
-        return false;
-
-    return begin > other.getEnd();
-}
-
-bool Range::operator <(const Range &other) const
-{
-    if (!isValid() || !other.isValid())
-        return false;
-
-    return end < other.getBegin();
-}
-
-void Range::setBegin(const QDateTime &begin_)
-{
-    begin = begin_;
-}
-
-void Range::setEnd(const QDateTime &end_)
-{
-    end = end_;
+    return false;
 }
 
 void Range::setRange(const QDateTime &date, const long &duration)
@@ -139,65 +162,52 @@ void Range::setRange(const QDateTime &date, const long &duration)
         return;
 
     if (duration >= 0) {
-        begin = date;
-        end = date.addSecs(duration);
+        _begin = date;
+        _end = date.addSecs(duration);
     } else {
-        begin = date.addSecs(duration);
-        end = date;
+        _begin = date.addSecs(duration);
+        _end = date;
     }
 }
 
-void Range::addSecs(const long secs)
+void Range::shift(const long &secs)
 {
-    if (!isValid())
-        return;
+    if (isBeginValid())
+        _begin = _begin.addSecs(secs);
 
-    begin = begin.addSecs(secs);
-    end = end.addSecs(secs);
+    if (isEndValid())
+        _end = _end.addSecs(secs);
 }
 
 void Range::constrain(const Range &other)
 {
-    if (!isValid() || !other.isValid())
-        return;
+    if (other.isBeginValid() && (isBeginNull() || _begin < other._begin))
+        _begin = other._begin;
 
-    if (begin < other.begin)
-        begin = other.begin;
+    if (other.isEndValid() && (isEndNull() || _end > other._end))
+        _end = other._end;
 
-    if (end > other.end)
-        end = other.end;
+    if (_begin > _end) {
+        _begin = QDateTime();
+        _end = QDateTime();
+    }
 }
 
 void Range::remove(const Range &other)
 {
-    if (!isIntersected(other))
-        return; //диапазоны не пересекаются
+    if (!contains(other._begin) && !contains(other._end) &&
+            !other.contains(_begin) && !other.contains(_end))
+        return; //нет пересечений
 
-    if (begin < other.begin )
-        end = other.begin;
-    else
-        begin = other.end;
-}
+    if (other.isEndValid() && (isEndNull() || _end >= other._end)) {
+        _begin = other._end;
+    } else if (other.isBeginValid()) {
+        _end = other._begin;
+    }
 
-Range Range::remove(const Range &other) const
-{
-    if (!isIntersected(other))
-        return Range(); //диапазоны не пересекаются
-
-    Range result = *this;
-    if (result.begin < other.begin )
-       result.end = other.begin;
-    else
-        result.begin = other.end;
-
-    return result;
-}
-
-void Range::extend(const Range &other)
-{
-    if (isValid() && other.isValid()) {
-        begin = std::min(begin, other.begin);
-        end = std::max(end, other.end);
+    if (_begin > _end) {
+        _begin = QDateTime();
+        _end = QDateTime();
     }
 }
 

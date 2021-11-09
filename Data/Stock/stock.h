@@ -33,7 +33,7 @@ public:
     size_t count() const;
 
     ///Ищет свечу с меткой времени равной time
-    std::optional<const Candle*> find(const QDateTime &time) const;
+    const Candle *find(const QDateTime &time) const;
 
     ///Добавляет свечи appendCandles в список candles
     Range append(Stock &stock);
@@ -42,8 +42,8 @@ public:
     const std::deque<Candle> &getCandles() const;
 
 private:
-    StockKey stockKey;
-    std::deque<Candle> candles;
+    StockKey _key;
+    std::deque<Candle> _candles;
 };
 
 }

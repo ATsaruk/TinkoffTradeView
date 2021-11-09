@@ -23,7 +23,6 @@ namespace Data {
 class Stocks
 {
 public:
-    //virtual CandlePtr getCandlesForWrite(const StockKey &key) = 0;
     using SharedStockVewRef = QSharedPointer<const Data::StockReference<QReadLocker>>;
 
     explicit Stocks();
@@ -66,7 +65,7 @@ protected:
                                         const size_t minCandlesCount = 0) const;
 
 private:
-    std::unordered_map<StockKey, QSharedPointer<Stock>> stocks; /// Список акций
+    std::unordered_map<StockKey, QSharedPointer<Stock>> _stocks; /// Список акций
 
     friend class Task::GetStock;
     friend class StockViewGlobal;

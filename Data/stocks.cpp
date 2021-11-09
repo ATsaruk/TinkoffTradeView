@@ -14,7 +14,7 @@ Stocks::~Stocks()
 
 std::pair<Range, size_t> Stocks::getRange(const StockKey &key) const
 {
-    if (auto record = stocks.find(key); record != stocks.end()) {
+    if (auto record = _stocks.find(key); record != _stocks.end()) {
         auto mutex = const_cast<QReadWriteLock*>(&record->second->mutex);
         QReadLocker locker(mutex);
         return std::make_pair(record->second->range(), record->second->count());
@@ -25,12 +25,12 @@ std::pair<Range, size_t> Stocks::getRange(const StockKey &key) const
 
 void Stocks::appedStock(Stock &stock)
 {
-    if (auto record = stocks.find(stock.key()); record != stocks.end()) {
+    if (auto record = _stocks.find(stock.key()); record != _stocks.end()) {
         auto mutex = const_cast<QReadWriteLock*>(&record->second->mutex);
         QReadLocker locker(mutex);
         record->second->append(stock);
     } else
-        stocks[stock.key()] = QSharedPointer<Stock>::create(std::move(stock));
+        _stocks[stock.key()] = QSharedPointer<Stock>::create(std::move(stock));
 }
 
 Stocks::SharedStockVewRef Stocks::getCandlesForRead(const StockKey &key, const QDateTime &begin, const QDateTime &end, const size_t minCandlesCount) const
@@ -38,7 +38,7 @@ Stocks::SharedStockVewRef Stocks::getCandlesForRead(const StockKey &key, const Q
     /*for ( const auto &it : stocks )
         if (it.first == key)
             return SharedStockVewRef::create(it.second, begin, end, minCandlesCount);*/
-    if (const auto &record = stocks.find(key); record != stocks.end())
+    if (const auto &record = _stocks.find(key); record != _stocks.end())
         return SharedStockVewRef::create(record->second, begin, end, minCandlesCount);
 
     return nullptr;

@@ -55,7 +55,7 @@ public:
     std::enable_if_t<std::is_base_of_v<IBaseTask, T>, T*>
     createTask(SharedInterface &inputData, N ... args)
     {
-        QMutexLocker locker(&mutex);
+        QMutexLocker locker(&_mutex);
         T *newTask = new T(args ...);
         newTask->setData(inputData);
         newTask->setThread(nullptr);
@@ -78,11 +78,11 @@ protected slots:
 private:
     Q_OBJECT
 
-    QRecursiveMutex mutex;
-    QQueue<IBaseTask*> taskList;    //очередь задач на запуск
+    QRecursiveMutex _mutex;
+    QQueue<IBaseTask*> _taskList;    //очередь задач на запуск
 
-    const uint16_t maxTaskCount;    //максимальное число одновременно работающих задач
-    uint16_t taskCount = 0;         //текущее кол-во запущенных задач
+    const uint16_t _maxTaskCount;    //максимальное число одновременно работающих задач
+    uint16_t _taskCount = 0;         //текущее кол-во запущенных задач
 };
 
 }

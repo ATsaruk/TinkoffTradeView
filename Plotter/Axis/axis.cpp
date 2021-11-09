@@ -2,9 +2,9 @@
 
 namespace Plotter {
 
-Axis::Axis(const AXIS_TYPE _axisType)
+Axis::Axis(const AXIS_TYPE axisType)
+    : _axisType(axisType)
 {
-    axisType = _axisType;
 }
 
 Axis::~Axis()
@@ -14,13 +14,13 @@ Axis::~Axis()
 
 const Axis::AXIS_TYPE& Axis::getAxisType()
 {
-    return axisType;
+    return _axisType;
 }
 
 //Resize action
-void Axis::setSceneRect(const QRectF &_rect)
+void Axis::setSceneRect(const QRectF &rect)
 {
-    sceneRect = _rect;
+    sceneRect = rect;
     emit scaled();
 }
 

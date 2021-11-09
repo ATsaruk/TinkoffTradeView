@@ -36,11 +36,11 @@ public:
     using DequeIt = std::_Deque_iterator<Data::Candle, const Data::Candle&, const Data::Candle*>;
     using ReverseDequeIt = std::reverse_iterator<DequeIt>;
 
-    StockView();
+    explicit StockView();
     virtual ~StockView();
 
     ///Возвращает диапазон дат, в котором доступны свечи (между итераторами begin() и end())
-    const Range getRange() const;
+    const Range &getRange() const;
 
     [[nodiscard]] bool empty() const;
 

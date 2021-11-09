@@ -33,8 +33,8 @@ protected:
     DateAxis* getDateAxis() const;
 
 private:
-    CandlesData candlesData;
-    std::shared_ptr<CandlesSeries> candles;
+    CandlesData _candlesData;
+    std::shared_ptr<CandlesSeries> _candles;
 };
 
 }

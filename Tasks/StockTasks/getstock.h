@@ -75,14 +75,14 @@ protected slots:
     void taskFinished() override;
 
 private:
-    bool extraRangeLoaded;      //производистся загрузка дополнительного 2х недельного интервала
-    size_t loadedCount;         //Число загруженный свечей
-    size_t minCandleCount;      //минимальное число свечей, которое нужно загрузить
-    Data::StockKey key;
+    bool _extraRangeLoaded = false;  //производистся загрузка дополнительного 2х недельного интервала
+    size_t _loadedCount = 0;         //Число загруженный свечей
+    size_t _minCandleCount = 0;      //минимальное число свечей, которое нужно загрузить
+    Data::StockKey _key;
 
-    InterfaceWrapper<Data::Range> range;            //исходный интервал загрузки
-    InterfaceWrapper<Data::Range> subRange;         //подинтервал для загрузки
-    InterfaceWrapper<SharedStockVewRef> stock;      //список загруженных акций (из БД + от брокера)
+    InterfaceWrapper<Data::Range> _range;            //исходный интервал загрузки
+    InterfaceWrapper<Data::Range> _subRange;         //подинтервал для загрузки
+    InterfaceWrapper<SharedStockVewRef> _stock;      //список загруженных акций (из БД + от брокера)
 };
 
 }

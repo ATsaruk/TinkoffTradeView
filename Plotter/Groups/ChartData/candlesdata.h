@@ -19,7 +19,7 @@ class CandlesData : public QObject
     Q_OBJECT
 
 public:
-    CandlesData();
+    explicit CandlesData();
     ~CandlesData();
 
     void update(const long long newIndex, const size_t candlesCount);
@@ -49,24 +49,24 @@ protected slots:
 
 private:
     //Параметры масштабирования
-    qreal clearance = 0.;           //Зазор по оси Х между свечами
-    long long candlesCount = 0;     //Количество отображаемых свечей
-    long long offsetIndex = 0;      //Индекс первой отображаемой свечи
-    qreal xScale = 0;               //Масштаб по оси Х
-    qreal yScale = 0;               //Масштаб по оси Y
-    bool autoPriceRange = true;     //Режим автомастабирования оси Y по цене //@note возможно его нужно от сюда перенести?
+    qreal _clearance = 0.;           //Зазор по оси Х между свечами
+    long long _candlesCount = 0;     //Количество отображаемых свечей
+    long long _offsetIndex = 0;      //Индекс первой отображаемой свечи
+    qreal _xScale = 0;               //Масштаб по оси Х
+    qreal _yScale = 0;               //Масштаб по оси Y
+    bool _autoPriceRange = true;     //Режим автомастабирования оси Y по цене //@note возможно его нужно от сюда перенести?
 
     //Pen и Brush для отрисовки свечи (обычно бычьи свечи - красные, медвежьи свечи - зеленые)
-    QPen bearPen, bullPen;
-    QBrush bearBrush, bullBrush;
+    QPen _bearPen, _bullPen;
+    QBrush _bearBrush, _bullBrush;
 
     //Ключи акции для которой предназначены данные
-    Data::StockKey stockKey;
+    Data::StockKey _stockKey;
 
     //Свечная информация
-    bool isDataRequested = false;
-    CandlesPool candles;            //Список свечей
-    CandlesPool candlesPool;        //Список неиспользуемых свечей (по мотивам паттерна Object Pool)
+    bool _isDataRequested = false;
+    CandlesPool _candles;            //Список свечей
+    CandlesPool _candlesPool;        //Список неиспользуемых свечей (по мотивам паттерна Object Pool)
 
     friend class Axis;
     friend class CandleItem;

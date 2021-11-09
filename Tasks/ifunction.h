@@ -135,7 +135,7 @@ namespace Task {
 class IFunction : public QObject
 {
 public:
-    explicit IFunction(QString name);
+    explicit IFunction(const QString &name);
     virtual ~IFunction();
 
     ///Возвращает имя функции (нужно для ведения логов)

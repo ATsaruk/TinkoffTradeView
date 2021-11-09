@@ -59,15 +59,15 @@ private:
     Q_OBJECT
 
     //Текущий режим работы: true - режим работы в песочнице, false - режим работы с основным сервером брокера
-    bool sandMode;
+    bool _sandMode;
 
-    QString baseUri;            //Адрес сервера для работы с биржей
-    QString webSocketBaseUri;   //Адрес сервера для подписки на свечи
-    QByteArray authToken;       //Токен для авторизации
+    QString _baseUri;            //Адрес сервера для работы с биржей
+    QString _webSocketBaseUri;   //Адрес сервера для подписки на свечи
+    QByteArray _authToken;       //Токен для авторизации
 
 private slots:
     //Обрабатывает сетевые ошибоки при работе с брокером
-    void onError(QNetworkReply::NetworkError code);
+    void _onError(QNetworkReply::NetworkError code);
 };
 
 

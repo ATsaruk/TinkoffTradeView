@@ -4,45 +4,45 @@ namespace Plotter {
 
 CandlesPool::CandlesPool(CandlesData *seriesData)
 {
-    this->seriesData = seriesData;
+    this->_seriesData = seriesData;
 }
 
 void CandlesPool::clear()
 {
-    items.clear();
+    _items.clear();
 }
 
 bool CandlesPool::empty() const
 {
-    return items.empty();
+    return _items.empty();
 }
 
 size_t CandlesPool::size() const
 {
-    return items.size();
+    return _items.size();
 }
 
 CandleItem *CandlesPool::operator [](const size_t pos)
 {
-    if (pos >= items.size()) {
+    if (pos >= _items.size()) {
         //Если недостаточно элементов, создаем их!
-        Iterator newFirst = items.end();
-        if (!items.empty())
+        Iterator newFirst = _items.end();
+        if (!_items.empty())
             --newFirst;
 
-        for (size_t i = items.size(); i <= pos; i++)
-            items.emplace_back(seriesData);
+        for (size_t i = _items.size(); i <= pos; i++)
+            _items.emplace_back(_seriesData);
 
-        if (newFirst == items.end())
-            newFirst = items.begin();
+        if (newFirst == _items.end())
+            newFirst = _items.begin();
         else
             ++newFirst;
 
         //Отправляем сигнал о новых элементах
-        newItems(std::make_pair(newFirst, items.end()));
+        newItems(std::make_pair(newFirst, _items.end()));
     }
 
-    auto itemAtPos = items.begin();
+    auto itemAtPos = _items.begin();
     for (size_t i = 0; i < pos; ++i, ++itemAtPos);
 
     return &(*itemAtPos);
@@ -51,26 +51,26 @@ CandleItem *CandlesPool::operator [](const size_t pos)
 void CandlesPool::push_front(CandlesPool &pool, const PairRange &it)
 {
     auto [from, to] = it;
-    items.splice(items.begin(), pool.items, from, to);
+    _items.splice(_items.begin(), pool._items, from, to);
 }
 
 void CandlesPool::push_back(CandlesPool &pool, const PairRange &it)
 {
     auto [from, to] = it;
-    items.splice(items.end(), pool.items, from, to);
+    _items.splice(_items.end(), pool._items, from, to);
 }
 
 CandlesPool::PairRange CandlesPool::pop_front(const size_t count)
 {
     Iterator it = at(count);
-    return std::make_pair(items.begin(), it);
+    return std::make_pair(_items.begin(), it);
 }
 
 CandlesPool::PairRange CandlesPool::pop_back(const size_t count)
 {
-    if (count < items.size()) {
-        Iterator it = at(items.size() - count);
-        return std::make_pair(it, items.end());
+    if (count < _items.size()) {
+        Iterator it = at(_items.size() - count);
+        return std::make_pair(it, _items.end());
     } else {
         return pop_front(count);
     }
@@ -78,50 +78,50 @@ CandlesPool::PairRange CandlesPool::pop_back(const size_t count)
 
 CandlesPool::Iterator CandlesPool::begin()
 {
-    return items.begin();
+    return _items.begin();
 }
 
 CandlesPool::Iterator CandlesPool::end()
 {
-    return items.end();
+    return _items.end();
 }
 
 CandlesPool::ReverseIt CandlesPool::rbegin()
 {
-    return items.rbegin();
+    return _items.rbegin();
 }
 
 CandlesPool::ReverseIt CandlesPool::rend()
 {
-    return items.rend();
+    return _items.rend();
 }
 
 CandleItem* CandlesPool::getBack()
 {
-    return &items.back();
+    return &_items.back();
 }
 
 CandlesPool::Iterator CandlesPool::at(const size_t pos)
 {
-    if (pos > items.size()) {
+    if (pos > _items.size()) {
         //Если недостаточно элементов, создаем их!
-        Iterator newFirst = items.end();
-        if (!items.empty())
+        Iterator newFirst = _items.end();
+        if (!_items.empty())
             --newFirst;
 
-        for (size_t i = items.size(); i < pos; i++)
-            items.emplace_back(seriesData);
+        for (size_t i = _items.size(); i < pos; i++)
+            _items.emplace_back(_seriesData);
 
-        if (newFirst == items.end())
-            newFirst = items.begin();
+        if (newFirst == _items.end())
+            newFirst = _items.begin();
         else
             ++newFirst;
 
         //Отправляем сигнал о новых элементах
-        newItems(std::make_pair(newFirst, items.end()));
+        newItems(std::make_pair(newFirst, _items.end()));
     }
 
-    Iterator itemAtPos = items.begin();
+    Iterator itemAtPos = _items.begin();
     for (size_t i = 0; i < pos; ++i, ++itemAtPos);
 
     return itemAtPos;

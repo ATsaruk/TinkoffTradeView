@@ -13,10 +13,10 @@ constexpr auto defaultWebSocetUri = "wss://api-invest.tinkoff.ru/openapi/md/v1/m
 
 Request::Request()
 {
-    sandMode = Glo.conf->getValue("Tinkoff/sandMode", false);
+    _sandMode = Glo.conf->getValue("Tinkoff/sandMode", false);
     initMode();
 
-    webSocketBaseUri = Glo.conf->getValue("Tinkoff/webSocketBaseUri", QString(defaultWebSocetUri));
+    _webSocketBaseUri = Glo.conf->getValue("Tinkoff/webSocketBaseUri", QString(defaultWebSocetUri));
 }
 
 Request::~Request()
@@ -36,36 +36,36 @@ bool Request::sendPost(const QString &path, const QByteArray &data)
 
 bool Request::isSandMode() const
 {
-    return sandMode;
+    return _sandMode;
 }
 
 void Request::setSandMode(const bool sand)
 {
-    if (sandMode == sand)
+    if (_sandMode == sand)
         return;
 
-    sandMode = sand;
+    _sandMode = sand;
 
     initMode();
-    emit sandModeChanged(sandMode);
+    emit sandModeChanged(_sandMode);
 }
 
 void Request::initMode()
 {
     QString tokenFile;          //Имя файла с токеном авторизации
     if (isSandMode()) {
-        baseUri = Glo.conf->getValue("Tinkoff/sandboxBaseUri", QString(defaultSandBaseUri));
+        _baseUri = Glo.conf->getValue("Tinkoff/sandboxBaseUri", QString(defaultSandBaseUri));
         tokenFile = Glo.conf->getValue("Tinkoff/fileSandKey", QString(defaultSandFileToken));
     } else {
-        baseUri = Glo.conf->getValue("Tinkoff/baseURi", QString(defaultWorkBaseUri));
+        _baseUri = Glo.conf->getValue("Tinkoff/baseURi", QString(defaultWorkBaseUri));
         tokenFile = Glo.conf->getValue("Tinkoff/fileKey", QString(defaultWorkFileToken));
     }
 
-    authToken.clear();
+    _authToken.clear();
 
     QFile file(tokenFile);
     if (file.open(QIODevice::ReadOnly)) {
-        authToken = file.readAll();
+        _authToken = file.readAll();
         file.close();
         logInfo << "BrokerQuery;setMode();Successful loading broker key";
     } else
@@ -74,14 +74,14 @@ void Request::initMode()
 
 bool Request::send(const QString &path, const QByteArray &data)
 {
-    if (authToken.isEmpty())
+    if (_authToken.isEmpty())
         return false;;
 
-    QNetworkRequest request(baseUri + path);
+    QNetworkRequest request(_baseUri + path);
 
     //Добавляем данные в заголовок для авторизации
     QByteArray authInfo("Bearer ");
-    authInfo.append(authToken);
+    authInfo.append(_authToken);
     request.setRawHeader("Authorization", authInfo);
     request.setRawHeader("Content-Type", "application/json");
 
@@ -92,7 +92,7 @@ bool Request::send(const QString &path, const QByteArray &data)
                 networkAccessManager->get(request) :        //Если data is empty отправляем GET запрос
                 networkAccessManager->post(request, data);  //Иначе отправляем POST запрос
 
-    connect(reply, &QNetworkReply::errorOccurred, this, &Request::onError);
+    connect(reply, &QNetworkReply::errorOccurred, this, &Request::_onError);
 
     return true;
 }
@@ -109,7 +109,7 @@ void Request::onResponse(QNetworkReply* resp)
 }
 
 // Обрабатывает ошибоки от сервера
-void Request::onError(QNetworkReply::NetworkError code)
+void Request::_onError(QNetworkReply::NetworkError code)
 {
     logWarning << QString("BrokerQuery;onError;Error=%1").arg(code);
 }

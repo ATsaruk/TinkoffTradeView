@@ -6,19 +6,19 @@ namespace Data {
 
 
 StockViewGlobal::StockViewGlobal(const StockKey &key, const QDateTime &begin, const QDateTime &end, const size_t minCandlesCount)
+    : _stock(Glo.stocks->getCandlesForRead(key, begin, end, minCandlesCount))
 {
-    stock = Glo.stocks->getCandlesForRead(key, begin, end, minCandlesCount);
-    range = stock->getRange();
+    range = _stock->getRange();
 }
 
 StockView::DequeIt StockViewGlobal::begin() const
 {
-    return lower_bound(range.getBegin());
+    return lower_bound(range.begin());
 }
 
 StockView::DequeIt StockViewGlobal::end() const
 {
-    return upper_bound(range.getEnd());
+    return upper_bound(range.end());
 }
 
 StockView::ReverseDequeIt StockViewGlobal::rbegin() const
@@ -26,9 +26,9 @@ StockView::ReverseDequeIt StockViewGlobal::rbegin() const
     if (!range.isValid())
         return nullVector.rend();
 
-    auto time = range.getEnd();
+    auto time = range.end();
     auto isNotGreateThanTime = [&time](const auto &it){ return it.dateTime() <= time; };
-    return std::find_if(stock->rbegin(), stock->rend(), isNotGreateThanTime);
+    return std::find_if(_stock->rbegin(), _stock->rend(), isNotGreateThanTime);
 }
 
 StockView::ReverseDequeIt StockViewGlobal::rend() const
@@ -36,9 +36,9 @@ StockView::ReverseDequeIt StockViewGlobal::rend() const
     if (!range.isValid())
         return nullVector.rend();
 
-    auto time = range.getBegin();
+    auto time = range.begin();
     auto isLessThanTime = [&time](const auto &it){ return it.dateTime() < time; };
-    return std::find_if(stock->rbegin(), stock->rend(), isLessThanTime);
+    return std::find_if(_stock->rbegin(), _stock->rend(), isLessThanTime);
 }
 
 StockView::DequeIt StockViewGlobal::lower_bound(const QDateTime &time) const
@@ -47,7 +47,7 @@ StockView::DequeIt StockViewGlobal::lower_bound(const QDateTime &time) const
         return nullVector.end();
 
     auto isNotLessThanTime = [&time](const auto &it){ return it.dateTime() >= time; };
-    return std::find_if(stock->begin(), stock->end(), isNotLessThanTime);
+    return std::find_if(_stock->begin(), _stock->end(), isNotLessThanTime);
 }
 
 StockView::DequeIt StockViewGlobal::upper_bound(const QDateTime &time) const
@@ -56,7 +56,7 @@ StockView::DequeIt StockViewGlobal::upper_bound(const QDateTime &time) const
         return nullVector.end();
 
     auto isGreaterThanTime = [&time](const auto &it){ return it.dateTime() > time; };
-    return std::find_if(stock->begin(), stock->end(), isGreaterThanTime);
+    return std::find_if(_stock->begin(), _stock->end(), isGreaterThanTime);
 }
 
 }

@@ -8,6 +8,7 @@
 
 namespace Data {
 
+///@fixme переделать интерфейс доступа
 
 /** @ingroup StockView
   * @brief Обертка, предоставляющая доступ к свечам из Data::Stock
@@ -28,11 +29,11 @@ public:
       * @param end - время за последней доступной свечой (upper_bound(end))
       * @param minCandlesCount - минимальное количество доступных свечей
       * @warning правила формирования границ такие же, как у функции: @see Stocks::getCandlesForRead() */
-    StockReference(const QSharedPointer<Stock> &baseStock, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime(), const size_t minCandlesCount = 0)
+    explicit StockReference(const QSharedPointer<Stock> &baseStock, const QDateTime &begin = QDateTime(), const QDateTime &end = QDateTime(), const size_t minCandlesCount = 0)
         : stock(baseStock), locker(const_cast<QReadWriteLock*>(&baseStock->mutex))
     {
         range = stock->range();
-        Range newRange = Range((begin.isValid() ? begin : range.getBegin()), (end.isValid() ? end : range.getEnd()));
+        Range newRange = Range((begin.isValid() ? begin : range.begin()), (end.isValid() ? end : range.end()));
         range.constrain(newRange);  //обрезаем диапазон доступный в переданной акцие до не более чем заданного
 
         if (minCandlesCount == 0)
@@ -40,35 +41,35 @@ public:
 
         if (size() < minCandlesCount) {
             auto stockBeginIt = static_cast<DequeIt>(stock->getCandles().begin());
-            auto curEndIt = upper_bound(range.getEnd());
+            auto curEndIt = upper_bound(range.end());
             size_t availableCandlesCount = std::distance(stockBeginIt, curEndIt);
             if (availableCandlesCount > minCandlesCount)
                 availableCandlesCount = minCandlesCount;
 
             std::advance(curEndIt, -availableCandlesCount); //+1 т.к. curEndIt указывает на элемент за необходимым
-            range.setBegin(curEndIt->dateTime());
+            range.begin() = curEndIt->dateTime();
         }
     }
 
     StockReference(const StockReference &other) noexcept
-        : StockReference(other.stock, other.range.getBegin(), other.range.getEnd()) {}
+        : StockReference(other.stock, other.range.begin(), other.range.end()) {}
 
     ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
     DequeIt begin() const override
     {
-        return lower_bound(range.getBegin());
+        return lower_bound(range.begin());
     }
 
     ///итератор на свечу, время которой больше (upper_bound), чем range.getEnd()
     DequeIt end() const override
     {
-        return upper_bound(range.getEnd());
+        return upper_bound(range.end());
     }
 
     ///реверс итератор на первую свечу
     ReverseDequeIt rbegin() const override
     {
-        auto time = range.getEnd();
+        auto time = range.end();
         const auto &candles = stock->getCandles();
         auto isNotGreateThanTime = [&time](const auto &it){ return it.dateTime() <= time; };
         return std::find_if(candles.rbegin(), candles.rend(), isNotGreateThanTime);
@@ -77,7 +78,7 @@ public:
     ///реверс итератор на последнюю свечу
     ReverseDequeIt rend() const override
     {
-        auto time = range.getBegin();
+        auto time = range.begin();
         const auto &candles = stock->getCandles();
         auto isLessThanTime = [&time](const auto &it){ return it.dateTime() < time; };
         return std::find_if(candles.rbegin(), candles.rend(), isLessThanTime);

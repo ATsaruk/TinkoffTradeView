@@ -7,14 +7,14 @@ namespace Data {
 
 
 StockKey::StockKey()
+    : _interval(INTERVAL::WEEK)
 {
 
 }
 
 StockKey::StockKey(const QString &figi, const INTERVAL &interval)
+    : _figi(figi), _interval(interval)
 {
-    _figi = figi;
-    _interval = interval;
 }
 
 StockKey &StockKey::operator =(const StockKey &other)
@@ -79,7 +79,7 @@ QString StockKey::keyToString() const
     return QString("%1:%2").arg(_figi, intervalToString());
 }
 
-StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval) const
+StockKey::INTERVAL StockKey::stringToInterval(QString stringInterval)
 {
     stringInterval = stringInterval.toLower();
     if (stringInterval == QString("1min"))       return INTERVAL::MIN1;

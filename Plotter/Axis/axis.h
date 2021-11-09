@@ -14,7 +14,7 @@ class Axis : public QObject, public QGraphicsItem
 public:
     enum AXIS_TYPE : uint8_t { HORIZONTAL, VERTICAL };
 
-    explicit Axis(const AXIS_TYPE _axisType);
+    explicit Axis(const AXIS_TYPE axisType);
     virtual ~Axis();
 
     virtual qreal getScale() = 0;
@@ -28,7 +28,7 @@ public:
 
 public slots:
     //Изменение размеров окна
-    virtual void setSceneRect(const QRectF &_rect);
+    virtual void setSceneRect(const QRectF &rect);
 
     //Масштабирование delta - число шагов для смещения
     virtual void setMove(const qreal delta) = 0;
@@ -43,7 +43,7 @@ protected:
     QRectF sceneRect;
 
 private:
-    AXIS_TYPE axisType;
+    AXIS_TYPE _axisType;
 };
 
 }

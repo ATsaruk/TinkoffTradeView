@@ -126,7 +126,7 @@ class IBaseTask : public IFunction
     Q_OBJECT
 
 public:
-    explicit IBaseTask(QString taskname);
+    explicit IBaseTask(const QString &taskName);
     virtual ~IBaseTask();
 
     ///Возвращает поток, в котором находится данный экземпляр класса
@@ -152,11 +152,11 @@ protected:
 
 protected:
     //Поток в котором будет выполняться данная задача
-    QThread *taskThread;
+    QThread *taskThread = nullptr;
 
 private:
     //Признак того, что это корневая задача, она управляет выделением памяти, запуском, остановкой и удалением taskThread
-    bool isRootTask;
+    bool _isRootTask = false;
 };
 
 }

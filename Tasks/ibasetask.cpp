@@ -7,7 +7,7 @@
 namespace Task {
 
 
-IBaseTask::IBaseTask(QString taskName)
+IBaseTask::IBaseTask(const QString &taskName)
     : IFunction(taskName)
 {
     isFunc = false;
@@ -25,9 +25,9 @@ QThread *IBaseTask::getThread()
 
 void IBaseTask::setThread(QThread *parent)
 {
-    isRootTask = parent == nullptr;     //parent == nullptr означает, что это корневая задача!
+    _isRootTask = parent == nullptr;     //parent == nullptr означает, что это корневая задача!
 
-    if (isRootTask) {    //Это корневая задача, создаем поток, и перемещаемся в него
+    if (_isRootTask) {    //Это корневая задача, создаем поток, и перемещаемся в него
         taskThread = new QThread;
         connect(taskThread, &QThread::started,  this, &IBaseTask::exec);
         connect(this, &IBaseTask::finished,  taskThread, &QThread::quit);
@@ -40,7 +40,7 @@ void IBaseTask::setThread(QThread *parent)
 
 void IBaseTask::start()
 {
-    if (isRootTask) {
+    if (_isRootTask) {
         taskThread->setObjectName(getName());
         taskThread->start();
     } else

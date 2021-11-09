@@ -13,11 +13,12 @@ class Range
 public:
     explicit Range();
 
-    explicit Range(const Range &other);
     explicit Range(const QDateTime &begin, const QDateTime &end);
     explicit Range(const QDateTime &date, const long &duration);  //см. фунцию setRange(date, duration)
-    explicit Range(Range &&other) noexcept;
     explicit Range(QDateTime &&begin, QDateTime &&end) noexcept;
+
+    Range(const Range &other);
+    Range(Range &&other) noexcept;
 
     Range& operator= (const Range &other);
     Range& operator= (Range &&other) noexcept;

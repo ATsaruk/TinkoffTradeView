@@ -136,9 +136,9 @@ void CandlesData::requestCandles(const Data::Range &range, const size_t required
 void CandlesData::recieveCandles()
 {
     Task::IBaseTask *task = dynamic_cast<Task::IBaseTask*>(sender());
-    Task::InterfaceWrapper<Task::GetStock::SharedStockVewRef> stock = task->getResult();
+    Task::InterfaceWrapper<Data::StockView> stock = task->getResult();
 
-    if (stock->empty()) {
+    if (stock->size() == 0) {
         logCritical << "CandlesData::recieveCandles;recieved empty stock!";
         _isDataRequested = false;
         return;
@@ -146,7 +146,8 @@ void CandlesData::recieveCandles()
 
     auto lastRecievedCandleTime = stock->rbegin()->dateTime();
     if (!_candles.empty() && lastRecievedCandleTime == _candles.begin()->getCandle()->dateTime())
-        const_cast<Data::StockReference<QReadLocker>*>(stock.operator->())->setEnd(_stockKey.prevCandleTime(stock->getRange().end()));
+        stock->setEnd(_stockKey.prevCandleTime(stock->range().end()));
+        //const_cast<Data::StockReference<QReadLocker>*>(stock.operator->())->setEnd(_stockKey.prevCandleTime(stock->getRange().end()));
 
     //Получаем stock->size() элементов для вставки из unused candles pool'а
     auto newItems = _candlesPool.pop_front(stock->size());

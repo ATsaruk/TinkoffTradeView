@@ -89,10 +89,9 @@ void LoadStockFromBroker::finishTask()
 {
     Glo.broker->mutex.unlock();
 
-    auto &candles = _stock->getCandles();
-    if (!candles.empty()) {
-        std::sort(candles.begin(), candles.end());
-        removeIncompleteCandle();
+    if (_stock->size() > 0) {
+        _stock->sort();
+        _stock->removeIncompleteCandle();
     }
 
     emit finished();
@@ -119,8 +118,7 @@ bool LoadStockFromBroker::readCandles(const QByteArray &answer)
 
     QJsonArray candlesArray = payload.value("candles").toArray();
 
-    auto &candles = _stock->getCandles();
-    auto pushBack = [&candles](const auto &it){ candles.push_back(Data::Candle::fromJson(it.toObject())); };
+    auto pushBack = [&](const auto &it){ _stock->insertCandle(_stock->end(), Data::Candle::fromJson(it.toObject())); };
     std::for_each(candlesArray.begin(), candlesArray.end(), pushBack);
 
     return true;
@@ -141,24 +139,6 @@ bool LoadStockFromBroker::checkStockKey(const QJsonObject &payload)
         return false;
     }
     return true;
-}
-
-/* Проверяем последнюю свечу и если она незавершенная удаляем ее, поясню зачем это:
- * Например сейчас 17:42 и мы запрашиваем информацию по 15 минутным свечам с начала суток.
- * Время у последней полученной свечи будет 17:30 и если ничего не делать, то эта свеча будет записана в базу данных с таким временем.
- * И допустим через час мы захотим вновь загрузить свечную информацию, в итоге мы опять получим свечу на 17:30, только в этот раз она
- * будет содержать в себе полные данные за 15 минут, но в базу данных она уже не запишется, т.к. так уже етсь свеча на 17:30!
- * Т.к. в базе данных primary key для записи это figi + interval + time.
- * В итоге свеча так и останется незавершенной! это было вяснено постфактум, когда заметил отличие на моем графике и графике брокера!
- */
-void LoadStockFromBroker::removeIncompleteCandle()
-{
-    auto &candles = _stock->getCandles();
-    Data::Candle &lastCandle = candles.back();
-
-    QDateTime lastCompleteCandle = _stock->key().prevCandleTime(QDateTime::currentDateTime());
-    if (lastCandle.dateTime() >= lastCompleteCandle)
-        candles.pop_back();
 }
 
 }

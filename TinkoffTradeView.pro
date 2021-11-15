@@ -24,8 +24,7 @@ SOURCES += \
     Data/Stock/candle.cpp \
     Data/Stock/stock.cpp \
     Data/Stock/stockkey.cpp \
-    Data/StockView/stockview.cpp \
-    Data/StockView/stockviewglobal.cpp \
+    Data/Stock/stockview.cpp \
     Data/range.cpp \
     Data/stocks.cpp \
     DataBase/Query/stocksquery.cpp \
@@ -65,9 +64,7 @@ HEADERS += \
     Data/Stock/candle.h \
     Data/Stock/stock.h \
     Data/Stock/stockkey.h \
-    Data/StockView/stockreference.h \
-    Data/StockView/stockview.h \
-    Data/StockView/stockviewglobal.h \
+    Data/Stock/stockview.h \
     Data/range.h \
     Data/stocks.h \
     DataBase/Query/stocksquery.h \

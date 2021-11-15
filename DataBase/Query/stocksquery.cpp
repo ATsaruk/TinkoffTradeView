@@ -19,11 +19,12 @@ void StocksQuery::insertCandles(const Stock &stock)
     if (!db->isOpen())
         return;
 
+    const auto &figi = stock.key().figi();
     QString interval = stock.key().intervalToString();
-    const auto data = stock.getCandles();
-    for (const auto &it: data) {
+
+    auto insertCandle = [&figi, &interval, &db] (const auto &it) {
         QString insert = QString("INSERT INTO stocks (figi, interval, time, open, close, high, low, volume) VALUES ('%1', '%2', '%3', %4, %5, %6, %7, %8)")
-                .arg(stock.key().figi(),
+                .arg(figi,
                      interval,
                      it.dateTime().toString("yyyy-MM-dd hh:mm:ss"))
                 .arg(it.open())
@@ -35,7 +36,9 @@ void StocksQuery::insertCandles(const Stock &stock)
         QSqlQuery query( db->get() );
         if (!query.exec(insert))
             qDebug() << query.lastError().databaseText();
-    }
+    };
+
+    std::for_each(stock.begin(), stock.end(), insertCandle);
 }
 
 void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateTime &end, const uint candleCount)
@@ -68,14 +71,14 @@ void StocksQuery::loadCandles(Stock &stock, const QDateTime &begin, const QDateT
                        .arg(query.lastError().databaseText(), query.lastError().driverText());
     }
 
-    auto &candles = stock.getCandles();
     while (query.next()) {
-        candles.emplace_back( query.value(2).toDateTime(),   //dateTime
-                              query.value(3).toReal(),       //open
-                              query.value(4).toReal(),       //close
-                              query.value(5).toReal(),       //high
-                              query.value(6).toReal(),       //low
-                              query.value(7).toLongLong() ); //volume
+        stock.insertCandle( stock.end(),
+                            Data::Candle( query.value(2).toDateTime(),    //dateTime
+                                          query.value(3).toReal(),        //open
+                                          query.value(4).toReal(),        //close
+                                          query.value(5).toReal(),        //high
+                                          query.value(6).toReal(),        //low
+                                          query.value(7).toLongLong()) ); //volume
     }
 }
 

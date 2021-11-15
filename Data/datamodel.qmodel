@@ -50,7 +50,7 @@
                          <object>{669fb42c-8435-46b6-9589-e56c9b74218c}</object>
                          <context>Stock</context>
                          <name>IStocks</name>
-                         <pos>x:160;y:-490</pos>
+                         <pos>x:195;y:-595</pos>
                          <rect>x:-80;y:-85;w:160;h:170</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -73,7 +73,7 @@
                          <object>{43b83ec7-f88d-4dc8-8fdd-0c879cf03c3f}</object>
                          <context>Stock</context>
                          <name>Stocks</name>
-                         <pos>x:510;y:-480</pos>
+                         <pos>x:510;y:-590</pos>
                          <rect>x:-90;y:-45;w:180;h:90</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -114,8 +114,8 @@
                          <object>{a72c4c7a-acc2-4217-bccb-7fb7c77b5fd8}</object>
                          <context>Stock</context>
                          <name>Stock</name>
-                         <pos>x:515;y:-265</pos>
-                         <rect>x:-85;y:-85;w:170;h:170</rect>
+                         <pos>x:510;y:-365</pos>
+                         <rect>x:-85;y:-90;w:170;h:180</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -137,7 +137,7 @@
                          <object>{96de3efc-7e30-4240-8b1f-68daa9234186}</object>
                          <context>Stock</context>
                          <name>StockKey</name>
-                         <pos>x:300;y:-10</pos>
+                         <pos>x:295;y:-110</pos>
                          <rect>x:-135;y:-90;w:270;h:180</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -160,7 +160,7 @@
                          <object>{bf77072d-345a-4c3b-9dc3-757ac5285d35}</object>
                          <context>Stock</context>
                          <name>Candle</name>
-                         <pos>x:665;y:-5</pos>
+                         <pos>x:660;y:-105</pos>
                          <rect>x:-135;y:-90;w:270;h:180</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -267,54 +267,8 @@
                          <object>{81b69e0a-3380-4ea6-b56b-e0754c7e76ab}</object>
                          <context>StockView</context>
                          <name>StockView</name>
-                         <pos>x:-25;y:-30</pos>
-                         <rect>x:-45;y:-70;w:90;h:140</rect>
-                         <visual-role>0</visual-role>
-                        </DObject>
-                       </base-DObject>
-                       <namespace>Data</namespace>
-                       <show-all-members>true</show-all-members>
-                      </DClass>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DClass">
-                      <DClass>
-                       <base-DObject>
-                        <DObject>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{b74aa600-6f74-4c0e-87cd-6a7774c3eb08}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{a8bc5021-cef6-4e28-a9aa-979fdaabf694}</object>
-                         <context>StockView</context>
-                         <name>StockViewGlobal</name>
-                         <pos>x:-25;y:-260</pos>
-                         <rect>x:-100;y:-55;w:200;h:110</rect>
-                         <visual-role>0</visual-role>
-                        </DObject>
-                       </base-DObject>
-                       <namespace>Data</namespace>
-                       <show-all-members>true</show-all-members>
-                      </DClass>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DClass">
-                      <DClass>
-                       <base-DObject>
-                        <DObject>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{8ea9fe5e-4086-4634-91e9-ea74c53474d7}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</object>
-                         <context>StockView</context>
-                         <name>StockViewReference</name>
-                         <pos>x:245;y:-265</pos>
-                         <rect>x:-105;y:-55;w:210;h:110</rect>
+                         <pos>x:195;y:-365</pos>
+                         <rect>x:-45;y:-75;w:90;h:150</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -330,87 +284,15 @@
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{2c303a2f-8c4a-40f3-86b3-979e4d564e8f}</uid>
+                           <uid>{42bd2253-b13d-484c-95af-fb909fd56204}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{beb80273-6f80-4b27-b994-d4c46027aec6}</object>
-                         <a>{8ea9fe5e-4086-4634-91e9-ea74c53474d7}</a>
-                         <b>{f8399500-20f2-4be9-86fe-97edf98df114}</b>
-                        </DRelation>
-                       </base-DRelation>
-                      </DInheritance>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DInheritance">
-                      <DInheritance>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{b730487b-ea9a-42fe-bee0-f9cccaaabb03}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{182dd289-4f60-4fb4-9850-34f0332b8ebd}</object>
-                         <a>{b74aa600-6f74-4c0e-87cd-6a7774c3eb08}</a>
-                         <b>{f8399500-20f2-4be9-86fe-97edf98df114}</b>
-                        </DRelation>
-                       </base-DRelation>
-                      </DInheritance>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DDependency">
-                      <DDependency>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{42eb3355-e562-40f9-86f3-5a114dd93399}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{0968e9f5-8ad8-447c-abd5-2f3b2da8a559}</object>
-                         <a>{b74aa600-6f74-4c0e-87cd-6a7774c3eb08}</a>
-                         <b>{8ea9fe5e-4086-4634-91e9-ea74c53474d7}</b>
-                        </DRelation>
-                       </base-DRelation>
-                      </DDependency>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DDependency">
-                      <DDependency>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{a638876c-20a9-46a0-8793-4443e77d8aa1}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{101a7ac8-7ab9-42f4-a474-f536c21d68c9}</object>
-                         <a>{b74aa600-6f74-4c0e-87cd-6a7774c3eb08}</a>
-                         <b>{d826fab3-5a29-43be-9815-73e6e44be6f2}</b>
-                        </DRelation>
-                       </base-DRelation>
-                      </DDependency>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DDependency">
-                      <DDependency>
-                       <base-DRelation>
-                        <DRelation>
-                         <base-DElement>
-                          <DElement>
-                           <uid>{bc8e89bc-acfe-4662-b607-f36a32844161}</uid>
-                          </DElement>
-                         </base-DElement>
-                         <object>{5dbe18b3-ee8e-4536-a87f-cb4c98bfefa2}</object>
-                         <a>{8ea9fe5e-4086-4634-91e9-ea74c53474d7}</a>
+                         <object>{0af29e15-950e-44dc-b0ef-1e0d56c79cd4}</object>
+                         <a>{f8399500-20f2-4be9-86fe-97edf98df114}</a>
                          <b>{735792ea-da99-445a-8da7-b7fa6d5bf164}</b>
                         </DRelation>
                        </base-DRelation>
-                      </DDependency>
+                      </DInheritance>
                      </instance>
                     </item>
                     <item>
@@ -420,12 +302,12 @@
                         <DRelation>
                          <base-DElement>
                           <DElement>
-                           <uid>{83d7da61-3d75-486d-b50f-201fe1e6e2c9}</uid>
+                           <uid>{a7571f53-8095-44d2-991d-29f486480abb}</uid>
                           </DElement>
                          </base-DElement>
-                         <object>{d5b035f6-8765-4bff-a887-4d3618043a13}</object>
+                         <object>{608263eb-5835-41f1-88fc-0f98d0dd4557}</object>
                          <a>{d826fab3-5a29-43be-9815-73e6e44be6f2}</a>
-                         <b>{8ea9fe5e-4086-4634-91e9-ea74c53474d7}</b>
+                         <b>{f8399500-20f2-4be9-86fe-97edf98df114}</b>
                         </DRelation>
                        </base-DRelation>
                       </DDependency>
@@ -433,7 +315,7 @@
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1633144497831</last-modified>
+                  <last-modified>1636956290335</last-modified>
                   <toolbarid>General</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -501,7 +383,7 @@
                                            <qlist>
                                             <item>
                                              <handle>
-                                              <uid>{d5b035f6-8765-4bff-a887-4d3618043a13}</uid>
+                                              <uid>{608263eb-5835-41f1-88fc-0f98d0dd4557}</uid>
                                               <target>
                                                <instance type="MDependency">
                                                 <MDependency>
@@ -509,11 +391,11 @@
                                                   <MRelation>
                                                    <base-MElement>
                                                     <MElement>
-                                                     <uid>{d5b035f6-8765-4bff-a887-4d3618043a13}</uid>
+                                                     <uid>{608263eb-5835-41f1-88fc-0f98d0dd4557}</uid>
                                                     </MElement>
                                                    </base-MElement>
                                                    <a>{669fb42c-8435-46b6-9589-e56c9b74218c}</a>
-                                                   <b>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</b>
+                                                   <b>{81b69e0a-3380-4ea6-b56b-e0754c7e76ab}</b>
                                                   </MRelation>
                                                  </base-MRelation>
                                                 </MDependency>
@@ -532,21 +414,21 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{2276c54a-0111-44e5-8cba-8608a78d0fd4}</uid>
+                                          <uid>{658c3f9e-e5f3-48f0-b4b4-d5fb46b434a4}</uid>
                                           <type>1</type>
                                           <declaration>-friend class StockViewGlobal</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{c0026e3e-978c-458f-b499-6eacdd3f9ab1}</uid>
+                                          <uid>{3d4fe89b-1105-4d78-860e-358e0a77ccce}</uid>
                                           <type>1</type>
                                           <declaration>+signal: newCandles</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{d2129543-eb7a-47ff-b6fa-47f438fa49d2}</uid>
+                                          <uid>{b05a021a-c892-427e-86c7-fa39878a3771}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>+getCandle()</declaration>
@@ -554,7 +436,7 @@
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{29c0f99b-0ae6-4f72-b12d-4327df1e360f}</uid>
+                                          <uid>{55523a3f-fce2-42c2-b817-0da048f76697}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>+checkCandles()</declaration>
@@ -562,7 +444,7 @@
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{a52a1578-ba60-41e6-9de6-5009e4e1c2cf}</uid>
+                                          <uid>{2e7a1c89-ba3d-4b35-9961-5e712a2195ca}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>+insert()</declaration>
@@ -570,7 +452,7 @@
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{ab5137bb-ba5e-44bf-8557-e5dae34d657e}</uid>
+                                          <uid>{6e18314a-e371-4078-8448-ff46b7d9625c}</uid>
                                           <type>2</type>
                                           <properties>2</properties>
                                           <declaration>-getCandlesForRead()</declaration>
@@ -664,7 +546,7 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{dd05b035-1656-4891-96cc-cf5775e0cd17}</uid>
+                                          <uid>{353aeb9f-8a7b-4cc3-990d-eb37f479144d}</uid>
                                           <type>1</type>
                                           <declaration>-u_map&lt;StockKey, Stock&gt; stocks</declaration>
                                          </MClassMember>
@@ -773,42 +655,49 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{80296bfa-899e-4a92-b8e1-4deaeba94268}</uid>
+                                          <uid>{bf6531d1-15d2-4377-9ac8-79324ffc8431}</uid>
                                           <type>1</type>
-                                          <declaration>-StockKey stockKey</declaration>
+                                          <declaration>-StockKey _key</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{09abefe1-6d83-4ad5-aad9-44c57b132194}</uid>
+                                          <uid>{d8997bc3-6c45-4527-97b6-c313e5f7b950}</uid>
                                           <type>1</type>
-                                          <declaration>-vector&lt;Candle&gt; candles</declaration>
+                                          <declaration>-deque&lt;Candle&gt; _candles</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{96e30e5c-b596-4c9e-9b02-66c0a88d4b94}</uid>
+                                          <uid>{871328fb-b0f4-4309-95ac-532159e9df2c}</uid>
                                           <type>1</type>
                                           <declaration>+QReadWriteLock mutex</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{c69bd809-22a2-4003-8130-02fc248e89d2}</uid>
+                                          <uid>{d1f0c3df-4d93-4fd3-9c0e-04fa54c1ea25}</uid>
+                                          <type>2</type>
+                                          <declaration>+size()</declaration>
+                                         </MClassMember>
+                                        </item>
+                                        <item>
+                                         <MClassMember>
+                                          <uid>{c365dba9-4339-4596-a77c-de551ade0ab1}</uid>
                                           <type>2</type>
                                           <declaration>+range()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{8a5a16fc-16c1-4549-9d09-92be0a0885d0}</uid>
+                                          <uid>{da96aca8-cd4e-4bb0-8669-16d0ba732b71}</uid>
                                           <type>2</type>
                                           <declaration>+find(const QDateTime &amp;time)</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{f1adba8f-e50a-4f4c-9baf-2bfc462313fc}</uid>
+                                          <uid>{794aa2dc-2ead-48d3-bb88-35bdd1ea162f}</uid>
                                           <type>2</type>
                                           <declaration>+append(Stock &amp;&amp;stock)</declaration>
                                          </MClassMember>
@@ -1017,6 +906,36 @@
                                          </MElement>
                                         </base-MElement>
                                         <name>StockView</name>
+                                        <relations>
+                                         <handles>
+                                          <handles>
+                                           <qlist>
+                                            <item>
+                                             <handle>
+                                              <uid>{0af29e15-950e-44dc-b0ef-1e0d56c79cd4}</uid>
+                                              <target>
+                                               <instance type="MInheritance">
+                                                <MInheritance>
+                                                 <base-MRelation>
+                                                  <MRelation>
+                                                   <base-MElement>
+                                                    <MElement>
+                                                     <uid>{0af29e15-950e-44dc-b0ef-1e0d56c79cd4}</uid>
+                                                    </MElement>
+                                                   </base-MElement>
+                                                   <a>{81b69e0a-3380-4ea6-b56b-e0754c7e76ab}</a>
+                                                   <b>{a72c4c7a-acc2-4217-bccb-7fb7c77b5fd8}</b>
+                                                  </MRelation>
+                                                 </base-MRelation>
+                                                </MInheritance>
+                                               </instance>
+                                              </target>
+                                             </handle>
+                                            </item>
+                                           </qlist>
+                                          </handles>
+                                         </handles>
+                                        </relations>
                                        </MObject>
                                       </base-MObject>
                                       <namespace>Data</namespace>
@@ -1024,238 +943,37 @@
                                        <qlist>
                                         <item>
                                          <MClassMember>
-                                          <uid>{407bf99f-8f08-48e3-91ed-5dc931034d48}</uid>
+                                          <uid>{7aae9432-c1b6-4bc0-8dbc-c52c7d8090c0}</uid>
                                           <type>1</type>
-                                          <declaration>-Range range</declaration>
+                                          <declaration>-Range _range</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{e5153174-590a-4128-b175-3a3df19d0465}</uid>
+                                          <uid>{51b08c62-5059-4abc-862c-ab587c7e70f6}</uid>
                                           <type>2</type>
                                           <declaration>+begin()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{376b0a02-1eab-4795-b2c9-2b409d7fc1ad}</uid>
+                                          <uid>{b8377330-354e-46df-87a6-7b998af0c166}</uid>
                                           <type>2</type>
                                           <declaration>+end()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{d3eff50c-1314-4165-b703-f9ca345ec93d}</uid>
+                                          <uid>{cdd56641-7c92-4d2e-b236-7ff30f1c0d31}</uid>
                                           <type>2</type>
-                                          <declaration>+operator[] ()</declaration>
-                                         </MClassMember>
-                                        </item>
-                                       </qlist>
-                                      </members>
-                                     </MClass>
-                                    </instance>
-                                   </target>
-                                  </handle>
-                                 </item>
-                                 <item>
-                                  <handle>
-                                   <uid>{a8bc5021-cef6-4e28-a9aa-979fdaabf694}</uid>
-                                   <target>
-                                    <instance type="MClass">
-                                     <MClass>
-                                      <base-MObject>
-                                       <MObject>
-                                        <base-MElement>
-                                         <MElement>
-                                          <uid>{a8bc5021-cef6-4e28-a9aa-979fdaabf694}</uid>
-                                          <flags>1</flags>
-                                         </MElement>
-                                        </base-MElement>
-                                        <name>StockViewGlobal</name>
-                                        <relations>
-                                         <handles>
-                                          <handles>
-                                           <qlist>
-                                            <item>
-                                             <handle>
-                                              <uid>{182dd289-4f60-4fb4-9850-34f0332b8ebd}</uid>
-                                              <target>
-                                               <instance type="MInheritance">
-                                                <MInheritance>
-                                                 <base-MRelation>
-                                                  <MRelation>
-                                                   <base-MElement>
-                                                    <MElement>
-                                                     <uid>{182dd289-4f60-4fb4-9850-34f0332b8ebd}</uid>
-                                                    </MElement>
-                                                   </base-MElement>
-                                                   <a>{a8bc5021-cef6-4e28-a9aa-979fdaabf694}</a>
-                                                   <b>{81b69e0a-3380-4ea6-b56b-e0754c7e76ab}</b>
-                                                  </MRelation>
-                                                 </base-MRelation>
-                                                </MInheritance>
-                                               </instance>
-                                              </target>
-                                             </handle>
-                                            </item>
-                                            <item>
-                                             <handle>
-                                              <uid>{0968e9f5-8ad8-447c-abd5-2f3b2da8a559}</uid>
-                                              <target>
-                                               <instance type="MDependency">
-                                                <MDependency>
-                                                 <base-MRelation>
-                                                  <MRelation>
-                                                   <base-MElement>
-                                                    <MElement>
-                                                     <uid>{0968e9f5-8ad8-447c-abd5-2f3b2da8a559}</uid>
-                                                    </MElement>
-                                                   </base-MElement>
-                                                   <a>{a8bc5021-cef6-4e28-a9aa-979fdaabf694}</a>
-                                                   <b>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</b>
-                                                  </MRelation>
-                                                 </base-MRelation>
-                                                </MDependency>
-                                               </instance>
-                                              </target>
-                                             </handle>
-                                            </item>
-                                            <item>
-                                             <handle>
-                                              <uid>{101a7ac8-7ab9-42f4-a474-f536c21d68c9}</uid>
-                                              <target>
-                                               <instance type="MDependency">
-                                                <MDependency>
-                                                 <base-MRelation>
-                                                  <MRelation>
-                                                   <base-MElement>
-                                                    <MElement>
-                                                     <uid>{101a7ac8-7ab9-42f4-a474-f536c21d68c9}</uid>
-                                                    </MElement>
-                                                   </base-MElement>
-                                                   <a>{a8bc5021-cef6-4e28-a9aa-979fdaabf694}</a>
-                                                   <b>{669fb42c-8435-46b6-9589-e56c9b74218c}</b>
-                                                  </MRelation>
-                                                 </base-MRelation>
-                                                </MDependency>
-                                               </instance>
-                                              </target>
-                                             </handle>
-                                            </item>
-                                           </qlist>
-                                          </handles>
-                                         </handles>
-                                        </relations>
-                                       </MObject>
-                                      </base-MObject>
-                                      <namespace>Data</namespace>
-                                      <members>
-                                       <qlist>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{5a0ffc31-42e6-408e-97ae-37fd8909c29f}</uid>
-                                          <type>1</type>
-                                          <declaration>-StockViewReference ref</declaration>
+                                          <declaration>+size()</declaration>
                                          </MClassMember>
                                         </item>
                                         <item>
                                          <MClassMember>
-                                          <uid>{9c0217b4-bc1d-4cb4-96b8-210271ec379d}</uid>
+                                          <uid>{ab0f9d0d-b349-48c0-abb5-809942a25367}</uid>
                                           <type>2</type>
-                                          <declaration>+StockVewGlobal(StockKey&amp;, Range)</declaration>
-                                         </MClassMember>
-                                        </item>
-                                       </qlist>
-                                      </members>
-                                     </MClass>
-                                    </instance>
-                                   </target>
-                                  </handle>
-                                 </item>
-                                 <item>
-                                  <handle>
-                                   <uid>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</uid>
-                                   <target>
-                                    <instance type="MClass">
-                                     <MClass>
-                                      <base-MObject>
-                                       <MObject>
-                                        <base-MElement>
-                                         <MElement>
-                                          <uid>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</uid>
-                                          <flags>1</flags>
-                                         </MElement>
-                                        </base-MElement>
-                                        <name>StockViewReference</name>
-                                        <relations>
-                                         <handles>
-                                          <handles>
-                                           <qlist>
-                                            <item>
-                                             <handle>
-                                              <uid>{beb80273-6f80-4b27-b994-d4c46027aec6}</uid>
-                                              <target>
-                                               <instance type="MInheritance">
-                                                <MInheritance>
-                                                 <base-MRelation>
-                                                  <MRelation>
-                                                   <base-MElement>
-                                                    <MElement>
-                                                     <uid>{beb80273-6f80-4b27-b994-d4c46027aec6}</uid>
-                                                    </MElement>
-                                                   </base-MElement>
-                                                   <a>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</a>
-                                                   <b>{81b69e0a-3380-4ea6-b56b-e0754c7e76ab}</b>
-                                                  </MRelation>
-                                                 </base-MRelation>
-                                                </MInheritance>
-                                               </instance>
-                                              </target>
-                                             </handle>
-                                            </item>
-                                            <item>
-                                             <handle>
-                                              <uid>{5dbe18b3-ee8e-4536-a87f-cb4c98bfefa2}</uid>
-                                              <target>
-                                               <instance type="MDependency">
-                                                <MDependency>
-                                                 <base-MRelation>
-                                                  <MRelation>
-                                                   <base-MElement>
-                                                    <MElement>
-                                                     <uid>{5dbe18b3-ee8e-4536-a87f-cb4c98bfefa2}</uid>
-                                                    </MElement>
-                                                   </base-MElement>
-                                                   <a>{3ad0fc60-c443-4c84-a35e-ce9cc57cda15}</a>
-                                                   <b>{a72c4c7a-acc2-4217-bccb-7fb7c77b5fd8}</b>
-                                                  </MRelation>
-                                                 </base-MRelation>
-                                                </MDependency>
-                                               </instance>
-                                              </target>
-                                             </handle>
-                                            </item>
-                                           </qlist>
-                                          </handles>
-                                         </handles>
-                                        </relations>
-                                       </MObject>
-                                      </base-MObject>
-                                      <namespace>Data</namespace>
-                                      <members>
-                                       <qlist>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{06bd6a67-cb60-48b4-a530-da0b66484352}</uid>
-                                          <type>1</type>
-                                          <declaration>-Stock &amp;ref</declaration>
-                                         </MClassMember>
-                                        </item>
-                                        <item>
-                                         <MClassMember>
-                                          <uid>{24a36160-6987-4ec9-b0fe-52e82141c3c3}</uid>
-                                          <type>2</type>
-                                          <declaration>+StockViewReference(Stock&amp;, Range)</declaration>
+                                          <declaration>+range()</declaration>
                                          </MClassMember>
                                         </item>
                                        </qlist>

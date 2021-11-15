@@ -8,7 +8,7 @@
 #include "Tasks/Interfaces/interfase.h"
 
 #include "Data/range.h"
-#include "Data/StockView/stockreference.h"
+#include "Data/Stock/stockview.h"
 
 namespace Task {
 
@@ -29,8 +29,6 @@ class GetStock : public IBaseCommand
     Q_OBJECT
 
 public:
-    using SharedStockVewRef = const Data::StockReference<QReadLocker>;
-
     /** @brief Конструктор, сохраняет начальные данные
       * @param stockKey - ключ акции для загрузки
       * @param minCandleCount - минимальное число свечей, которое должны быть загружно */
@@ -76,13 +74,12 @@ protected slots:
 
 private:
     bool _extraRangeLoaded = false;  //производистся загрузка дополнительного 2х недельного интервала
-    size_t _loadedCount = 0;         //Число загруженный свечей
     size_t _minCandleCount = 0;      //минимальное число свечей, которое нужно загрузить
     Data::StockKey _key;
 
     InterfaceWrapper<Data::Range> _range;            //исходный интервал загрузки
     InterfaceWrapper<Data::Range> _subRange;         //подинтервал для загрузки
-    InterfaceWrapper<SharedStockVewRef> _stock;      //список загруженных акций (из БД + от брокера)
+    InterfaceWrapper<Data::StockView> _stock;      //список загруженных акций (из БД + от брокера)
 };
 
 }

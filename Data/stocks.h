@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 #include "Stock/stock.h"
-#include "StockView/stockreference.h"
+#include "Stock/stockview.h"
 #include "Tasks/StockTasks/getstock.h"
 
 namespace Data {
@@ -23,12 +23,11 @@ namespace Data {
 class Stocks
 {
 public:
-    using SharedStockVewRef = QSharedPointer<const Data::StockReference<QReadLocker>>;
-
     explicit Stocks();
     ~Stocks();
 
 protected:
+    using SharedStockVewRef = QSharedPointer<Data::StockView>;
 
     /** @brief Возвращает доступный диапазон по акции и количество доступных свечей
       * @param key - ключ акции */
@@ -45,8 +44,7 @@ protected:
 
     /** @brief Возвращает свечи из запрошенного интервала
       * @param[IN] key - ключ акции
-      * @param[IN] begin - дата начала интервала
-      * @param[IN] end - дата конца интервала
+      * @param[IN] range - запрашиваемый интервал
       * @param[IN] minCandlesCount - минимальное число свечей, которое должен содержать результирующий массив
       * @return Возвращает обертку над акцией с ключем key, обертка ограничивает массив запрошенным интервалом/числом свечей
       *
@@ -60,9 +58,8 @@ protected:
       * 3. Если minCandlesCount > 0, то датой первой свечи будет свеча с номером last_candle_index - minCandlesCount,
       *    где last_candle_index это индекс свечи с датой последней свечи. */
     SharedStockVewRef getCandlesForRead(const StockKey &key,
-                                        const QDateTime &begin = QDateTime(),
-                                        const QDateTime &end = QDateTime(),
-                                        const size_t minCandlesCount = 0) const;
+                                        const Range &range = Range(),
+                                        const size_t minCandlesCount = 0);
 
 private:
     std::unordered_map<StockKey, QSharedPointer<Stock>> _stocks; /// Список акций

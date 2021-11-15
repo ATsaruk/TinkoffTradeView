@@ -57,9 +57,6 @@ protected:
     ///Проверяет корректность полученного ключа акции
     bool checkStockKey(const QJsonObject &payload);
 
-    ///Удаляет незавершенную свечу
-    void removeIncompleteCandle();
-
 protected slots:
     ///Обработка отвера с сервера брокера
     void onResponse(const QByteArray &answer);

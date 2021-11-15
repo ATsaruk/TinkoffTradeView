@@ -68,13 +68,25 @@ size_t Stock::size() const
     return &(*item);
 }*/
 
-bool Stock::isEnoughCandles(const Range &range, const size_t minCandleCount) const
+/* про ignoreRightBorder, данный флаг нужен для проверки доступности свечей, после загрузки свечей от брокера,
+ * дело в том, что биржа не работает в ночью, в выходные, в праздники, и допустим сейчас воскресенье 14.11.2021,
+ * и мы произвели запрос свечей от брокера и получили свечи до пятницы и их может быть меньше чем запрошено в minCandleCount
+ * но других свечей просто не существует! и именно такой случай учитывает ignoreRightBorder.
+ * т.е. при ignoreRightBorder = true по сути достаточно, что бы totalRange.begin() был <= range.begin() */
+bool Stock::isEnoughCandles(Range range, const size_t minCandleCount, const bool ignoreRightBorder) const
 {
     auto totalRange = Stock::range();
+
+    if (range.isBeginNull())
+        range.begin() = totalRange.begin();
+
+    if (range.isEndNull() || ignoreRightBorder)
+        range.end() = totalRange.end();
+
     return totalRange.isValid()
             && range.isValid()
             && totalRange.contains(range)
-            && size() >= minCandleCount;
+            && (size() >= minCandleCount || ignoreRightBorder);
 }
 
 Range Stock::append(Stock &stock)

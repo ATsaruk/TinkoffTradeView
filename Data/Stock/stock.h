@@ -44,8 +44,10 @@ public:
     /** @brief Проверяет достаточно ли свечей доступно
       * @param range - доступен ли данный интервал?
       * @param minCandleCount - доступно ли minCandleCount свечей
+      * @param ignoreRightBorder - пропустить проверку правой границы, данный флаг нужен для корректной проверки после
+      * загрузки свечей от брокера, подробнее написано перед телом функции
       * @return true если _candles содержит интервал range и содержит minCandleCount свечей */
-    virtual bool isEnoughCandles(const Range &range, const size_t minCandleCount) const;
+    virtual bool isEnoughCandles(Range range, const size_t minCandleCount, const bool ignoreRightBorder = false) const;
 
     ///Добавляет свечи appendCandles в список candles
     virtual Range append(Stock &stock);

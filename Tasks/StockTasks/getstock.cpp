@@ -34,6 +34,8 @@ SharedInterface &GetStock::getResult()
  */
 void GetStock::exec()
 {
+    ///@todo !!!!!перенести загрузку 2 недельного интервала в LoadStockFromBroker
+    ///@todo !!!!!изменить логику загрузки с inf range!
     if (!_range->isValid()) {
         logCritical << "getStock::exec():;Invalid range!";
         emit finished();
@@ -57,6 +59,7 @@ void GetStock::exec()
 
 bool GetStock::isEnoughCandles(const bool loadFromBrockerComplete)
 {
+    ///@todo в Stock есть isEnoughCandles, ипользовать! Учитывая прошлка загрузка или нет
     Q_UNUSED(loadFromBrockerComplete)
     return false;
 }

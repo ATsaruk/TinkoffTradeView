@@ -48,7 +48,7 @@ protected:
     bool sendRequest();
 
     ///Смещает начало очередного интервала загрузки
-    bool getNextLoadRange();
+    bool goNextLoadRange();
 
     bool isLoadFinished();
 

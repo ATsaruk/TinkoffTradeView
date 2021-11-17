@@ -64,14 +64,20 @@ QString StockKey::intervalToString() const
     throw std::bad_exception();
 }
 
+QDateTime StockKey::startCandleTime(const QDateTime &time) const
+{
+    auto div = std::div(time.toSecsSinceEpoch(), static_cast<long long>(candleLenght()));
+    return QDateTime::fromSecsSinceEpoch(div.quot);
+}
+
 QDateTime StockKey::prevCandleTime(const QDateTime &time) const
 {
-    return time.addSecs(-candleLenght());
+    return startCandleTime(time).addSecs(-candleLenght());
 }
 
 QDateTime StockKey::nextCandleTime(const QDateTime &time) const
 {
-    return time.addSecs(candleLenght());
+    return startCandleTime(time).addSecs(candleLenght());
 }
 
 QString StockKey::keyToString() const

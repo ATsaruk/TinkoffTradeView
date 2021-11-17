@@ -48,6 +48,7 @@ public:
     ///Возвращает количество секунд в отрезке времени interval
     long candleLenght() const;
 
+    QDateTime startCandleTime(const QDateTime &time) const;
     QDateTime prevCandleTime(const QDateTime &time) const;
     QDateTime nextCandleTime(const QDateTime &time) const;
 

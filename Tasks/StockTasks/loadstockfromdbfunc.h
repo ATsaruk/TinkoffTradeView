@@ -24,17 +24,13 @@ public:
       * @param minCandlesCount - минимальное число свечей, которое необходимо загрузить */
     explicit LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount = 1);
 
-    void exec() override;
-
     ///Сохраняет диапазон, в котором будет происходить загрузка (Data::Range)
     void setData(SharedInterface &inputData) override;
 
+    void exec() override;
+
     ///Возвращает загруженные свечи (Data::Stock)
     SharedInterface &getResult() override;
-
-protected:
-    ///Загрузка недостающего количества свечей
-    void loadByCount();
 
 private:
     uint _minCandlesCount;                       //минимальное число свечей, которое нужно загрузить

@@ -1,4 +1,4 @@
-/** @todo ! комментарий для чего в LoadStockFromDbFunc::exec() в конце загружем 1 свечу
+/** @todo !комментарий для чего в LoadStockFromDbFunc::exec() в конце загружем 1 свечу
   *
   */
 
@@ -10,53 +10,43 @@
 namespace Task {
 
 LoadStockFromDbFunc::LoadStockFromDbFunc(const Data::StockKey &stockKey, const uint minCandlesCount)
-    : IFunction("LoadStockFromDbFunc"), _minCandlesCount(minCandlesCount)
+    : IFunction("LoadStockFromDbFunc"),
+      _minCandlesCount(minCandlesCount),
+      _stock(stockKey)
 {
-    _stock.create();
-    _stock->setStockKey(stockKey);
-}
-
-//Загружает данные из заданного диапазона, но не менее minCandlesCount
-void LoadStockFromDbFunc::exec()
-{
-    if (!_loadRange->isValid()) {
-        logCritical << "LoadStockFromDbFunc::exec:;invalid loadRange!";
-        return;
-    }
-
-    DB::StocksQuery::loadCandles(_stock, _loadRange->begin(), _loadRange->end());
-
-    if (_stock->size() < _minCandlesCount)
-        loadByCount();
-
-    if (_stock->size() == 0) {
-        //Загружаем одну свечу за диапазоном, это нужня для "неразрывности" данных
-        DB::StocksQuery::loadCandles(_stock, QDateTime(), _loadRange->begin(), 1);
-    }
-
-    //Свечи загружаются отсортированными по убыванию, и так нужно для loadByCount()
-    _stock->reverse();
+    //_stock.create();
+    //_stock->setStockKey(stockKey);
 }
 
 void LoadStockFromDbFunc::setData(SharedInterface &inputData)
 {
     _loadRange = inputData;
-    if (!_loadRange->isValid())
-        logCritical << "LoadStockFromDbFunc::setData:;invalid loadRange!";
+}
+
+//Загружает данные из заданного диапазона, но не менее minCandlesCount
+void LoadStockFromDbFunc::exec()
+{
+    //_minCandlesCount должен быть 0! либо !_loadRange.isValid()! иначе пишем ошибку в лог!
+    if ( (_loadRange->isValid()) != (_minCandlesCount > 0) ) {
+        logCritical << QString("LoadStockFromDbFunc::exec:;invalid input data!;%1;%2;%3")
+                       .arg(_loadRange->begin().toString(), _loadRange->end().toString())
+                       .arg(_minCandlesCount);
+        return;
+    }
+
+    DB::StocksQuery::loadCandles(_stock, _loadRange, _minCandlesCount);
+
+    if (_loadRange->isValid() && _stock->size() == 0) {
+        //Производилась загрузка конкретного диапазона и ничего не загружено!
+        //Загружаем одну свечу за диапазоном, это нужня для "неразрывности" данных
+        Data::Range leftFromLoadRange(QDateTime(), _loadRange->begin());
+        DB::StocksQuery::loadCandles(_stock, leftFromLoadRange, 1);
+    }
 }
 
 SharedInterface &LoadStockFromDbFunc::getResult()
 {
     return &_stock;
-}
-
-void LoadStockFromDbFunc::loadByCount()
-{
-    QDateTime end = _stock->size() == 0 ? _loadRange->begin() : _stock->range().end();
-    uint remainsCount = _minCandlesCount - _stock->size();
-
-    //Дату начала оставляем пустой, значит на неё не будет накладываться ограничения
-    DB::StocksQuery::loadCandles(_stock, QDateTime(), end, remainsCount);
 }
 
 }

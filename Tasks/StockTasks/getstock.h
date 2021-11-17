@@ -47,7 +47,7 @@ protected:
     /** @brief Проверяет условие завершения загрузки
       * @param loadFromBrockerComplete - признак того, что загрузка от брокера уже производилась
       * @return Возвращает TRUE - если все запрашиваемые свечи загружены, FALSE - требуется продолжение загрузки */
-    bool isEnoughCandles(const bool loadFromBrockerComplete);
+    bool isEnoughCandles();
 
     ///Загружет недостающие свечи из БД
     /** @brief Загружет недостающие свечи из БД
@@ -74,10 +74,10 @@ protected slots:
 
 private:
     bool _extraRangeLoaded = false;  //производистся загрузка дополнительного 2х недельного интервала
-    size_t _minCandleCount = 0;      //минимальное число свечей, которое нужно загрузить
+    size_t _minCandlesCount = 0;      //минимальное число свечей, которое нужно загрузить
     Data::StockKey _key;
 
-    InterfaceWrapper<Data::Range> _range;            //исходный интервал загрузки
+    InterfaceWrapper<Data::Range> _loadRange;            //исходный интервал загрузки
     InterfaceWrapper<Data::Range> _subRange;         //подинтервал для загрузки
     InterfaceWrapper<Data::StockView> _stock;      //список загруженных акций (из БД + от брокера)
 };

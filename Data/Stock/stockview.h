@@ -34,7 +34,7 @@ public:
     size_t size() const override;
 
     ///см. Stock::isEnoughCandles
-    bool isEnoughCandles(const Range &range, const size_t minCandleCount) const override;
+    bool isEnoughCandles(Range range, const size_t minCandleCount, const bool ignoreRightBorder = false) const override;
 
     ///итератор на первую свечу, время которой не меньше (lower_bound), чем range.getBegin()
     const DequeIt begin() const override;

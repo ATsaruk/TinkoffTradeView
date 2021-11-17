@@ -65,7 +65,6 @@ private:
     std::unordered_map<StockKey, QSharedPointer<Stock>> _stocks; /// Список акций
 
     friend class Task::GetStock;
-    friend class StockViewGlobal;
 };
 
 }

@@ -29,7 +29,7 @@ class LoadStockFromBroker : public IBaseTask
 public:
     /** @brief LoadStockFromBroker
       * @param stockKey - ключ акции для загрузки */
-    explicit LoadStockFromBroker(const Data::StockKey &stockKey);
+    explicit LoadStockFromBroker(const Data::StockKey &stockKey, const size_t minCandleCount = 0);
     ~LoadStockFromBroker();
 
     ///Сохраняет диапазон, в котором будет происходить загрузка (Data::Range)
@@ -42,11 +42,15 @@ protected:
     ///Запустить задачу
     void exec() override;
 
+    bool initLoadingRange();
+
     ///Запрос данных у брокера
     bool sendRequest();
 
     ///Смещает начало очередного интервала загрузки
     bool getNextLoadRange();
+
+    bool isLoadFinished();
 
     ///Освобождение ресурсов и сохранение полученных данных
     void finishTask();
@@ -62,10 +66,13 @@ protected slots:
     void onResponse(const QByteArray &answer);
 
 private:
-    Data::Range _subRange;     //Текущий подинтервал загрузки
+    bool _extraRangeLoaded;     //Производистся загрузка дополнительного 2х недельного интервала
+    bool _isForwardLoading;     //Прямое направление загрузки (смещение интервала загрузки)
+    size_t _minCandlesCount;    //Минимальное число свечей, которое нужно загрузить
+    Data::Range _subRange;      //Подинтервалы для загрузки
 
-    InterfaceWrapper<Data::Range> _range;    //интервал для загрузки
-    InterfaceWrapper<Data::Stock> _stock;    //загруженные свечи
+    InterfaceWrapper<Data::Range> _loadRange;   //Полный загружаемый интервал
+    InterfaceWrapper<Data::Stock> _stock;       //Загруженные свечи
 };
 
 }

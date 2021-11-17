@@ -9,9 +9,8 @@ StockView::StockView(QSharedPointer<Stock> &stock, const Range &targetRange, con
 {
     _range.constrain(targetRange);  //обрезаем диапазон доступный в переданной акцие до не более чем заданного
 
-    if ( (targetRange.isValid()) != (minCandlesCount > 0) ) {
+    if ( (targetRange.isValid()) != (minCandlesCount > 0) )
         throw std::logic_error("StockView::setRange;targetRange.isValid() && minCandlesCount > 0!");
-    }
 
     if (_candles->empty() || minCandlesCount == 0)
         return;
@@ -53,9 +52,9 @@ size_t StockView::size() const {
     return std::distance(begin(), end());
 }
 
-bool StockView::isEnoughCandles(const Range &range, const size_t minCandleCount) const
+bool StockView::isEnoughCandles(Range range, const size_t minCandleCount, const bool ignoreRightBorder) const
 {
-    return Stock::isEnoughCandles(range, minCandleCount);
+    return Stock::isEnoughCandles(range, minCandleCount, ignoreRightBorder);
 }
 
 const Stock::DequeIt StockView::begin() const

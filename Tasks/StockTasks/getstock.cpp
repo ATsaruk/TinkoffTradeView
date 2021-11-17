@@ -14,13 +14,15 @@ namespace Task {
 constexpr long secInTwoWeek = 14 * 24 * 60 * 60;
 
 GetStock::GetStock(const Data::StockKey &stockKey, const size_t minCandleCount)
-    : IBaseCommand("GetStock"), _minCandleCount(minCandleCount), _key(stockKey)
+    : IBaseCommand("GetStock"),
+      _minCandlesCount(minCandleCount),
+      _key(stockKey)
 {
 }
 
 void GetStock::setData(SharedInterface &inputData)
 {
-    _range = inputData;
+    _loadRange = inputData;
 }
 
 SharedInterface &GetStock::getResult()
@@ -34,19 +36,18 @@ SharedInterface &GetStock::getResult()
  */
 void GetStock::exec()
 {
-    ///@todo !!!!!перенести загрузку 2 недельного интервала в LoadStockFromBroker
-    ///@todo !!!!!изменить логику загрузки с inf range!
-    if (!_range->isValid()) {
+    //
+    if ( (_loadRange->isValid()) != (_minCandlesCount > 0) ) {
         logCritical << "getStock::exec():;Invalid range!";
         emit finished();
         return;
     }
 
     //Получаем доступные свечи из Data::Stocks
-    _subRange = Data::Range(_range);  //создаем копию range!
+    _subRange = Data::Range(_loadRange);  //создаем копию range!
 
     //Проверяем доступные свечи (Glo.stocks)
-    if (isEnoughCandles(false))
+    if (isEnoughCandles())
         return;
 
     //Загружаем доступные свечи из БД
@@ -57,21 +58,19 @@ void GetStock::exec()
     startLoading();
 }
 
-bool GetStock::isEnoughCandles(const bool loadFromBrockerComplete)
+bool GetStock::isEnoughCandles()
 {
-    ///@todo в Stock есть isEnoughCandles, ипользовать! Учитывая прошлка загрузка или нет
-    Q_UNUSED(loadFromBrockerComplete)
-    return false;
+    return Glo.stocks->getCandlesForRead(_key)->isEnoughCandles(_loadRange, _minCandlesCount);
 }
 
 
 bool GetStock::loadFromDb()
 {
-    auto loadFromDb = execFunc<LoadStockFromDbFunc>(&_subRange, _key, _minCandleCount);
+    auto loadFromDb = execFunc<LoadStockFromDbFunc>(&_subRange, _key, _minCandlesCount);
     InterfaceWrapper<Data::Stock> loadedStock = loadFromDb->getResult();
     Glo.stocks->appedStock(loadedStock);
 
-    return isEnoughCandles(false);
+    return isEnoughCandles();
 }
 
 void GetStock::startLoading()
@@ -89,6 +88,7 @@ void GetStock::startLoading()
 
         bool isRightLoading = _subRange->end() >= _key.nextCandleTime(existedRange.end());
         if (isRightLoading) {
+            static std::unordered_map<Data::StockKey, QDateTime> lastEndLoadingList;    ///@todo !!!!пропускать уже загруженные интервалы
             //в конеце есть не загруженный интервал
             InterfaceWrapper<Data::Range> rightRange = Data::Range(_key.nextCandleTime(existedRange.end()), _subRange->end());
             auto *task = createTask<LoadStockFromBroker>(_key);
@@ -109,7 +109,7 @@ void GetStock::startNextTask()
     if (taskList.isEmpty()) {
         //Задачи по загрузке запрошенных интрвалов завершены
 
-        if (isEnoughCandles(true))
+        if (isEnoughCandles(/*true*/))
             return;
 
         if (_extraRangeLoaded) {
@@ -122,7 +122,7 @@ void GetStock::startNextTask()
         createExtraRangeTasks();
     } else if (_extraRangeLoaded) {
         //Происходит загрузка дополнительного 2 недельного интервала
-        if (isEnoughCandles(true))
+        if (isEnoughCandles(/*true*/))
             return;
     }
 
@@ -138,7 +138,7 @@ void GetStock::createExtraRangeTasks()
     if (auto [existedRange, count] = Glo.stocks->getRange(_key); existedRange.isValid())
         endTime = existedRange.begin();
     else
-        endTime = _range->begin();
+        endTime = _loadRange->begin();
 
     //Разбвиваем загрузку на поддиапазоны, каждый длительностью с максимальный размер разовой загрузки от брокера
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(_key.interval());
@@ -157,7 +157,7 @@ void GetStock::createExtraRangeTasks()
 void GetStock::finishTask()
 {
     //Преобразование QSharedPointer<Data::StockViewReference<QReadLocker>> в InterfaceWrapper<Data::StockViewReference<QReadLocker>>
-    auto sharedStockVew = Glo.stocks->getCandlesForRead(_key, _range, _minCandleCount);
+    auto sharedStockVew = Glo.stocks->getCandlesForRead(_key, _loadRange, _minCandlesCount);
     _stock = InterfaceWrapper<Data::StockView>(sharedStockVew);
     emit finished();
 }

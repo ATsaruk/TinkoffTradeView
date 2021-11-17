@@ -54,7 +54,7 @@ private:
     long long _offsetIndex = 0;      //Индекс первой отображаемой свечи
     qreal _xScale = 0;               //Масштаб по оси Х
     qreal _yScale = 0;               //Масштаб по оси Y
-    bool _autoPriceRange = true;     //Режим автомастабирования оси Y по цене //@note возможно его нужно от сюда перенести?
+    bool _autoPriceRange = true;     //Режим автомастабирования оси Y по цене
 
     //Pen и Brush для отрисовки свечи (обычно бычьи свечи - красные, медвежьи свечи - зеленые)
     QPen _bearPen, _bullPen;

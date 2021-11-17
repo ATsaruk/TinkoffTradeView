@@ -27,7 +27,7 @@ public:
       * @param candleCount - минимальное число свечей, которое должно быть загружено
       * @warning если указано candleCount, то по факту дата начала будет проигнорирована и будет загружено candleCount
       *          свечей, дата последней свечи будет <= end */
-    static void loadCandles(Stock &stock, const QDateTime &begin, const QDateTime &end = QDateTime(), const uint candleCount = 0);
+    static void loadCandles(Stock &stock, const Range &range, const uint loadCandlesCount = 0);
 };
 
 }

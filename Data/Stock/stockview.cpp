@@ -7,9 +7,12 @@ StockView::StockView(QSharedPointer<Stock> &stock, const Range &targetRange, con
       locker(&stock->mutex),
       _range(Stock::range())       //инициализируем _range всем доступным диапазоном
 {
+    if (targetRange.isNull() && minCandlesCount == 0)
+        return; //доступ ко всей акции целиком
+
     _range.constrain(targetRange);  //обрезаем диапазон доступный в переданной акцие до не более чем заданного
 
-    if ( (targetRange.isValid()) != (minCandlesCount > 0) )
+    if ( (targetRange.isValid()) != (minCandlesCount == 0) )
         throw std::logic_error("StockView::setRange;targetRange.isValid() && minCandlesCount > 0!");
 
     if (_candles->empty() || minCandlesCount == 0)
@@ -68,7 +71,7 @@ const Stock::DequeIt StockView::end() const
 {
     if (!_range.isValid())
         return _candles->end();
-    return lower_bound(_range.end());
+    return upper_bound(_range.end());
 }
 
 const Stock::ReverseDequeIt StockView::rbegin() const

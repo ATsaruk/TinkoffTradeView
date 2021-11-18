@@ -43,7 +43,7 @@ void StocksQuery::insertCandles(const Stock &stock)
 
 void StocksQuery::loadCandles(Stock &stock, const Range &range, const uint loadCandlesCount)
 {
-    if ( (range.isValid()) != (loadCandlesCount > 0) ) {
+    if ( (range.isValid()) != (loadCandlesCount == 0) ) {
         logCritical << QString("StocksQuery::loadCandles:;invalid input data!;%1;%2;%3")
                        .arg(range.begin().toString(), range.end().toString())
                        .arg(loadCandlesCount);
@@ -83,13 +83,16 @@ void StocksQuery::loadCandles(Stock &stock, const Range &range, const uint loadC
     }
 
     while (query.next()) {
-        stock.insertCandle( isForwardLoading ? stock.end() : stock.begin(),                                 //проверить что загружается в правильном порядке!
-                            Data::Candle( query.value(2).toDateTime(),    //dateTime
-                                          query.value(3).toReal(),        //open
-                                          query.value(4).toReal(),        //close
-                                          query.value(5).toReal(),        //high
-                                          query.value(6).toReal(),        //low
-                                          query.value(7).toLongLong()) ); //volume
+        auto position = isForwardLoading
+                ? stock.end()
+                : (stock.size() ? stock.begin() : stock.end());
+        //проверить что загружается в правильном порядке!
+        stock.insertCandle(position, Data::Candle( query.value(2).toDateTime(),    //dateTime
+                                                   query.value(3).toReal(),        //open
+                                                   query.value(4).toReal(),        //close
+                                                   query.value(5).toReal(),        //high
+                                                   query.value(6).toReal(),        //low
+                                                   query.value(7).toLongLong()) ); //volume
     }
 }
 

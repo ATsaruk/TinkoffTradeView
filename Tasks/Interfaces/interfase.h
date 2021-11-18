@@ -61,7 +61,7 @@ public:
     explicit InterfaceWrapper() = default;
 
     //Дропает старую ссылку, и получает новую (если интерфейсы совместимы!)
-    explicit InterfaceWrapper(SharedInterface &inputData) {
+    InterfaceWrapper(SharedInterface &inputData) {
         assert(inputData->isCompatible<T>() && "DataWrapper constructor from Interface: Interfaces aren't compatible!");
         _sharePtr = inputData;
     }
@@ -94,7 +94,6 @@ public:
         } else {
             throw std::logic_error("InterfaceWrapper::operator=(N &&data) error input data");
         }
-
     }
 
     //Каст к ссылке
@@ -112,9 +111,11 @@ public:
         return _sharePtr;
     }
 
-    void create() {
+    //Создает "оборачиваемый" объект с параметрами args ...
+    template <typename... N>
+    void create(const N& ... args) {
         if (_sharePtr.isNull())
-            _sharePtr = SharedInterface( new InterfaceData<T>() );
+            _sharePtr = SharedInterface( new InterfaceData<T>(args ...) );
     }
 
 private:

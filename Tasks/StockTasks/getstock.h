@@ -55,15 +55,7 @@ protected:
     bool loadFromDb();
 
     ///Создает задачи для загрузки недостающих свечей от брокера
-    void startLoading();
-
-    /** @brief Продолжает загрузку от брокера
-      * @details Если после основной загрузки от брокера, все равно недостаточно свечей, то запускает загрузку
-      * дополнительного 2 недельного интервала. */
-    void startNextTask();
-
-    ///Создает задачи для загрузки дополнительного 2 недельного интервала
-    void createExtraRangeTasks();
+    bool startLoading();
 
     ///завершает задачу
     void finishTask();
@@ -73,13 +65,12 @@ protected slots:
     void taskFinished() override;
 
 private:
-    bool _extraRangeLoaded = false;  //производистся загрузка дополнительного 2х недельного интервала
-    size_t _minCandlesCount = 0;      //минимальное число свечей, которое нужно загрузить
+    size_t _minCandlesCount;        //минимальное число свечей, которое нужно загрузить
+    size_t loadedCandlesCount;      //доступное количество свечей
     Data::StockKey _key;
 
-    InterfaceWrapper<Data::Range> _loadRange;            //исходный интервал загрузки
-    InterfaceWrapper<Data::Range> _subRange;         //подинтервал для загрузки
-    InterfaceWrapper<Data::StockView> _stock;      //список загруженных акций (из БД + от брокера)
+    InterfaceWrapper<Data::Range> _loadRange;   //интервал загрузки
+    InterfaceWrapper<Data::StockView> _stock;   //список загруженных акций (из БД + от брокера)
 };
 
 }

@@ -57,14 +57,11 @@ public:
       * @param candle - добавляемая свеча */
     virtual void insertCandle(const DequeIt &it, Candle &&candle);
 
-    ///Производит реверс свечей
+    /*///Производит реверс свечей
     virtual void reverse();
 
     ///Сортирует свечи по дате
-    virtual void sort();
-
-    ///Проверяет последнюю свечу является ли она полной, если нет, то удаляет её
-    virtual void removeIncompleteCandle();
+    virtual void sort();*/
 
     ///итератор на начало deque со свечами
     virtual const DequeIt begin() const;

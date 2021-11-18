@@ -12,7 +12,7 @@ Stocks::~Stocks()
 
 }
 
-std::pair<Range, size_t> Stocks::getRange(const StockKey &key) const
+std::pair<Range, size_t> Stocks::stockInfo(const StockKey &key) const
 {
     if (auto record = _stocks.find(key); record != _stocks.end()) {
         auto mutex = const_cast<QReadWriteLock*>(&record->second->mutex);

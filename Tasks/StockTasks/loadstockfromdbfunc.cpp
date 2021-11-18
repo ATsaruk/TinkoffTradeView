@@ -27,7 +27,7 @@ void LoadStockFromDbFunc::setData(SharedInterface &inputData)
 void LoadStockFromDbFunc::exec()
 {
     //_minCandlesCount должен быть 0! либо !_loadRange.isValid()! иначе пишем ошибку в лог!
-    if ( (_loadRange->isValid()) != (_minCandlesCount > 0) ) {
+    if ( (_loadRange->isValid()) != (_minCandlesCount == 0) ) {
         logCritical << QString("LoadStockFromDbFunc::exec:;invalid input data!;%1;%2;%3")
                        .arg(_loadRange->begin().toString(), _loadRange->end().toString())
                        .arg(_minCandlesCount);

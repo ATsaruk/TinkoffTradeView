@@ -11,6 +11,7 @@
 #include "Stock/stock.h"
 #include "Stock/stockview.h"
 #include "Tasks/StockTasks/getstock.h"
+#include "Tasks/StockTasks/loadstockfrombroker.h"
 
 namespace Data {
 
@@ -31,7 +32,7 @@ protected:
 
     /** @brief Возвращает доступный диапазон по акции и количество доступных свечей
       * @param key - ключ акции */
-    std::pair<Range, size_t> getRange(const StockKey &key) const;
+    std::pair<Range, size_t> stockInfo(const StockKey &key) const;
 
     /** @brief Сохраняет данные по акции
       * @param stock - акция, данные которой нужно сохранить
@@ -65,6 +66,7 @@ private:
     std::unordered_map<StockKey, QSharedPointer<Stock>> _stocks; /// Список акций
 
     friend class Task::GetStock;
+    friend class Task::LoadStockFromBroker;
 };
 
 }

@@ -10,15 +10,19 @@
 
 namespace Task {
 
+constexpr long secInTwoWeek = 14 * 24 * 60 * 60;
+
 LoadStockFromBroker::LoadStockFromBroker(const Data::StockKey &stockKey, const size_t minCandleCount)
     : IBaseTask("LoadStockFromBroker"),
       _extraRangeLoaded(false),
       _isForwardLoading(false),
       _minCandlesCount(minCandleCount),
+      _maxTotalLoadTime(stockKey.candleLenght() * Glo.conf->getValue("Tinkoff/maxLoadCount", 2000)),
       _stock(stockKey)
 {
-    //_stock.create();
-    //_stock->setStockKey(stockKey);
+    //_stock.create(stockKey);
+    if (_maxTotalLoadTime < secInTwoWeek)
+        _maxTotalLoadTime = secInTwoWeek;   //интервал должен быть не меньше 2 недель, что бы загрузка успешно прошла через новогодние каникулы
 }
 
 LoadStockFromBroker::~LoadStockFromBroker()
@@ -37,40 +41,40 @@ SharedInterface &LoadStockFromBroker::getResult()
 
 void LoadStockFromBroker::exec()
 {
-    //подготавливаем подинтервал для загрузки
-    if (!initLoadingRange()) {
-        finishTask();
-        return;
-    }
-
     //получаем доступ к брокеру
     Glo.broker->mutex.lock();
     connect(Glo.broker.data(), &Broker::IBroker::getResopnse, this, &LoadStockFromBroker::onResponse);
 
-    //отправляем запрос на получение свечей
-    if (!sendRequest())
+    if ( !initLoadingRange()    //подготавливаем подинтервал для загрузки
+         || !sendRequest() ) {  //отправляем запрос на получение свечей
         finishTask();
+    }
 }
 
 bool LoadStockFromBroker::initLoadingRange()
 {
-    if ( (_loadRange->isValid()) != (_minCandlesCount > 0) ) {
+    if ( (_loadRange->isValid()) != (_minCandlesCount == 0) ) {
         logCritical << QString("LoadStockFromBroker::exec:;invalid input data!;%1;%2;%3")
                        .arg(_loadRange->begin().toString(), _loadRange->end().toString())
                        .arg(_minCandlesCount);
         return false;
     }
 
-    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(_stock->key().interval());
-    auto endLoading = _loadRange->isEndValid() ? _loadRange->end() : QDateTime::currentDateTime();
+    _isForwardLoading = _loadRange->isBeginValid();
+
+    //Ограничивам окончание загрузки последней завершенной свечей
+    _subRange = Data::Range(_loadRange);
+    if ( auto timeEndLastFullCandle = _stock->key().startCandleTime(QDateTime::currentDateTime());
+         _subRange.isEndNull() || _subRange.end() > timeEndLastFullCandle )
+        _subRange.end() = timeEndLastFullCandle;
 
     //Формируем подинтервал для загрузки, длинна которого не более чем максимально доступный интервал загрузки для
     //данной длительности свечи (интервалы определяет брокер)
-    _isForwardLoading = _loadRange->isBeginValid();
+    qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(_stock->key().interval());
     if (_isForwardLoading)
         _subRange.setRange(_loadRange->begin(), maxLoadRange);
     else
-        _subRange.setRange(endLoading, -maxLoadRange);
+        _subRange.setRange(_loadRange->end(), -maxLoadRange);
 
     _subRange.constrain(_loadRange);
 
@@ -100,24 +104,27 @@ bool LoadStockFromBroker::goNextLoadRange()
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(_stock->key().interval());
     _subRange.shift( (_isForwardLoading ? 1 : -1) * maxLoadRange );
     _subRange.constrain(_loadRange);
-    return isLoadFinished();
+    return !isLoadFinished();   //если загрузка не завершена, возращаем true (успешно перешли к след. подинтервалу загрузки)
 }
 
 bool LoadStockFromBroker::isLoadFinished()
 {
-    ///@todo !!!ограничить максимальный интервал загрузки Config->parametr
-    ///@todo !!!реализовать определение конца загрузки + загрузку доп 2 недельного интервала
+    if ( (_minCandlesCount > 0 && _stock->size() >= _minCandlesCount)   //загрузки по количеству и загружено достаточно!
+         || _subRange.toSec() < _stock->key().candleLenght() ) {        //запрашиваемый интервал загружен!
+        return true;
+    }
 
-    return _subRange.toSec() >= _stock->key().candleLenght();
+    size_t curTotalLoadTime = _isForwardLoading
+            ? _loadRange->begin().secsTo(_subRange.begin())
+            : _subRange.end().secsTo(_loadRange->end());
+
+    return curTotalLoadTime > _maxTotalLoadTime;
 }
 
 void LoadStockFromBroker::finishTask()
 {
     disconnect(Glo.broker.data(), &Broker::IBroker::getResopnse, this, &LoadStockFromBroker::onResponse);
     Glo.broker->mutex.unlock();
-
-    if (_stock->size() > 0)
-        _stock->removeIncompleteCandle();
 
     emit finished();
 }

@@ -10,8 +10,6 @@ namespace Plotter {
 
 class CandlesData;
 
-///@todo возможно стоит сделать экран влево и экран вправо запас по свечам
-
 class CandlesPool : public QObject
 {
     Q_OBJECT
@@ -27,7 +25,7 @@ public:
     [[nodiscard]] bool empty() const;
     size_t size() const;
 
-    CandleItem* operator [] (const size_t pos);     //??????Вопрос по возвращаемому типу, может CandleItem* ?
+    CandleItem* operator [] (const size_t pos);
 
     //Функции push_front и push_back вставляют список в начало/в конец, ptr - указатель на начало списка
     void push_front(CandlesPool &pool, const PairRange &it);

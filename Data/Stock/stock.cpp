@@ -14,12 +14,14 @@ Stock::Stock()
 }
 
 Stock::Stock(const StockKey &stockKey)
-    : _key(stockKey)
+    : _key(stockKey),
+      _candles(std::make_shared<std::deque<Candle>>())
 {
 }
 
 Stock::Stock(Stock &&other)
-    : _key(std::move(other._key))
+    : mutex(QReadWriteLock::Recursive),
+      _key(std::move(other._key))
 {
     _candles.swap(other._candles);
 }
@@ -76,17 +78,14 @@ size_t Stock::size() const
 bool Stock::isEnoughCandles(Range range, const size_t minCandleCount, const bool ignoreRightBorder) const
 {
     auto totalRange = Stock::range();
+    if (!totalRange.isValid())
+        return false;
 
-    if (range.isBeginNull())
-        range.begin() = totalRange.begin();
-
-    if (range.isEndNull() || ignoreRightBorder)
+    if (range.isEndNull() && ignoreRightBorder)
         range.end() = totalRange.end();
 
-    return totalRange.isValid()
-            && range.isValid()
-            && totalRange.contains(range)
-            && (size() >= minCandleCount || ignoreRightBorder);
+    bool isCountEnough = minCandleCount > 0 && minCandleCount >= size();
+    return isCountEnough || (range.isValid() && totalRange.contains(range));
 }
 
 Range Stock::append(Stock &stock)
@@ -128,7 +127,7 @@ void Stock::insertCandle(const DequeIt &it, Candle &&candle)
     _candles->insert(it, std::move(candle));
 }
 
-void Stock::reverse()
+/*void Stock::reverse()
 {
     std::reverse(_candles->begin(), _candles->end());
 }
@@ -136,26 +135,7 @@ void Stock::reverse()
 void Stock::sort()
 {
     std::sort(_candles->begin(), _candles->end());
-}
-
-/* Проверяем последнюю свечу и если она незавершенная удаляем ее, поясню зачем это:
- * Например сейчас 17:42 и мы запрашиваем информацию по 15 минутным свечам с начала суток.
- * Время у последней полученной свечи будет 17:30 и если ничего не делать, то эта свеча будет записана в базу данных с таким временем.
- * И допустим через час мы захотим вновь загрузить свечную информацию, в итоге мы опять получим свечу на 17:30, только в этот раз она
- * будет содержать в себе полные данные за 15 минут, но в базу данных она уже не запишется, т.к. так уже етсь свеча на 17:30!
- * Т.к. в базе данных primary key для записи это figi + interval + time.
- * В итоге свеча так и останется незавершенной! это было вяснено постфактум, когда заметил отличие на моем графике и графике брокера! */
-void Stock::removeIncompleteCandle()
-{
-    if (_candles->empty())
-        return;
-
-    const Data::Candle &lastCandle = _candles->back();
-
-    QDateTime lastCompleteCandle = _key.prevCandleTime(QDateTime::currentDateTime());
-    if (lastCandle.dateTime() >= lastCompleteCandle)
-        _candles->pop_back();
-}
+}*/
 
 const Stock::DequeIt Stock::begin() const
 {
@@ -178,7 +158,8 @@ const Stock::ReverseDequeIt Stock::rend() const
 }
 
 Stock::Stock(Stock &other)
-    :_key(other._key),
+    : mutex(QReadWriteLock::Recursive),
+      _key(other._key),
      _candles(other._candles)
 {
 }

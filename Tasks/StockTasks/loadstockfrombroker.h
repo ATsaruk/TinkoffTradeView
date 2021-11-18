@@ -2,8 +2,9 @@
 #define LOADSTOCKFROMBROKER_H
 
 #include "Tasks/ibasetask.h"
+
 #include "Data/range.h"
-#include "Data/stocks.h"
+#include "Data/Stock/stock.h"
 
 namespace Task {
 
@@ -39,26 +40,31 @@ public:
     SharedInterface &getResult() override;
 
 protected:
-    ///Запустить задачу
+    //Запустить задачу
     void exec() override;
 
+    //Подготавливает первый подинтервал для начала загрузки
     bool initLoadingRange();
 
-    ///Запрос данных у брокера
+    //Запрос данных у брокера
     bool sendRequest();
 
-    ///Смещает начало очередного интервала загрузки
+    //Смещает начало очередного интервала загрузки
     bool goNextLoadRange();
 
+    //Проверяет завершена ли загрузка
     bool isLoadFinished();
 
-    ///Освобождение ресурсов и сохранение полученных данных
+    //Освобождение ресурсов и сохранение полученных данных
     void finishTask();
 
-    ///Читает свечи из QJsonDocument'а
+    //Начинает загрузку дополнительного 2 недельного интервала
+    bool loadExtraRange();
+
+    //Читает свечи из QJsonDocument'а
     bool readCandles(const QByteArray &answer);
 
-    ///Проверяет корректность полученного ключа акции
+    //Проверяет корректность полученного ключа акции
     bool checkStockKey(const QJsonObject &payload);
 
 protected slots:
@@ -69,6 +75,7 @@ private:
     bool _extraRangeLoaded;     //Производистся загрузка дополнительного 2х недельного интервала
     bool _isForwardLoading;     //Прямое направление загрузки (смещение интервала загрузки)
     size_t _minCandlesCount;    //Минимальное число свечей, которое нужно загрузить
+    size_t _maxTotalLoadTime;   //Максимальный интервал загрузки
     Data::Range _subRange;      //Подинтервалы для загрузки
 
     InterfaceWrapper<Data::Range> _loadRange;   //Полный загружаемый интервал

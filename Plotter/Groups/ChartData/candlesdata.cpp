@@ -30,9 +30,8 @@ void CandlesData::update(const long long newIndex, const size_t candlesCount)
     if (_isDataRequested)
         return;     //Данные уже запрошены, ждем!
 
-    long candleLenght = _stockKey.candleLenght();
     if (_candles.empty()) {      //если список свечей пуст, запрашиваем весь интервал
-        requestCandles(Data::Range(QDateTime::currentDateTime(), -candlesCount * candleLenght), candlesCount);
+        requestCandles(Data::Range(QDateTime(), QDateTime::currentDateTime()), candlesCount);
         return;
     }
 
@@ -51,7 +50,7 @@ void CandlesData::update(const long long newIndex, const size_t candlesCount)
             _candlesPool.push_back(_candles, splitItem);
         } else {    //requiredCount > 0
             auto lastCandleTime = _candles.getBack()->getCandle()->dateTime();
-            Data::Range requiredRange(_stockKey.nextCandleTime(lastCandleTime), requiredCount * candleLenght);
+            Data::Range requiredRange(_stockKey.nextCandleTime(lastCandleTime), QDateTime());
             requestCandles(requiredRange, requiredCount);
         }
     } else if (indexOffset < 0) {       //Первая отображаемая свеча смещается влево
@@ -63,7 +62,7 @@ void CandlesData::update(const long long newIndex, const size_t candlesCount)
         std::for_each(splitItem.first, splitItem.second, setUnVisible);
         _candlesPool.push_back(_candles, splitItem);
 
-        Data::Range requiredRange(_candles.begin()->getCandle()->dateTime(), -requiredCount * candleLenght);
+        Data::Range requiredRange(QDateTime(), _candles.begin()->getCandle()->dateTime());
         requestCandles(requiredRange, requiredCount);
     } else { //indexOffset > 0          //Первая отображаемая свеча смещается вправо
         if (requiredCount <= 0) {
@@ -73,7 +72,7 @@ void CandlesData::update(const long long newIndex, const size_t candlesCount)
             _candlesPool.push_back(_candles, splitItem);
         } else {
             auto lastCandleTime = _candles.getBack()->getCandle()->dateTime();
-            Data::Range requiredRange(_stockKey.nextCandleTime(lastCandleTime), requiredCount * candleLenght);
+            Data::Range requiredRange(_stockKey.nextCandleTime(lastCandleTime), QDateTime());
             requestCandles(requiredRange, requiredCount);
         }
     }

@@ -78,7 +78,7 @@ bool Range::isEndValid() const
 
 bool Range::isValid() const
 {
-    return _begin.isValid() && !_end.isValid() && _begin <= _end;
+    return _begin.isValid() && _end.isValid() && _begin <= _end;
 }
 
 bool Range::isBeginNull() const
@@ -111,7 +111,7 @@ qint64 Range::toSec() const
 
 bool Range::contains(const QDateTime &date) const
 {
-    if (isNull())
+    if (isNull() || !date.isValid())
         return false;
 
     if (isBeginValid() && date < _begin)
@@ -145,15 +145,7 @@ bool Range::contains(const Range &other) const
 
 bool Range::isIntersected(const Range &other) const
 {
-    if (isNull())
-        return false;
-
-    if (other.isBeginValid() && contains(other._begin))
-        return true;
-    if (other.isEndValid() && contains(other._end))
-        return true;
-
-    return false;
+    return contains(other._begin) || contains(other._end) || other.contains(_begin) || other.contains(_end);
 }
 
 void Range::setRange(const QDateTime &date, const long &duration)
@@ -195,17 +187,15 @@ void Range::constrain(const Range &other)
 
 void Range::remove(const Range &other)
 {
-    if (!contains(other._begin) && !contains(other._end) &&
-            !other.contains(_begin) && !other.contains(_end))
+    if (!isIntersected(other))
         return; //нет пересечений
 
-    if (other.isEndValid() && (isEndNull() || _end >= other._end)) {
-        _begin = other._end;
-    } else if (other.isBeginValid()) {
+    if (other.isBeginValid() && (isBeginNull() || (isBeginValid() && _begin < other._begin)) )
         _end = other._begin;
-    }
+    else if (other.isEndValid())
+        _begin = other._end;
 
-    if (_begin > _end) {
+    if (isBeginValid() && isEndValid() && _begin > _end) {
         _begin = QDateTime();
         _end = QDateTime();
     }

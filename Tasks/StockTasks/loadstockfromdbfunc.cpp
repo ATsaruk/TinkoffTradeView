@@ -29,7 +29,7 @@ void LoadStockFromDbFunc::exec()
     //_minCandlesCount должен быть 0! либо !_loadRange.isValid()! иначе пишем ошибку в лог!
     if ( (_loadRange->isValid()) != (_minCandlesCount == 0) ) {
         logCritical << QString("LoadStockFromDbFunc::exec:;invalid input data!;%1;%2;%3")
-                       .arg(_loadRange->begin().toString(), _loadRange->end().toString())
+                       .arg(_loadRange->start().toString(), _loadRange->end().toString())
                        .arg(_minCandlesCount);
         return;
     }
@@ -39,7 +39,7 @@ void LoadStockFromDbFunc::exec()
     if (_loadRange->isValid() && _stock->size() == 0) {
         //Производилась загрузка конкретного диапазона и ничего не загружено!
         //Загружаем одну свечу за диапазоном, это нужня для "неразрывности" данных
-        Data::Range leftFromLoadRange(QDateTime(), _loadRange->begin());
+        Data::Range leftFromLoadRange(QDateTime(), _loadRange->start());
         DB::StocksQuery::loadCandles(_stock, leftFromLoadRange, 1);
     }
 }

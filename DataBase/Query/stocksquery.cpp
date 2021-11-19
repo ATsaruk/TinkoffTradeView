@@ -45,7 +45,7 @@ void StocksQuery::loadCandles(Stock &stock, const Range &range, const uint loadC
 {
     if ( (range.isValid()) != (loadCandlesCount == 0) ) {
         logCritical << QString("StocksQuery::loadCandles:;invalid input data!;%1;%2;%3")
-                       .arg(range.begin().toString(), range.end().toString())
+                       .arg(range.start().toString(), range.end().toString())
                        .arg(loadCandlesCount);
         return;
     }
@@ -59,15 +59,15 @@ void StocksQuery::loadCandles(Stock &stock, const Range &range, const uint loadC
     QString interval = stock.key().intervalToString();
     QString load = QString("SELECT * FROM stocks WHERE figi = '%1' and interval = '%2'").arg(stock.key().figi(), interval);
 
-    if (range.begin().isValid())
-        load += QString(" and time >= '%1'").arg(range.begin().toString("dd.MM.yyyy hh:mm:ss"));
+    if (range.start().isValid())
+        load += QString(" and time >= '%1'").arg(range.start().toString("dd.MM.yyyy hh:mm:ss"));
     if (range.end().isValid()) {
         load += QString(" and time < '%1'").arg(range.end().toString("dd.MM.yyyy hh:mm:ss"));
         /* time<'%1' потому что если мы загружаем например 15 минутные свечи с 9:00:00 до 10:00:00,
          * свеча на 10:00:00 она относится к диапазону 10:00:00 - 10:15:00 */
     }
 
-    bool isForwardLoading = range.isBeginValid() && range.isEndNull();
+    bool isForwardLoading = range.isStartValid() && range.isEndNull();
     if (isForwardLoading)
         load += QString(" ORDER BY time ASC");
     else

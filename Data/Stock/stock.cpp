@@ -81,11 +81,14 @@ bool Stock::isEnoughCandles(Range range, const size_t minCandleCount, const bool
     if (!totalRange.isValid())
         return false;
 
-    if (range.isEndNull() && ignoreRightBorder)
+    if (range.isStartNull())
+        range.start() = totalRange.start();
+
+    if (range.isEndNull() || ignoreRightBorder)
         range.end() = totalRange.end();
 
     bool isCountEnough = minCandleCount > 0 && minCandleCount >= size();
-    return isCountEnough || (range.isValid() && totalRange.contains(range));
+    return isCountEnough && range.isValid() && totalRange.contains(range);
 }
 
 Range Stock::append(Stock &stock)
@@ -116,8 +119,8 @@ Range Stock::append(Stock &stock)
         std::move(stock._candles->rbegin(), stock._candles->rend(), std::front_inserter(*_candles));
      else   //На всякий случай, такого быть не должно!
         logCritical << QString("Stock::appendCandles();%1;%2;%3;%4")
-                       .arg(newRange.begin().toString()).arg(newRange.end().toString())
-                       .arg(existedRange.begin().toString()).arg(existedRange.end().toString());
+                       .arg(newRange.start().toString()).arg(newRange.end().toString())
+                       .arg(existedRange.start().toString()).arg(existedRange.end().toString());
 
     return newRange;
 }

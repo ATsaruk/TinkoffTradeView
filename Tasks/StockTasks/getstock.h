@@ -66,7 +66,6 @@ protected slots:
 
 private:
     size_t _minCandlesCount;        //минимальное число свечей, которое нужно загрузить
-    size_t loadedCandlesCount;      //доступное количество свечей
     Data::StockKey _key;
 
     InterfaceWrapper<Data::Range> _loadRange;   //интервал загрузки

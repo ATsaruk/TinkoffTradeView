@@ -13,9 +13,9 @@ class Range
 public:
     explicit Range();
 
-    explicit Range(const QDateTime &begin, const QDateTime &end);
+    explicit Range(const QDateTime &start, const QDateTime &end);
     explicit Range(const QDateTime &date, const long &duration);  //см. фунцию setRange(date, duration)
-    explicit Range(QDateTime &&begin, QDateTime &&end) noexcept;
+    explicit Range(QDateTime &&start, QDateTime &&end) noexcept;
 
     Range(const Range &other);
     Range(Range &&other) noexcept;
@@ -23,28 +23,31 @@ public:
     Range& operator= (const Range &other);
     Range& operator= (Range &&other) noexcept;
 
+    bool operator< (const Range &other) const;
+    bool operator> (const Range &other) const;
+
     ///@return начало диапазона
-    QDateTime& begin();
+    QDateTime& start();
     ///@return конец диапазона
     QDateTime& end();
 
     ///@return начало диапазона
-    const QDateTime& begin() const;
+    const QDateTime& start() const;
     ///@return конец диапазона
     const QDateTime& end() const;
 
-    ///@return TRUE - если begin().isValid()
-    bool isBeginValid() const;
+    ///@return TRUE - если start().isValid()
+    bool isStartValid() const;
     ///@return TRUE - если end().isValid()
     bool isEndValid() const;
-    ///@return TRUE - если being() и end() isValid и если begin <= end
+    ///@return TRUE - если being() и end() isValid и если start <= end
     bool isValid() const;
 
-    ///@return TRUE - если begin().isNull()
-    bool isBeginNull() const;
+    ///@return TRUE - если start().isNull()
+    bool isStartNull() const;
     ///@return TRUE - если end().isNull()
     bool isEndNull() const;
-    ///@return TRUE - если begin().isNull() и end().isNull()
+    ///@return TRUE - если start().isNull() и end().isNull()
     bool isNull() const;
 
     ///@return TRUE - если isValid();
@@ -80,17 +83,17 @@ public:
     /** @brief Удаляет часть диапазона
       * @param[IN] other диапазон, который необходимо удалить
       * @warning Есть одно НО в работе функции:  если диапазон other находится внутри нашего диапазона (*this), по идее нужно разбивать
-      * текущий диапазон на 2 диапазона "до" other и "после" other. Данная же функция обрежет текущий диапазон (*this) до начала other.begin
+      * текущий диапазон на 2 диапазона "до" other и "после" other. Данная же функция обрежет текущий диапазон (*this) до начала other.start
       *
       * Результат выполнения:
       * 1. Если other находится внутри текущего диапазона(*this) этот случай описан в warning
       * 2. Если диапазоны не пересекаются, ничего не произойдет
-      * 3. Если диапазоны пересекаются, и other находится справа, то this->end = other.begin
-      * 4. Если диапазоны пересекаются, и other находится слева, то this->begin = other.end  */
+      * 3. Если диапазоны пересекаются, и other находится справа, то this->end = other.start
+      * 4. Если диапазоны пересекаются, и other находится слева, то this->start = other.end  */
     void remove(const Range &other);
 
 private:
-    QDateTime _begin;
+    QDateTime _start;
     QDateTime _end;
 };
 

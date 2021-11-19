@@ -8,12 +8,12 @@ Range::Range()
 }
 
 Range::Range(const Range &other)
-    : _begin(other._begin), _end(other._end)
+    : _start(other._start), _end(other._end)
 {
 }
 
-Range::Range(const QDateTime &begin, const QDateTime &end)
-    : _begin(begin), _end(end)
+Range::Range(const QDateTime &start, const QDateTime &end)
+    : _start(start), _end(end)
 {
 }
 
@@ -24,14 +24,24 @@ Range::Range(const QDateTime &date, const long &duration)
 
 Range &Range::operator =(const Range &other)
 {
-    _begin = other._begin;
+    _start = other._start;
     _end = other._end;
     return *this;
 }
 
-QDateTime &Range::begin()
+bool Range::operator<(const Range &other) const
 {
-    return _begin;
+    return this->isEndValid() && other.isStartValid() && this->end() < other.start();
+}
+
+bool Range::operator>(const Range &other) const
+{
+    return this->isStartValid() && other.isEndValid() && this->start() > other.end();
+}
+
+QDateTime &Range::start()
+{
+    return _start;
 }
 
 QDateTime &Range::end()
@@ -40,25 +50,25 @@ QDateTime &Range::end()
 }
 
 Range::Range(Range &&other) noexcept
-    : _begin(std::move(other._begin)), _end(std::move(other._end))
+    : _start(std::move(other._start)), _end(std::move(other._end))
 {
 }
 
-Range::Range(QDateTime &&begin, QDateTime &&end) noexcept
-    : _begin(std::move(begin)), _end(std::move(end))
+Range::Range(QDateTime &&start, QDateTime &&end) noexcept
+    : _start(std::move(start)), _end(std::move(end))
 {
 }
 
 Range &Range::operator =(Range &&other) noexcept
 {
-    _begin = std::move(other._begin);
+    _start = std::move(other._start);
     _end = std::move(other._end);
     return *this;
 }
 
-const QDateTime &Range::begin() const
+const QDateTime &Range::start() const
 {
-    return _begin;
+    return _start;
 }
 
 const QDateTime &Range::end() const
@@ -66,9 +76,9 @@ const QDateTime &Range::end() const
     return _end;
 }
 
-bool Range::isBeginValid() const
+bool Range::isStartValid() const
 {
-    return _begin.isValid();
+    return _start.isValid();
 }
 
 bool Range::isEndValid() const
@@ -78,22 +88,22 @@ bool Range::isEndValid() const
 
 bool Range::isValid() const
 {
-    return _begin.isValid() && _end.isValid() && _begin <= _end;
+    return _start.isValid() && _end.isValid() && _start <= _end;
 }
 
-bool Range::isBeginNull() const
+bool Range::isStartNull() const
 {
-    return _begin.isNull();
+    return _start.isNull() || !_start.isValid();
 }
 
 bool Range::isEndNull() const
 {
-    return _end.isNull();
+    return _end.isNull() || !_end.isValid();;
 }
 
 bool Range::isNull() const
 {
-    return _begin.isNull() && _end.isNull();
+    return isStartNull() && isEndNull();
 }
 
 Data::Range::operator bool() const
@@ -106,7 +116,7 @@ qint64 Range::toSec() const
     if (!isValid())
         return 0;
 
-    return _begin.secsTo(_end);
+    return _start.secsTo(_end);
 }
 
 bool Range::contains(const QDateTime &date) const
@@ -114,7 +124,7 @@ bool Range::contains(const QDateTime &date) const
     if (isNull() || !date.isValid())
         return false;
 
-    if (isBeginValid() && date < _begin)
+    if (isStartValid() && date < _start)
         return false;
 
     if (isEndValid() && date > _end)
@@ -126,8 +136,8 @@ bool Range::contains(const QDateTime &date) const
 bool Range::contains(const Range &other) const
 {
     bool valid = false;
-    if (isBeginValid() && other.isBeginValid()) {
-        if (_begin <= other._begin)
+    if (isStartValid() && other.isStartValid()) {
+        if (_start <= other._start)
             valid = true;
         else
             return false;
@@ -145,7 +155,7 @@ bool Range::contains(const Range &other) const
 
 bool Range::isIntersected(const Range &other) const
 {
-    return contains(other._begin) || contains(other._end) || other.contains(_begin) || other.contains(_end);
+    return contains(other._start) || contains(other._end) || other.contains(_start) || other.contains(_end);
 }
 
 void Range::setRange(const QDateTime &date, const long &duration)
@@ -154,18 +164,18 @@ void Range::setRange(const QDateTime &date, const long &duration)
         return;
 
     if (duration >= 0) {
-        _begin = date;
+        _start = date;
         _end = date.addSecs(duration);
     } else {
-        _begin = date.addSecs(duration);
+        _start = date.addSecs(duration);
         _end = date;
     }
 }
 
 void Range::shift(const long &secs)
 {
-    if (isBeginValid())
-        _begin = _begin.addSecs(secs);
+    if (isStartValid())
+        _start = _start.addSecs(secs);
 
     if (isEndValid())
         _end = _end.addSecs(secs);
@@ -173,14 +183,14 @@ void Range::shift(const long &secs)
 
 void Range::constrain(const Range &other)
 {
-    if (other.isBeginValid() && (isBeginNull() || _begin < other._begin))
-        _begin = other._begin;
+    if (other.isStartValid() && (isStartNull() || _start < other._start))
+        _start = other._start;
 
     if (other.isEndValid() && (isEndNull() || _end > other._end))
         _end = other._end;
 
-    if (_begin > _end) {
-        _begin = QDateTime();
+    if (_start > _end) {
+        _start = QDateTime();
         _end = QDateTime();
     }
 }
@@ -190,13 +200,13 @@ void Range::remove(const Range &other)
     if (!isIntersected(other))
         return; //нет пересечений
 
-    if (other.isBeginValid() && (isBeginNull() || (isBeginValid() && _begin < other._begin)) )
-        _end = other._begin;
+    if (other.isStartValid() && (isStartNull() || (isStartValid() && _start < other._start)) )
+        _end = other._start;
     else if (other.isEndValid())
-        _begin = other._end;
+        _start = other._end;
 
-    if (isBeginValid() && isEndValid() && _begin > _end) {
-        _begin = QDateTime();
+    if (isStartValid() && isEndValid() && _start > _end) {
+        _start = QDateTime();
         _end = QDateTime();
     }
 }

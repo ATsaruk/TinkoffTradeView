@@ -18,15 +18,15 @@ StockView::StockView(QSharedPointer<Stock> &stock, const Range &targetRange, con
     if (_candles->empty() || minCandlesCount == 0)
         return;
 
-    auto BeginIt = targetRange.isBeginNull() ? _candles->begin() : lower_bound(_range.begin());
+    auto BeginIt = targetRange.isStartNull() ? _candles->begin() : lower_bound(_range.start());
     auto EndIt   = targetRange.isEndNull()   ? _candles->end()   : upper_bound(_range.end());       ///@todo !!возможно lower_bound
     size_t availableCandlesCount = std::distance(BeginIt, EndIt);
     if (availableCandlesCount > minCandlesCount)
         availableCandlesCount = minCandlesCount;
 
-    if (targetRange.isBeginNull()) {
+    if (targetRange.isStartNull()) {
         std::advance(EndIt, -availableCandlesCount);
-        _range.begin() = EndIt->dateTime();
+        _range.start() = EndIt->dateTime();
     } else { //if (targetRange.isEndNull())
         std::advance(BeginIt, availableCandlesCount);
         _range.end() = BeginIt->dateTime();
@@ -57,14 +57,29 @@ size_t StockView::size() const {
 
 bool StockView::isEnoughCandles(Range range, const size_t minCandleCount, const bool ignoreRightBorder) const
 {
-    return Stock::isEnoughCandles(range, minCandleCount, ignoreRightBorder);
+    auto totalRange = Stock::range();
+    if (!totalRange.isValid())
+        return false;
+
+    if (range.isStartNull())
+        range.start() = _range.start();
+
+    if (range.isEndNull() || ignoreRightBorder)
+        range.end() = _range.end();
+
+    auto timeBeginLastFullCandle = _key.prevCandleTime(_key.startCandleTime(QDateTime::currentDateTime()));
+    if (range.isEndValid() && range.end() > timeBeginLastFullCandle)
+        range.end() = timeBeginLastFullCandle;
+
+    bool isCountEnough = minCandleCount > 0 && minCandleCount >= size();
+    return isCountEnough && range.isValid() && totalRange.contains(range);
 }
 
 const Stock::DequeIt StockView::begin() const
 {
     if (!_range.isValid())
         return _candles->end();
-    return lower_bound(_range.begin());
+    return lower_bound(_range.start());
 }
 
 const Stock::DequeIt StockView::end() const
@@ -87,7 +102,7 @@ const Stock::ReverseDequeIt StockView::rend() const
 {
     if (!_range.isValid())
         return _candles->rend();
-    auto time = _range.begin();
+    auto time = _range.start();
     auto isLessThanTime = [&time](const auto &it){ return it.dateTime() < time; };
     return std::find_if(_candles->rbegin(), _candles->rend(), isLessThanTime);
 }
@@ -95,14 +110,14 @@ const Stock::ReverseDequeIt StockView::rend() const
 void StockView::setBegin(const QDateTime &time)
 {
     if (_range.isEndValid() && _range.end() >= time)
-        _range.begin() = time;
+        _range.start() = time;
     else
         _range = Range();
 }
 
 void StockView::setEnd(const QDateTime &time)
 {
-    if (_range.isBeginValid() && _range.begin() <= time)
+    if (_range.isStartValid() && _range.start() <= time)
         _range.end() = time;
     else
         _range = Range();

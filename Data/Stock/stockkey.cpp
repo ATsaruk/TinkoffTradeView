@@ -67,7 +67,7 @@ QString StockKey::intervalToString() const
 QDateTime StockKey::startCandleTime(const QDateTime &time) const
 {
     auto div = std::div(time.toSecsSinceEpoch(), static_cast<long long>(candleLenght()));
-    return QDateTime::fromSecsSinceEpoch(div.quot);
+    return QDateTime::fromSecsSinceEpoch(div.quot * candleLenght());
 }
 
 QDateTime StockKey::prevCandleTime(const QDateTime &time) const

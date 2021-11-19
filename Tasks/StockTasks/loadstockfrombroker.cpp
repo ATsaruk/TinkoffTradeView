@@ -31,7 +31,8 @@ LoadStockFromBroker::~LoadStockFromBroker()
 
 void LoadStockFromBroker::setData(SharedInterface &inputData)
 {
-    _loadRange = inputData;
+    //InterfaceWrapper<Data::Range> inputRange = inputData;
+    _loadRange = Data::Range(inputData->get<Data::Range>());   //создаем копию переданного интервала, т.к. нам возможно его нужно будет редактировать
 }
 
 SharedInterface &LoadStockFromBroker::getResult()
@@ -55,24 +56,23 @@ bool LoadStockFromBroker::initLoadingRange()
 {
     if ( (_loadRange->isValid()) != (_minCandlesCount == 0) ) {
         logCritical << QString("LoadStockFromBroker::exec:;invalid input data!;%1;%2;%3")
-                       .arg(_loadRange->begin().toString(), _loadRange->end().toString())
+                       .arg(_loadRange->start().toString(), _loadRange->end().toString())
                        .arg(_minCandlesCount);
         return false;
     }
 
-    _isForwardLoading = _loadRange->isBeginValid();
+    _isForwardLoading = _loadRange->isStartValid();
 
     //Ограничивам окончание загрузки последней завершенной свечей
-    _subRange = Data::Range(_loadRange);
     if ( auto timeEndLastFullCandle = _stock->key().startCandleTime(QDateTime::currentDateTime());
-         _subRange.isEndNull() || _subRange.end() > timeEndLastFullCandle )
-        _subRange.end() = timeEndLastFullCandle;
+         _loadRange->isEndNull() || _loadRange->end() > timeEndLastFullCandle )
+        _loadRange->end() = timeEndLastFullCandle;
 
     //Формируем подинтервал для загрузки, длинна которого не более чем максимально доступный интервал загрузки для
     //данной длительности свечи (интервалы определяет брокер)
     qint64 maxLoadRange = Broker::TinkoffApi::getMaxLoadInterval(_stock->key().interval());
     if (_isForwardLoading)
-        _subRange.setRange(_loadRange->begin(), maxLoadRange);
+        _subRange.setRange(_loadRange->start(), maxLoadRange);
     else
         _subRange.setRange(_loadRange->end(), -maxLoadRange);
 
@@ -109,16 +109,24 @@ bool LoadStockFromBroker::goNextLoadRange()
 
 bool LoadStockFromBroker::isLoadFinished()
 {
-    if ( (_minCandlesCount > 0 && _stock->size() >= _minCandlesCount)   //загрузки по количеству и загружено достаточно!
-         || _subRange.toSec() < _stock->key().candleLenght() ) {        //запрашиваемый интервал загружен!
-        return true;
+    if (_subRange.toSec() < _stock->key().candleLenght())
+        return true;        //запрашиваемый интервал загружен!
+
+    if (_minCandlesCount > 0) {
+        //Загрузка производится по количеству свечей
+        if (_stock->size() >= _minCandlesCount)
+            return true;    //загружено достаточно!
+
+        /* Ограничиваем максимальную длинну загрузки, но только при загрузке по количеству, когда происходи загрузка
+         * заданного диапазона, то загружаем весь заданный диапазон, это важно! */
+        size_t curTotalLoadTime = _isForwardLoading
+                ? _loadRange->start().secsTo(_subRange.start())
+                : _subRange.end().secsTo(_loadRange->end());
+
+        return curTotalLoadTime > _maxTotalLoadTime;
     }
 
-    size_t curTotalLoadTime = _isForwardLoading
-            ? _loadRange->begin().secsTo(_subRange.begin())
-            : _subRange.end().secsTo(_loadRange->end());
-
-    return curTotalLoadTime > _maxTotalLoadTime;
+    return false;
 }
 
 void LoadStockFromBroker::finishTask()

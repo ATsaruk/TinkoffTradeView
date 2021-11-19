@@ -12,7 +12,6 @@ namespace Task {
 GetStock::GetStock(const Data::StockKey &stockKey, const size_t minCandleCount)
     : IBaseCommand("GetStock"),
       _minCandlesCount(minCandleCount),
-      loadedCandlesCount(0),
       _key(stockKey)
 {
 }
@@ -46,10 +45,8 @@ void GetStock::exec()
 
 bool GetStock::isEnoughCandles()
 {
-    if (auto stock = Glo.stocks->getCandlesForRead(_key, _loadRange, _loadRange->isValid() ? 0 : _minCandlesCount); stock) {
-        loadedCandlesCount = stock->size();
+    if (auto stock = Glo.stocks->getCandlesForRead(_key, _loadRange, _loadRange->isValid() ? 0 : _minCandlesCount); stock)
         return stock->isEnoughCandles(_loadRange, _loadRange->isValid() ? 0 : _minCandlesCount);
-    }
 
     return false;
 }
@@ -60,13 +57,11 @@ bool GetStock::loadFromDb()
     if (auto [existedRange, existedCount] = Glo.stocks->stockInfo(_key); existedRange.isValid()) {
         //В Glo.stocks есть акция с ключем key, формируем задачи для подинтервалов, где нет свечей
 
-        size_t remainedCandlesCount = _minCandlesCount - loadedCandlesCount;
-
-        bool isCandlesOnTheLeft = _loadRange->isBeginNull() || _loadRange->begin() <= _key.prevCandleTime(existedRange.begin());
+        bool isCandlesOnTheLeft = _loadRange->isStartNull() || _loadRange->start() <= _key.prevCandleTime(existedRange.start());
         if ( isCandlesOnTheLeft ) {
             //в начале есть незагруженный интервал
-            InterfaceWrapper<Data::Range> leftRange = Data::Range(_loadRange->begin(), existedRange.begin());
-            auto loadFromDb = execFunc<LoadStockFromDbFunc>(&leftRange, _key, leftRange->isValid() ? 0 : remainedCandlesCount);
+            InterfaceWrapper<Data::Range> leftRange = Data::Range(_loadRange->start(), existedRange.start());
+            auto loadFromDb = execFunc<LoadStockFromDbFunc>(&leftRange, _key, leftRange->isValid() ? 0 : _minCandlesCount);
             InterfaceWrapper<Data::Stock> loadedStock = loadFromDb->getResult();
             Glo.stocks->appedStock(loadedStock);
         }
@@ -75,7 +70,7 @@ bool GetStock::loadFromDb()
         if ( isCandlesOnTheRight ) {
             //в конеце есть не загруженный интервал
             InterfaceWrapper<Data::Range> rightRange = Data::Range(_key.nextCandleTime(existedRange.end()), _loadRange->end());
-            auto loadFromDb = execFunc<LoadStockFromDbFunc>(&rightRange, _key, rightRange->isValid() ? 0 : remainedCandlesCount);
+            auto loadFromDb = execFunc<LoadStockFromDbFunc>(&rightRange, _key, rightRange->isValid() ? 0 : _minCandlesCount);
             InterfaceWrapper<Data::Stock> loadedStock = loadFromDb->getResult();
             Glo.stocks->appedStock(loadedStock);
         }
@@ -93,24 +88,27 @@ bool GetStock::startLoading()
     if (auto [existedRange, existedCount] = Glo.stocks->stockInfo(_key); existedRange.isValid()) {
         //В Glo.stocks есть акция с ключем key, формируем задачи для подинтервалов, где нет свечей
 
-        bool isCandlesOnTheLeft = _loadRange->isBeginNull() || _loadRange->begin() <= _key.prevCandleTime(existedRange.begin());
+        bool isCandlesOnTheLeft = _loadRange->isStartNull() || _loadRange->start() <= _key.prevCandleTime(existedRange.start());
         bool isCandlesOnTheRight = _loadRange->isEndNull() || _loadRange->end() >= _key.nextCandleTime(existedRange.end());
 
-        if ( isCandlesOnTheLeft ) {
-            //в начале есть незагруженный интервал
-            InterfaceWrapper<Data::Range> leftRange = Data::Range(_loadRange->begin(), existedRange.begin());
-            auto *task = createTask<LoadStockFromBroker>(_key, leftRange->isValid() ? 0 : _minCandlesCount - loadedCandlesCount);
-            task->setData( &leftRange );
-        } else if ( isCandlesOnTheRight ) {
-            static std::unordered_map<Data::StockKey, QDateTime> lastEndLoadingList;    ///@todo !!!!пропускать уже загруженные интервалы
+        if ( isCandlesOnTheRight ) {
+            static std::unordered_map<Data::StockKey, QDateTime> lastEndLoadingList;
+
+            ///@todo !!!!пропускать уже загруженные интервалы
+
             //в конеце есть не загруженный интервал
             InterfaceWrapper<Data::Range> rightRange = Data::Range(_key.nextCandleTime(existedRange.end()), _loadRange->end());
-            auto *task = createTask<LoadStockFromBroker>(_key, rightRange->isValid() ? 0 : _minCandlesCount - loadedCandlesCount);
+            auto *task = createTask<LoadStockFromBroker>(_key, rightRange->isValid() ? 0 : _minCandlesCount);
             task->setData( &rightRange );
+        } else if ( isCandlesOnTheLeft ) {
+            //в начале есть незагруженный интервал
+            InterfaceWrapper<Data::Range> leftRange = Data::Range(_loadRange->start(), existedRange.start());
+            auto *task = createTask<LoadStockFromBroker>(_key, leftRange->isValid() ? 0 : _minCandlesCount);
+            task->setData( &leftRange );
         }
     } else {
         //В Glo.stocks отсутствует акция с ключем key, загружаем весь интервал
-        auto *task = createTask<LoadStockFromBroker>(_key, _loadRange->isValid() ? 0 : _minCandlesCount - loadedCandlesCount);
+        auto *task = createTask<LoadStockFromBroker>(_key, _loadRange->isValid() ? 0 : _minCandlesCount);
         task->setData(&_loadRange);
     }
 
@@ -147,11 +145,13 @@ void GetStock::taskFinished()
     logDebug << QString("%1;taskFinished();finished: %2;loaded;%3;candles")
                 .arg(getName(), task->getName()).arg(brokerCandles->size());
 
-    //Сохраняем свечи в БД
-    DB::StocksQuery::insertCandles(brokerCandles);
+    if (brokerCandles->size() > 0) {
+        //Сохраняем свечи в БД
+        DB::StocksQuery::insertCandles(brokerCandles);
 
-    //Сохраняем свечи в Glo.stocks
-    Glo.stocks->appedStock(brokerCandles);
+        //Сохраняем свечи в Glo.stocks
+        Glo.stocks->appedStock(brokerCandles);
+    }
 
     task->deleteLater();
 

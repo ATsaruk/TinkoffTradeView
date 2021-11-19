@@ -31,9 +31,12 @@ void CandlesData::update(const long long newIndex, const size_t candlesCount)
         return;     //Данные уже запрошены, ждем!
 
     if (_candles.empty()) {      //если список свечей пуст, запрашиваем весь интервал
-        requestCandles(Data::Range(QDateTime(), QDateTime::currentDateTime()), candlesCount);
+        requestCandles(Data::Range(QDateTime(), QDateTime::currentDateTime()), candlesCount * 2);
         return;
     }
+
+    ///@todo !!Загружать +50% свечей слева и +50% свечей справа! как только подходим к границе +/- 25%, начинаем дозагрузку!
+    ///@todo !!Ограничить запросы на загрузка вперед, когда настоящее время
 
     //Вычисляем смещение отображаемого индекса свечи и число свечей, которые нужно будет запросить
     long long indexOffset = newIndex - _candles.begin()->getIndex();
